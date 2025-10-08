@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, Send, Heart } from "lucide-react";
+import { Calendar as CalendarIcon, Heart } from "lucide-react";
 import CalendarMonth from "@/components/CalendarMonth";
 import GalleryCarousel from "@/components/GalleryCarousel";
 import QuoteBlock from "@/components/QuoteBlock";
@@ -98,17 +98,16 @@ export default function InvitacionPage() {
                 {/* Itinerario como timeline */}
                 <RevealSection>
                     <Timeline
-  title="Itinerario"
-  items={[
-    { time: "4:30 PM", label: "Recepción de invitados" },
-    { time: "5:00 PM", label: "Ceremonia" },
-    { time: "6:30 PM", label: "Brindis & fotos" },
-    { time: "7:00 PM", label: "Recepción & cena" },
-    { time: "10:00 PM", label: "Baile" },
-  ]}
-  live
-  dateBase={WEDDING_DATE}
-/>
+                        items={[
+                            { time: "4:30 PM", label: "Recepción de invitados" },
+                            { time: "5:00 PM", label: "Ceremonia" },
+                            { time: "6:30 PM", label: "Brindis & fotos" },
+                            { time: "7:00 PM", label: "Recepción & cena" },
+                            { time: "10:00 PM", label: "Baile" },
+                        ]}
+                        className="px-3 pt-2"
+                        title="Itinerario"
+                    />
                 </RevealSection>
 
                 <RevealSection>
@@ -137,7 +136,7 @@ export default function InvitacionPage() {
                     </div>
                 </RevealSection>
                 <RevealSection>
-                    <GalleryCarousel aspect={4/3}
+                    <GalleryCarousel aspect={4 / 3}
                         images={[
                             { src: "/assets/4.jpg", alt: "Foto 1" },
                             { src: "/assets/5.jpg", alt: "Foto 2" },
