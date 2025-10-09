@@ -37,7 +37,7 @@ export default function GalleryCarousel({
   const current = images[index];
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl bg-white shadow-lg">
+    <div className="relative w-full max-w-full overflow-hidden rounded-2xl bg-white shadow-lg">
       {/* Marco con alto fijo por aspect-ratio: evita saltos al cambiar de slide */}
       <div
         className="relative w-full overflow-hidden"
@@ -59,7 +59,7 @@ export default function GalleryCarousel({
               src={current.src}
               alt={current.alt ?? `Foto ${index + 1}`}
               fill
-              sizes="100vw"
+              sizes="100dvw"               // <-- antes 100vw
               priority={index === 0}
               className="object-cover select-none"
               draggable={false}
@@ -97,22 +97,15 @@ export default function GalleryCarousel({
             <Maximize2 className="size-4" />
           </button>
         </DialogTrigger>
-        <DialogContent className="p-0 bg-black/95 border-none w-[calc(100vw-24px)] max-w-[1100px] rounded-2xl">
-          <DialogClose asChild>
-            <button
-              className="absolute right-3 top-3 text-white/80 hover:text-white rounded-full p-1"
-              aria-label="Cerrar"
-            >
-              <X className="size-5" />
-            </button>
-          </DialogClose>
+        <DialogContent className="p-0 bg-black/95 border-none w-[min(1100px,100dvw-24px)] rounded-2xl">
+          {/* ... */}
           <div className="grid place-items-center max-h-[86dvh]">
             <Image
               src={current.src}
               alt={current.alt ?? ""}
               width={2000}
               height={2000}
-              className="w-auto h-auto max-w-[96vw] max-h-[86dvh] object-contain select-none"
+              className="w-auto h-auto max-w-[96dvw] max-h-[86dvh] object-contain select-none"  // <-- dvw
               priority
             />
           </div>
@@ -120,7 +113,7 @@ export default function GalleryCarousel({
       </Dialog>
 
       {/* Indicadores */}
-      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+      <div className="relative w-full max-w-full overflow-hidden rounded-2xl bg-white shadow-lg">
         {images.map((_, i) => (
           <div
             key={i}

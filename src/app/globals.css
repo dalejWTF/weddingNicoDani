@@ -7,6 +7,18 @@
 
 img, video { max-width: 100%; height: auto; }
 .no-scroll-on-load { overflow-y: hidden !important; }
+
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { max-width: 100dvw; overflow-x: clip; }
+
+img, video, canvas, svg { max-width: 100%; height: auto; }
+
+#root, #__next, main { overflow-x: clip; }
+
 * { box-sizing: border-box; }
 @theme inline {
   --color-background: var(--background);

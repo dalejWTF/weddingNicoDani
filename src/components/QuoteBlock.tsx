@@ -1,3 +1,4 @@
+// components/QuoteBlock.tsx
 "use client";
 
 export default function QuoteBlock({ quote, author }: { quote: string; author?: string }) {

@@ -1,3 +1,4 @@
+// components/TextBlock.tsx
 "use client";
 
 export default function TextBlock({ title, paragraphs }: { title?: string; paragraphs: string[] }) {
