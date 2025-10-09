@@ -12,10 +12,10 @@ import Timeline from "@/components/Timeline";
 import dynamic from "next/dynamic";
 import { Separator } from "@/components/ui/separator";
 import SnapPager from "@/components/SnapPager";
-import { Tangerine } from "next/font/google";
+import { Tangerine, Lora } from "next/font/google";
 import DressCode from "@/components/DressCode";
 import RecGiftsSection from "@/components/RecGiftsSection";
-
+import BackgroundAudio from "@/components/BackgroundAudio";
 
 const tangerine = Tangerine({
     subsets: ["latin"],
@@ -42,6 +42,12 @@ const GOOGLE_FORM_URL = "https://forms.gle/tu-form-id";
 export default function InvitacionPage() {
     return (
         <main className="min-h-dvh w-full bg-white ">
+            <BackgroundAudio
+  src="/audio/cancion.mp3"
+  title="Nuestra canción"
+  artist="Daniel & Nicole"
+  cover="/assets/1.jpg"
+/>
             <SnapPager>
                 {/* 1 */}
                 <div className="text-center">
@@ -136,17 +142,14 @@ export default function InvitacionPage() {
                 {/* 11 */}
 
                 <DressCode
-                    // si quieres traducir:
-                    title="CÓDIGO DE VESTIMENTA"
-                    subtitle="black tie optional"
-                    message="Sugerimos estas gamas de color para los atuendos"
-                // opcional: personaliza la paleta
-                // colors={[
-                //   { color: "#F3ECE2", name: "Cream" },
-                //   { color: "#E7C0A3", name: "Blush" },
-                //   // ...
-                // ]}
+                    womenColors={[
+                        { color: "#9DD9F3" }, { color: "#A1D7F0FF" }, { color: "#ABDCF1" }, { color: "#B8E2F2" },
+                    ]}
+                    menColors={[
+                        { color: "#191919" }, { color: "#393939" }, { color: "#4B4B4B" }, { color: "#535353" },
+                    ]}
                 />
+
 
                 {/* 12 — Recomendaciones + Regalos (dos tarjetas con el mismo look) */}
                 <RecGiftsSection
