@@ -12,14 +12,17 @@ import Timeline from "@/components/Timeline";
 import dynamic from "next/dynamic";
 import { Separator } from "@/components/ui/separator";
 import SnapPager from "@/components/SnapPager";
-import { Tangerine  } from "next/font/google";
+import { Tangerine } from "next/font/google";
+import DressCode from "@/components/DressCode";
+import RecGiftsSection from "@/components/RecGiftsSection";
+
 
 const tangerine = Tangerine({
-  subsets: ["latin"],
-  weight: "700",
-  style: "normal",
-  variable: "--font-tangerine",
-  display: "swap",
+    subsets: ["latin"],
+    weight: "700",
+    style: "normal",
+    variable: "--font-tangerine",
+    display: "swap",
 });
 
 // Contador estilo banner (CSR para evitar hydration)
@@ -97,10 +100,9 @@ export default function InvitacionPage() {
                         time="5:00 PM"
                         mapUrl={CHURCH_MAPS_URL}
                     />
-                    <div className="px-12">
-                    <Separator className="my-2 mx-12 opacity-50" />
+                    <div className="px-6">
+                        <Separator className="my-6 opacity-50" />
                     </div>
-                    
                     <VenueBlock
                         title="Recepción"
                         name={RECEPTION_NAME}
@@ -132,32 +134,28 @@ export default function InvitacionPage() {
                 />
 
                 {/* 11 */}
-                <div className="px-3 py-4 space-y-4">
-                    <div className="rounded-3xl border bg-neutral-50 px-4 py-5">
-                        <div className="text-center text-sm font-semibold uppercase tracking-wide mb-2">
-                            Código de vestimenta
-                        </div>
-                        <p className="text-center text-sm text-neutral-700">
-                            Mujeres: Vestido largo y elegante. Hombres: Atuendo formal (camisa manga larga). Evitar blanco puro.
-                        </p>
-                    </div>
-                    <div className="rounded-3xl border bg-neutral-50 px-4 py-5">
-                        <div className="text-center text-sm font-semibold uppercase tracking-wide mb-2">
-                            Recomendaciones
-                        </div>
-                        <p className="text-center text-sm text-neutral-700">
-                            Seguir las indicaciones del personal, ser puntual y llevar abrigo ligero (locación al aire libre).
-                        </p>
-                    </div>
-                    <div className="rounded-3xl border bg-neutral-50 px-4 py-5">
-                        <div className="text-center text-sm font-semibold uppercase tracking-wide mb-2">Lluvia de sobres</div>
-                        <p className="text-center text-sm text-neutral-700">
-                            Tu presencia es lo más valioso; si deseas obsequiarnos algo, agradecemos el detalle en sobre.
-                        </p>
-                    </div>
-                </div>
 
-                {/* 12 */}
+                <DressCode
+                    // si quieres traducir:
+                    title="CÓDIGO DE VESTIMENTA"
+                    subtitle="black tie optional"
+                    message="Sugerimos estas gamas de color para los atuendos"
+                // opcional: personaliza la paleta
+                // colors={[
+                //   { color: "#F3ECE2", name: "Cream" },
+                //   { color: "#E7C0A3", name: "Blush" },
+                //   // ...
+                // ]}
+                />
+
+                {/* 12 — Recomendaciones + Regalos (dos tarjetas con el mismo look) */}
+                <RecGiftsSection
+                // opcional: personaliza textos o agrega mesa de regalos
+                // registryLabel="Ver mesa de regalos"
+                // registryUrl="https://tulista.com"
+                />
+
+                {/* 13 — Carrusel */}
                 <GalleryCarousel
                     aspect={4 / 3}
                     images={[
@@ -167,15 +165,17 @@ export default function InvitacionPage() {
                     ]}
                 />
 
-                {/* 13 */}
+                {/* 14 — Cita */}
                 <QuoteBlock
                     quote="El amor nunca se da por vencido, jamás pierde la fe, siempre tiene esperanzas y se mantiene firme en toda circunstancia."
                     author="1 Corintios 13:7"
                 />
 
-                {/* 14 */}
-                <div className="px-3 py-6 text-center">
-                    <div className="text-sm font-semibold uppercase tracking-wide mb-1">Confirmar asistencia</div>
+                {/* 15 — Confirmación */}
+                <div className="px-3 py-10 text-center">
+                    <div className="text-sm font-semibold uppercase tracking-wide mb-1">
+                        Confirmar asistencia
+                    </div>
                     <p className="text-sm text-neutral-700">
                         Por favor confirma tu asistencia antes del 10 de septiembre de 2025
                     </p>
@@ -188,7 +188,7 @@ export default function InvitacionPage() {
                     </div>
                 </div>
 
-                {/* 15 */}
+                {/* 16 — Foto final */}
                 <img
                     src="/assets/2.jpg"
                     alt="Nos vemos pronto"

@@ -5,13 +5,14 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image, { StaticImageData } from "next/image";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+// 👇 añade DialogTitle
+import { Dialog, DialogContent, DialogTrigger, DialogClose, DialogTitle } from "@/components/ui/dialog";
 
 type Img = { src: StaticImageData | string; alt?: string };
 
 export default function GalleryCarousel({
   images,
-  aspect = 16 / 10, // alto constante: 16:10 por defecto (puedes pasar 4/3, 1, etc.)
+  aspect = 16 / 10,
 }: {
   images: Img[];
   aspect?: number;
@@ -24,7 +25,6 @@ export default function GalleryCarousel({
     setIndex(([i]) => [((i + dir + count) % count), dir]);
   }
 
-  // Swipe móvil
   const touch = React.useRef<number | null>(null);
   function onTouchStart(e: React.TouchEvent) { touch.current = e.touches[0].clientX; }
   function onTouchEnd(e: React.TouchEvent) {
@@ -38,7 +38,7 @@ export default function GalleryCarousel({
 
   return (
     <div className="relative w-full max-w-full overflow-hidden rounded-2xl bg-white shadow-lg">
-      {/* Marco con alto fijo por aspect-ratio: evita saltos al cambiar de slide */}
+      {/* marco con alto fijo */}
       <div
         className="relative w-full overflow-hidden"
         style={{ aspectRatio: aspect }}
@@ -54,12 +54,11 @@ export default function GalleryCarousel({
             exit={{ x: direction > 0 ? -100 : 100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
-            {/* Next/Image con fill + object-cover — no cambia el alto del contenedor */}
             <Image
               src={current.src}
               alt={current.alt ?? `Foto ${index + 1}`}
               fill
-              sizes="100dvw"               // <-- antes 100vw
+              sizes="100dvw"
               priority={index === 0}
               className="object-cover select-none"
               draggable={false}
@@ -68,7 +67,7 @@ export default function GalleryCarousel({
         </AnimatePresence>
       </div>
 
-      {/* Controles */}
+      {/* controles */}
       <button
         type="button"
         aria-label="Anterior"
@@ -86,7 +85,7 @@ export default function GalleryCarousel({
         <ChevronRight className="size-5" />
       </button>
 
-      {/* Lightbox modal (imagen adaptada a cualquier tamaño sin salirse) */}
+      {/* lightbox */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <button
@@ -97,23 +96,37 @@ export default function GalleryCarousel({
             <Maximize2 className="size-4" />
           </button>
         </DialogTrigger>
+
         <DialogContent className="p-0 bg-black/95 border-none w-[min(1100px,100dvw-24px)] rounded-2xl">
-          {/* ... */}
+          {/* ✅ Título obligatorio para a11y (oculto visualmente) */}
+          <DialogTitle className="sr-only">
+            Imagen {index + 1} de {count}
+          </DialogTitle>
+
+          <DialogClose asChild>
+            <button
+              className="absolute right-3 top-3 text-white/80 hover:text-white rounded-full p-1"
+              aria-label="Cerrar"
+            >
+              <X className="size-5" />
+            </button>
+          </DialogClose>
+
           <div className="grid place-items-center max-h-[86dvh]">
             <Image
               src={current.src}
               alt={current.alt ?? ""}
               width={2000}
               height={2000}
-              className="w-auto h-auto max-w-[96dvw] max-h-[86dvh] object-contain select-none"  // <-- dvw
+              className="w-auto h-auto max-w-[96dvw] max-h-[86dvh] object-contain select-none"
               priority
             />
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Indicadores */}
-      <div className="relative w-full max-w-full overflow-hidden rounded-2xl bg-white shadow-lg">
+      {/* indicadores (restauro posición y evito capturar toques) */}
+      <div className="pointer-events-none absolute bottom-2 left-0 right-0 flex justify-center gap-1">
         {images.map((_, i) => (
           <div
             key={i}
