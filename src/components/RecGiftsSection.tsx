@@ -7,6 +7,9 @@ import InfoCard from "@/components/InfoCard";
 import { Button } from "@/components/ui/button";
 import BankAccountsDialog, { type BankAccount } from "@/components/BankAccountsDialog";
 
+const HIGHLIGHT = "#77C3EC";
+const BACKGROUND = "#d2e9ffff";
+
 export default function RecGiftsSection({
   recommendations = "Llega con anticipación, sigue las indicaciones del personal y considera llevar un abrigo ligero (locación al aire libre).",
   gifts = "Tu presencia es lo más valioso; si deseas obsequiarnos algo, agradecemos el detalle en sobre o transferencia.",
@@ -25,13 +28,13 @@ export default function RecGiftsSection({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <section className={"w-full px-3 " + (className ?? "")}>
-      <div className="mx-auto grid max-w-[880px] gap-4">
-        <InfoCard title="Recomendaciones" icon={<Sparkles className="size-6" />}>
+    <section className={"w-full px-3 " + (className ?? "")} >
+      <div className="mx-auto grid max-w-[880px] gap-4" >
+        <InfoCard title="Recomendaciones" icon={<Sparkles className="size-6" style={{ color: HIGHLIGHT }}/>}>
           {recommendations}
         </InfoCard>
 
-        <InfoCard title="Regalos" icon={<Gift className="size-6" />}>
+        <InfoCard title="Regalos" icon={<Gift className="size-6" style={{ color: HIGHLIGHT }}/>}>
           <p>{gifts}</p>
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -39,7 +42,8 @@ export default function RecGiftsSection({
               <Button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="rounded-xl"
+                className="rounded-xl "
+                style={{ backgroundColor: HIGHLIGHT }}
               >
                 <Banknote className="mr-2 size-4" />
                 Ver cuentas

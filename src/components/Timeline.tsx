@@ -43,7 +43,7 @@ export default function Timeline({
         />
 
         {/* Zig-zag en todas las resoluciones */}
-        <ol className="grid grid-cols-[max-content_1px_max-content] auto-rows-[60px] gap-y-6 justify-center">
+        <ol className="grid grid-cols-[max-content_1px_max-content] auto-rows-[40px] gap-y-3 justify-center">
           {items.map((it, i) => {
             const side: "left" | "right" = it.side ?? (i % 2 === 0 ? "left" : "right");
             return (
