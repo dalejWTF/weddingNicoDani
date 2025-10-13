@@ -155,19 +155,19 @@ export default function BackgroundAudio({
         }
         style={{ WebkitTapHighlightColor: "transparent" }}
       >
-        <Music2 className="size-4 opacity-90" />
+        
         <button
           onClick={toggle}
-          className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold"
-          aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
+          className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-semibold"
+          aria-label={isPlaying ? "" : ""}
         >
           {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
-          <span>{isPlaying ? "Pausar" : blocked ? "Reproducir" : "Reproducir"}</span>
+          <span>{isPlaying ? "" : blocked ? "" : ""}</span>
         </button>
 
         <button
           onClick={toggleMute}
-          className="rounded-full p-1 hover:bg-white/10"
+          className="rounded-full hover:bg-white/10"
           aria-label={isMuted ? "Activar sonido" : "Silenciar"}
           title={isMuted ? "Activar sonido" : "Silenciar"}
         >

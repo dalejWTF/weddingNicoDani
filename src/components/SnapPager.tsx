@@ -75,7 +75,7 @@ export default function SnapPager({
   return (
     <div
       ref={containerRef}
-      className="isolate relative h-dvh w-full max-w-[100dvw] overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth"
+      className="isolate relative h-dvh w-full max-w-[100dvw] overflow-y-auto overflow-x-hidden snap-y snap-proximity md:snap-mandatory scroll-smooth"
       style={{ overscrollBehaviorY: "contain" }}
     >
       {pages.map((page, idx) => (
@@ -85,9 +85,10 @@ export default function SnapPager({
           style={{ gap, scrollSnapStop: "always" }}
           variants={pageVariants}
           initial="hidden"
+          // ⬇⬇ el cambio importante
+          viewport={{ amount: 0.6, once: false }}
           whileInView="enter"
-          viewport={{ amount: 1, once: false }}   // vuelve a animar cada vez que entra el slide
-          custom={dir}                                // pasa la dirección a los hijos
+          custom={dir}
         >
           {page.map((child, j) => (
             <motion.div

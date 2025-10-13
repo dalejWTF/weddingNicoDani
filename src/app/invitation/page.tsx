@@ -43,11 +43,11 @@ export default function InvitacionPage() {
     return (
         <main className="min-h-dvh w-full bg-white ">
             <BackgroundAudio
-  src="/audio/cancion.mp3"
-  title="Nuestra canción"
-  artist="Daniel & Nicole"
-  cover="/assets/1.jpg"
-/>
+                src="/audio/cancion.mp3"
+                title="Nuestra canción"
+                artist="Daniel & Nicole"
+                cover="/assets/1.jpg"
+            />
             <SnapPager>
                 {/* 1 */}
                 <div className="text-center">
@@ -153,9 +153,23 @@ export default function InvitacionPage() {
 
                 {/* 12 — Recomendaciones + Regalos (dos tarjetas con el mismo look) */}
                 <RecGiftsSection
-                // opcional: personaliza textos o agrega mesa de regalos
-                // registryLabel="Ver mesa de regalos"
-                // registryUrl="https://tulista.com"
+                    // opcional: personaliza textos o agrega mesa de regalos
+                    // registryLabel="Ver mesa de regalos"
+                    // registryUrl="https://tulista.com"
+                    accounts={[
+                        {
+                            bank: "Banco Pichincha",
+                            holder: "Daniel Ulloa",
+                            account: "1234567890",
+                            dni: "0102030405",
+                        },
+                        {
+                            bank: "Banco Guayaquil",
+                            holder: "Nicole Torres",
+                            account: "0987654321",
+                            dni: "1122334455",
+                        },
+                    ]}
                 />
 
                 {/* 13 — Carrusel */}

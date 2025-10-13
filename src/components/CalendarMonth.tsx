@@ -18,7 +18,7 @@ export default function CalendarMonth({ date, highlightDate, startOnSunday = fal
   const weeks: (number | null)[] = Array.from({ length: startOffset + total }, (_, i) => (i < startOffset ? null : i - startOffset + 1));
   while (weeks.length % 7 !== 0) weeks.push(null);
 
-  const daysShort = startOnSunday ? ["DOM","LUN","MAR","MIE","JUE","VIE","SAB"] : ["L","M","X","J","V","S","D"];
+  const daysShort = startOnSunday ? ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"] : ["L", "M", "X", "J", "V", "S", "D"];
 
   return (
     <div className="w-full select-none px-3">
@@ -31,15 +31,33 @@ export default function CalendarMonth({ date, highlightDate, startOnSunday = fal
         <div className="border-t" />
         <div className="grid grid-cols-7">
           {weeks.map((day, idx) => {
-            const isHighlight = day !== null && highlight && highlight.getFullYear() === date.getFullYear() && highlight.getMonth() === date.getMonth() && highlight.getDate() === day;
+            const isHighlight =
+              day !== null &&
+              highlight &&
+              highlight.getFullYear() === date.getFullYear() &&
+              highlight.getMonth() === date.getMonth() &&
+              highlight.getDate() === day;
+
             return (
               <div key={idx} className="aspect-square grid place-items-center text-sm">
                 {day === null ? (
                   <span className="invisible">-</span>
                 ) : (
-                  <div className="flex items-center justify-center gap-1">
-                    {isHighlight && <Heart className="size-3 text-rose-600 fill-current" />}
-                    <span className={isHighlight ? "font-semibold text-neutral-900" : "text-neutral-800"}>{day}</span>
+                  <div className="relative grid place-items-center size-9 sm:size-10">
+                    {isHighlight && (
+                      <Heart
+                        aria-hidden
+                        className="absolute pointer-events-none size-7 sm:size-8 text-rose-600/25 fill-current"
+                      />
+                    )}
+                    <span
+                      className={
+                        "relative z-10 " +
+                        (isHighlight ? "font-semibold text-neutral-900" : "text-neutral-800")
+                      }
+                    >
+                      {day}
+                    </span>
                   </div>
                 )}
               </div>
