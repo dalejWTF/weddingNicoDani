@@ -25,7 +25,7 @@ export default function VenueBlock({
 }: Props) {
   return (
     <section className={`w-full ${className ?? ""}`}>
-      <div className="mx-auto w-full max-w-[520px] rounded-3xl border bg-white/90 px-6 py-6 shadow-lg ring-1 ring-rose-200/60" style={{ borderColor: HIGHLIGHT }}>
+      <div className="mx-auto w-full max-w-[520px] rounded-3xl bg-white/90 px-6 py-6 " style={{ borderColor: HIGHLIGHT }}>
         {/* Icono destacado */}
         <div className="mx-auto grid size-12 place-items-center rounded-2xl bg-rose-100 text-rose-600 shadow-sm" style={{ backgroundColor: BACKGROUND }}>
           <MapPin className="size-6" style={{ color: HIGHLIGHT }}/>

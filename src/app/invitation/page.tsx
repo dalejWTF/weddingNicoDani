@@ -146,10 +146,10 @@ export default function InvitacionPage() {
                     <section className="grid gap-3 pt-6">
                         <Timeline
                             items={[
-                                { time: "4:30 PM", label: "Recepción de invitados" },
                                 { time: "5:00 PM", label: "Ceremonia" },
-                                { time: "6:30 PM", label: "Brindis & fotos" },
-                                { time: "7:00 PM", label: "Recepción & cena" },
+                                { time: "6:00 PM", label: "Fotos" },
+                                { time: "7:00 PM", label: "Recepción" },
+                                { time: "9:00 PM", label: "Brindis & cena" },
                                 { time: "10:00 PM", label: "Baile" },
                             ]}
                             className="px-3 pt-2"

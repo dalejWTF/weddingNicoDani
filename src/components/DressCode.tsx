@@ -7,20 +7,21 @@ type Swatch = { color: string; name?: string };
 
 export default function DressCode({
   title = "CÓDIGO DE VESTIMENTA",
-  subtitle = "Paleta sugerida",
-  message = "Te invitamos a unirte usando los siguientes colores",
+  message1 = "Se recomienda no usar blanco ni tonalidades similares ya que es el color de la novia.",
+  message2 = "Invitados en general pueden usar tonos pasteles, colores claros o vibrantes.",
   colors = DEFAULT_COLORS,               // fallback: 8 colores (4 mujeres, 4 hombres)
   womenColors,
   menColors,
   className,
 }: {
   title?: string;
-  subtitle?: string;
-  message?: string;
+  message1?: string;
+  message2?: string;
   colors?: Swatch[];
   womenColors?: Swatch[];               // opcional: define explícito
   menColors?: Swatch[];                 // opcional: define explícito
   className?: string;
+
 }) {
   // 1) determina grupos: si pasan womenColors/menColors, úsalo; si no, reparte 4/4 del array `colors`
   const w = (womenColors && womenColors.length ? womenColors.slice(0, 4) : colors.slice(0, 4));
@@ -28,19 +29,21 @@ export default function DressCode({
 
   return (
     <section className={`w-full ${className ?? ""}`}>
-      <div className="mx-auto max-w-[640px] rounded-3xl border bg-white/90 px-6 py-7 shadow-sm">
+      <div className="mx-auto max-w-[640px] rounded-3xl  bg-white/90 px-6 py-7 ">
         {/* Títulos */}
         <div className="text-center">
           <h3 className="text-3xl sm:text-4xl tracking-[0.18em] font-medium uppercase">{title}</h3>
-          <div className="mt-1 font-brand text-2xl sm:text-3xl leading-none text-neutral-700">{subtitle}</div>
-          <p className="mt-3 text-sm text-neutral-600">{message}</p>
+          <p className="mt-3 text-sm text-neutral-600">{message1}</p>
         </div>
 
         {/* Grupos */}
         <div className="mt-6 grid gap-5">
-          <PaletteGroup label="Mujeres" icon={<Venus className="size-4" />} colors={w} />
-          <PaletteGroup label="Hombres" icon={<Mars className="size-4" />} colors={m} />
+          <PaletteGroup label="Damas" icon={<Venus className="size-4" />} colors={w} />         
+          <PaletteGroup label="Caballeros" icon={<Mars className="size-4" />} colors={m} />
         </div>
+        <div className="text-center pt-4">
+            <p className="mt-3 text-sm text-neutral-600">{message2}</p>
+          </div>
       </div>
     </section>
   );
@@ -56,7 +59,7 @@ function PaletteGroup({
   colors: Swatch[];
 }) {
   return (
-    <div className="mx-auto w-full max-w-[560px]">
+    <div className="mx-auto w-full max-w-[520px]">
       <div className="mb-2 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-500">
         {icon}
         <span>{label}</span>
