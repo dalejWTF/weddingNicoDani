@@ -29,7 +29,7 @@ export default function HeroCover({
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
 
       {/* texto al frente, en blanco, a 25% del borde inferior */}
-      <div className="absolute inset-x-0 bottom-[25%] z-10 px-6">
+      <div className="absolute inset-x-0 bottom-[15%] z-10 px-6">
         {children}
       </div>
     </div>

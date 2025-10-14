@@ -28,7 +28,7 @@ export default function Timeline({
     <section className={className}>
       {title && (
         <div
-          className={`mb-2 text-center text-4xl sm:text-5xl tracking-wide ${lora.className}`}
+          className={`mb-2 text-center text-4xl sm:text-4xl tracking-wide ${lora.className}`}
           style={{ color: TEXTTIMELINE }}
         >
           {title}
