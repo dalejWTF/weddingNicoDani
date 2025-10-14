@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { Music2, Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 
 type Props = {
   src: string;

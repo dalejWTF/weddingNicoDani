@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import BankAccountsDialog, { type BankAccount } from "@/components/BankAccountsDialog";
 
 const HIGHLIGHT = "#77C3EC";
-const BACKGROUND = "#d2e9ffff";
 
 export default function RecGiftsSection({
   recommendations = "Llega con anticipación, sigue las indicaciones del personal y considera llevar un abrigo ligero (locación al aire libre).",
@@ -37,13 +36,13 @@ export default function RecGiftsSection({
         <InfoCard title="Regalos" icon={<Gift className="size-6" style={{ color: HIGHLIGHT }}/>}>
           <p>{gifts}</p>
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="mt-4 items-center gap-3">
             {accounts.length > 0 && (
               <Button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="rounded-xl "
-                style={{ backgroundColor: HIGHLIGHT }}
+                className="rounded-xl hover:bg-blue-600/75 active:bg-rose-800 bg-blue-600/50 items-center"
+                
               >
                 <Banknote className="mr-2 size-4" />
                 Ver cuentas

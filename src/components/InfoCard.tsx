@@ -2,25 +2,23 @@
 "use client";
 
 import * as React from "react";
-const HIGHLIGHT = "#77C3EC";
-const BACKGROUND = "#d2e9ffff";
 
 export default function InfoCard({
   icon,
   title,
   children,
-  className,
+  
 }: {
   icon?: React.ReactNode;
   title: string;
   children: React.ReactNode;
-  className?: string;
+  
 }) {
   return (
-    <div className="mx-auto w-full max-w-[520px] rounded-3xl border bg-white/90 px-6 py-6 shadow-lg ring-1 ring-rose-200/60" style={{ borderColor: HIGHLIGHT }}>
+    <div className="mx-auto w-full max-w-[520px] rounded-3xl bg-white/90 px-6 py-6" >
     
       {icon && (
-        <div className="mx-auto grid size-12 place-items-center rounded-2xl text-rose-600 shadow-sm" style={{ backgroundColor: BACKGROUND }}>
+        <div className="mx-auto grid size-12 place-items-center rounded-2xl border border-blue-200" >
           {icon}
         </div>
       )}

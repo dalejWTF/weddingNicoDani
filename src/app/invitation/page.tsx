@@ -10,13 +10,15 @@ import TextBlock from "@/components/TextBlock";
 import VenueBlock from "@/components/VenueBlock";
 import Timeline from "@/components/Timeline";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import RevealSection from "@/components/RevealSection";
-import { Tangerine, Cookie, Englebert, Merienda } from "next/font/google";
+import { Tangerine, Cookie, Merienda } from "next/font/google";
 import DressCode from "@/components/DressCode";
 import RecGiftsSection from "@/components/RecGiftsSection";
 import BackgroundAudio from "@/components/BackgroundAudio";
 import HeroCover from "@/components/HeroCover";
+import RsvpButton from "@/components/RsvpButton";
 
 const tangerine = Tangerine({
     subsets: ["latin"],
@@ -30,14 +32,6 @@ const cookie = Cookie({
     weight: "400",
     style: "normal",
     variable: "--font-cookie",
-    display: "swap",
-});
-
-const englebert = Englebert({
-    subsets: ["latin"],
-    weight: "400",
-    style: "normal",
-    variable: "--font-englebert",
     display: "swap",
 });
 
@@ -104,9 +98,9 @@ export default function InvitacionPage() {
                         {/* Si no quieres este encabezado, bórralo */}
                         <div className="text-center py-2">
                             <div className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-neutral-500`}>El gran día</div>
-                            <div className="flex items-center justify-center gap-2 text-sm text-neutral-700">
+                            <div className="flex items-center justify-center gap-2 text-sm text-blue-600/75 pt-2">
                                 <CalendarIcon className="size-4" />
-                                <span className="uppercase">{WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}</span>
+                                <span className="uppercase ">{WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}</span>
                             </div>
                         </div>
                         <CalendarMonth date={WEDDING_DATE} highlightDate={WEDDING_DATE} startOnSunday />
@@ -155,7 +149,17 @@ export default function InvitacionPage() {
                             className="px-3 pt-2"
                             title="Itinerario"
                         />
-                        <img src="/assets/3.jpg" alt="Momentos" className="pt-6 w-full object-cover aspect-[16/10]" loading="lazy" />
+                        <div className="relative mt-6 w-full aspect-[16/10] overflow-hidden rounded-xl">
+                            <Image
+                                src="/assets/3.jpg"
+                                alt="Momentos"
+                                fill
+                                sizes="100vw"
+                                className="object-cover"
+                                loading="lazy"
+                            />
+                        </div>
+
                     </section>
                 </RevealSection>
                 {/* 6 — DressCode */}
@@ -201,19 +205,15 @@ export default function InvitacionPage() {
                             </div>
 
                             <p className={`mt-2 text-center text-white/90 ${merienda.className}`}>
-                                Por favor confirma tu asistencia antes del 10 de septiembre de 2025
+                                Por favor confirma tu asistencia antes del 10 de diciembre de 2025
                             </p>
 
                             <div className="pt-3">
-                                <Button
-                                    asChild
-                                    variant="outline"
-                                    className="rounded-2xl px-10 border-white text-white hover:bg-white/10 bg-white/10"
-                                >
-                                    <a href={GOOGLE_FORM_URL} target="_blank" rel="noopener noreferrer">
-                                        Confirmar
-                                    </a>
-                                </Button>
+
+                                <RsvpButton
+                                    triggerClassName="rounded-2xl px-10 border-white text-white hover:bg-white/10 bg-white/10"
+                                    triggerLabel="Confirmar"
+                                />
                             </div>
                         </div>
                     </HeroCover>

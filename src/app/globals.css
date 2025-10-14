@@ -8,8 +8,8 @@
 
 :root, html, body { max-width: 100%; overflow-x: hidden; scrollbar-gutter: stable both-edges; }
 
-img, video { max-width: 100%; height: auto; }
-.no-scroll-on-load { overflow-y: hidden !important; }
+
+
 
 
 *,

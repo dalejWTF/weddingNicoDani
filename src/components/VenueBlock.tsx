@@ -25,9 +25,9 @@ export default function VenueBlock({
 }: Props) {
   return (
     <section className={`w-full ${className ?? ""}`}>
-      <div className="mx-auto w-full max-w-[520px] rounded-3xl bg-white/90 px-6 py-6 " style={{ borderColor: HIGHLIGHT }}>
+      <div className="mx-auto w-full max-w-[520px] rounded-3xl bg-white/90 px-6 py-6 ">
         {/* Icono destacado */}
-        <div className="mx-auto grid size-12 place-items-center rounded-2xl bg-rose-100 text-rose-600 shadow-sm" style={{ backgroundColor: BACKGROUND }}>
+        <div className="mx-auto grid size-12 place-items-center rounded-2xl border border-blue-200 shadow-sm" >
           <MapPin className="size-6" style={{ color: HIGHLIGHT }}/>
         </div>
 
@@ -46,7 +46,7 @@ export default function VenueBlock({
           {/* Hora como “pill” visible */}
           {time && (
             <div className="mt-2">
-              <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-rose-700" style={{ color: HIGHLIGHT , backgroundColor: BACKGROUND }}>
+              <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs border border-blue-200 font-medium" style={{ color: HIGHLIGHT }}>
                 <Clock className="size-3" style={{ color: HIGHLIGHT }}/>
                 {time}
               </span>
@@ -66,8 +66,8 @@ export default function VenueBlock({
               aria-label={`Ver ${name} en el mapa`}
               className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-md transition
                          focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2
-                         bg-rose-600 hover:bg-rose-700 active:bg-rose-800"
-                         style={{ backgroundColor: HIGHLIGHT }}
+                         hover:bg-blue-600/75 active:bg-rose-800 bg-blue-600/50"
+                         
             >
               Ver mapa
             </a>
