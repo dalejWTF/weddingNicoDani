@@ -1,7 +1,6 @@
 // app/invitation/page.tsx
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, Heart } from "lucide-react";
 import CalendarMonth from "@/components/CalendarMonth";
 import GalleryCarousel from "@/components/GalleryCarousel";
@@ -54,8 +53,6 @@ const CHURCH_MAPS_URL = "https://maps.google.com/?q=Iglesia+San+Francisco";
 const RECEPTION_NAME = "Quinta Carbonero";
 const RECEPTION_MAPS_URL = "https://maps.google.com/?q=Hacienda+La+Esperanza";
 
-// Formulario de Google para RSVP (reemplaza el id)
-const GOOGLE_FORM_URL = "https://forms.gle/tu-form-id";
 
 export default function InvitacionPage() {
     return (

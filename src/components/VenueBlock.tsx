@@ -4,7 +4,6 @@
 import { MapPin, Clock } from "lucide-react";
 
 const HIGHLIGHT = "#77C3EC";
-const BACKGROUND = "#d2e9ffff";
 
 type Props = {
   title?: string;

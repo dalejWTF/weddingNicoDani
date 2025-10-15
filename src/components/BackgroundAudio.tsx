@@ -1,4 +1,3 @@
-// components/BackgroundAudio.tsx
 "use client";
 
 import * as React from "react";
@@ -29,16 +28,14 @@ export default function BackgroundAudio({
   const [blocked, setBlocked] = React.useState(false); // autoplay bloqueado
   const [ready, setReady] = React.useState(false);
 
-  // Preferencia del usuario
   React.useEffect(() => {
     const pref = localStorage.getItem("bg-music");
     if (pref === "off") {
       setIsPlaying(false);
-      setBlocked(true); // mostramos botón para que decida encender
+      setBlocked(true);
     }
   }, []);
 
-  // Monta el <audio> y prueba reproducir
   React.useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
@@ -49,15 +46,15 @@ export default function BackgroundAudio({
     // Metadata para controles del SO
     if ("mediaSession" in navigator) {
       try {
-        // @ts-ignore
+        
         navigator.mediaSession.metadata = new MediaMetadata({
           title,
           artist,
           artwork: cover ? [{ src: cover, sizes: "512x512", type: "image/png" }] : [],
         });
-        // @ts-ignore
+        
         navigator.mediaSession.setActionHandler?.("play", () => play());
-        // @ts-ignore
+        
         navigator.mediaSession.setActionHandler?.("pause", () => pause());
       } catch {}
     }
@@ -69,20 +66,17 @@ export default function BackgroundAudio({
         setBlocked(false);
         setReady(true);
       } catch {
-        // Autoplay bloqueado → esperar primer gesto
         setBlocked(true);
         setReady(true);
       }
     };
 
-    // Si el usuario no desactivó la música, intentamos autoplay
     if (localStorage.getItem("bg-music") !== "off") {
       void tryAutoplay();
     } else {
       setReady(true);
     }
 
-    // Arrancar al primer gesto si estaba bloqueado
     const onFirstGesture = async () => {
       if (!audioRef.current) return;
       if (!isPlaying) {
@@ -146,7 +140,6 @@ export default function BackgroundAudio({
         className="hidden"
       />
 
-      {/* Control flotante minimizado */}
       <div
         className={
           "pointer-events-auto fixed bottom-4 left-1/2 -translate-x-1/2 z-40 rounded-full bg-black/60 text-white backdrop-blur px-3 py-2 shadow-lg " +
@@ -155,14 +148,12 @@ export default function BackgroundAudio({
         }
         style={{ WebkitTapHighlightColor: "transparent" }}
       >
-        
         <button
           onClick={toggle}
           className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-semibold"
           aria-label={isPlaying ? "" : ""}
         >
           {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
-          <span>{isPlaying ? "" : blocked ? "" : ""}</span>
         </button>
 
         <button
@@ -175,7 +166,6 @@ export default function BackgroundAudio({
         </button>
       </div>
 
-      {/* Mensaje accesible si estaba bloqueado (opcional) */}
       {ready && blocked && (
         <span className="sr-only">
           La reproducción automática fue bloqueada por tu navegador. Toca “Reproducir” para iniciar la música.

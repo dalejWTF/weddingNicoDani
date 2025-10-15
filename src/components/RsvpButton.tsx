@@ -10,6 +10,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { DialogClose } from "@/components/ui/dialog";
 
 type Family = { id: string; nombreFamilia: string; nroPersonas: number };
 
@@ -174,21 +176,40 @@ export default function RsvpButton({
 
       {/* ⭐ Dialog de éxito */}
       <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="flex flex-row items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-green-600" />
-            <DialogTitle>¡Confirmación enviada!</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-1 text-sm">
-            <p>
-              Registramos la respuesta de <b>{successData?.nombreFamilia}</b> para{" "}
-              <b>{successData?.nroPersonas}</b> {successData?.nroPersonas === 1 ? "persona" : "personas"}.
-            </p>
-            {successData?.asistencia && <p>¡Qué emoción, nos vemos en la boda! 🎉</p>}
-          </div>
-          <DialogFooter>
-            <Button onClick={() => setSuccessOpen(false)}>Cerrar</Button>
-          </DialogFooter>
+        <DialogContent
+          className="
+      sm:max-w-md bg-transparent border-0 shadow-none p-0
+      [&>button]:hidden [&_[data-slot='dialog-close']]:hidden
+    "
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            className="rounded-xl bg-background p-6 shadow-2xl"
+          >
+            <DialogHeader className="items-center">
+              <div className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                <CheckCircle2 className="h-7 w-7 text-green-600" />
+              </div>
+              <DialogTitle className="text-center">¡Confirmación enviada!</DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-1 text-sm text-center">
+              <p>
+                Registramos la respuesta de <b>{successData?.nombreFamilia}</b> para{" "}
+                <b>{successData?.nroPersonas}</b> {successData?.nroPersonas === 1 ? "persona" : "personas"}.
+              </p>
+              <p>Estado: <b>{successData?.asistencia ? "Asistirá" : "No asistirá"}</b>.</p>
+              {successData?.asistencia && <p>¡Qué emoción, nos vemos en la boda! 🎉</p>}
+            </div>
+
+            <DialogFooter className="mt-4 justify-center">
+              <DialogClose asChild>
+                <Button>Aceptar</Button>
+              </DialogClose>
+            </DialogFooter>
+          </motion.div>
         </DialogContent>
       </Dialog>
     </>
