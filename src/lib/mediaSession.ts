@@ -1,32 +1,56 @@
 // src/lib/mediaSession.ts
 export type MediaArtwork = { src: string; sizes?: string; type?: string };
 
-type MediaSessionAction =
+type MediaSessionActionLocal =
   | "play" | "pause" | "stop"
   | "seekbackward" | "seekforward" | "seekto"
   | "previoustrack" | "nexttrack";
 
-type MediaSessionActionDetails = {
-  action: MediaSessionAction;
+type MediaSessionActionDetailsLocal = {
+  action: MediaSessionActionLocal;
   seekOffset?: number;
   seekTime?: number;
   fastSeek?: boolean;
 };
 
+// Constructor de MediaMetadata que devuelve MediaMetadata (no unknown)
+type MediaMetadataInitCompat = {
+  title?: string;
+  artist?: string;
+  album?: string;
+  artwork?: MediaArtwork[];
+};
+type MediaMetadataCtor = new (init?: MediaMetadataInitCompat) => MediaMetadata;
+
+// API mínima de MediaSession que necesitamos, con metadata tipada
+interface MediaSessionLike {
+  metadata: MediaMetadata | null;
+  playbackState?: "none" | "paused" | "playing";
+  setActionHandler?: (
+    action: MediaSessionActionLocal,
+    handler: ((details: MediaSessionActionDetailsLocal) => void) | null
+  ) => void;
+  setPositionState?: (state: { duration: number; position: number; playbackRate: number }) => void;
+}
+
 export function setupMediaSession(
   audio: HTMLAudioElement,
   opts: { title: string; artist?: string; album?: string; artwork?: MediaArtwork[] }
 ) {
-  const ms = (navigator as Navigator & { mediaSession?: any }).mediaSession;
+  const ms = (navigator as Navigator & { mediaSession?: MediaSessionLike }).mediaSession;
   if (!ms) return () => {};
 
-  // Metadatos
-  ms.metadata = new (window as any).MediaMetadata({
-    title: opts.title,
-    artist: opts.artist,
-    album: opts.album,
-    artwork: opts.artwork ?? [],
-  });
+  // Usa el ctor global si existe y asigna un MediaMetadata real
+  const MediaMetadataCtor =
+    (window as unknown as { MediaMetadata?: MediaMetadataCtor }).MediaMetadata;
+  if (MediaMetadataCtor) {
+    ms.metadata = new MediaMetadataCtor({
+      title: opts.title,
+      artist: opts.artist,
+      album: opts.album,
+      artwork: opts.artwork ?? [],
+    });
+  }
 
   // Estado de reproducción
   const updatePosition = () => {
@@ -36,7 +60,9 @@ export function setupMediaSession(
         position: audio.currentTime,
         playbackRate: audio.playbackRate || 1,
       });
-    } catch {}
+    } catch {
+      // noop
+    }
   };
 
   const play = async () => { await audio.play(); };
@@ -44,12 +70,16 @@ export function setupMediaSession(
   const stop = () => { audio.pause(); audio.currentTime = 0; };
 
   const seekBy = (offset = 10) => {
-    const next = Math.max(0, Math.min((audio.duration || Infinity), audio.currentTime + offset));
+    const next = Math.max(0, Math.min(audio.duration || Infinity, audio.currentTime + offset));
     audio.currentTime = next;
     updatePosition();
   };
 
-  const onAction = (details: MediaSessionActionDetails) => {
+  // Soporte opcional para fastSeek sin any
+  type FastSeekAudio = HTMLAudioElement & { fastSeek?: (time: number) => void };
+  const audioWithFast = audio as FastSeekAudio;
+
+  const onAction = (details: MediaSessionActionDetailsLocal) => {
     switch (details.action) {
       case "play": return void play();
       case "pause": return pause();
@@ -58,8 +88,11 @@ export function setupMediaSession(
       case "seekforward": return seekBy(details.seekOffset ?? 10);
       case "seekto":
         if (typeof details.seekTime === "number") {
-          if ((audio as any).fastSeek && details.fastSeek) (audio as any).fastSeek(details.seekTime);
-          else audio.currentTime = details.seekTime;
+          if (audioWithFast.fastSeek && details.fastSeek) {
+            audioWithFast.fastSeek(details.seekTime);
+          } else {
+            audio.currentTime = details.seekTime;
+          }
           updatePosition();
         }
         return;
@@ -68,11 +101,13 @@ export function setupMediaSession(
   };
 
   // Handlers
-  const actions: MediaSessionAction[] = [
-    "play","pause","stop","seekbackward","seekforward","seekto",
-    "previoustrack","nexttrack",
-  ];
-  actions.forEach(a => ms.setActionHandler?.(a, (d: MediaSessionActionDetails) => onAction(d)));
+const actions: MediaSessionActionLocal[] = [
+  "play", "pause", "stop", "seekbackward", "seekforward", "seekto",
+  "previoustrack", "nexttrack",
+];
+  actions.forEach((a) =>
+  ms.setActionHandler?.(a, (details: MediaSessionActionDetailsLocal) => onAction(details))
+);
 
   // Sincronizar estado
   const onTime = () => updatePosition();
@@ -91,7 +126,7 @@ export function setupMediaSession(
 
   // Limpieza
   return () => {
-    actions.forEach(a => ms.setActionHandler?.(a, null));
+    actions.forEach((a) => ms.setActionHandler?.(a, null));
     audio.removeEventListener("timeupdate", onTime);
     audio.removeEventListener("ratechange", onRate);
     audio.removeEventListener("play", onPlay);

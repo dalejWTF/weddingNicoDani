@@ -13,7 +13,6 @@ import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { DialogClose } from "@/components/ui/dialog";
 
-const COLOR = "#88CFF1";
 const BACKGROUNDCOLOR = "#FEFEFA"
 
 type Family = { id: string; nombreFamilia: string; nroPersonas: number };
