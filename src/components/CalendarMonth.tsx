@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 
 function startOfMonth(d: Date) { return new Date(d.getFullYear(), d.getMonth(), 1); }
 function daysInMonth(d: Date) { return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); }
+const COLOR = "#88CFF1";
 
 export default function CalendarMonth({ date, highlightDate, startOnSunday = false }: { date: Date; highlightDate?: Date; startOnSunday?: boolean; }) {
   const base = startOfMonth(date);
@@ -22,13 +23,13 @@ export default function CalendarMonth({ date, highlightDate, startOnSunday = fal
 
   return (
     <div className="w-full select-none px-3">
-      <div className="border-t border-b border-blue-600/25">
+      <div className="border-t border-b" style={{ borderColor: COLOR }}>
         <div className="grid grid-cols-7 text-center text-[11px] uppercase tracking-wide text-neutral-600">
           {daysShort.map((d) => (
             <div key={d} className="py-2">{d}</div>
           ))}
         </div>
-        <div className="border-t border-blue-600/25" />
+        <div className="border-t" style={{ borderColor: COLOR }} />
         <div className="grid grid-cols-7">
           {weeks.map((day, idx) => {
             const isHighlight =
@@ -47,7 +48,7 @@ export default function CalendarMonth({ date, highlightDate, startOnSunday = fal
                     {isHighlight && (
                       <Heart
                         aria-hidden
-                        className="absolute pointer-events-none size-7 sm:size-8 text-blue-600/25 fill-current"
+                        className="absolute pointer-events-none size-7 sm:size-8 fill-current" style={{ color: COLOR }}
                       />
                     )}
                     <span

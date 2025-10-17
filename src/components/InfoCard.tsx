@@ -18,7 +18,7 @@ export default function InfoCard({
     <div className="mx-auto w-full max-w-[520px] rounded-3xl bg-white/90 px-6 py-6" >
     
       {icon && (
-        <div className="mx-auto grid size-12 place-items-center rounded-2xl border border-blue-200" >
+        <div className="mx-auto grid size-12 place-items-center rounded-2xl border border-blue-300/70">
           {icon}
         </div>
       )}

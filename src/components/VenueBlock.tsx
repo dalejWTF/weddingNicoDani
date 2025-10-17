@@ -3,7 +3,7 @@
 
 import { MapPin, Clock } from "lucide-react";
 
-const HIGHLIGHT = "#77C3EC";
+const COLOR = "#55BAE9FF";
 
 type Props = {
   title?: string;
@@ -26,8 +26,8 @@ export default function VenueBlock({
     <section className={`w-full ${className ?? ""}`}>
       <div className="mx-auto w-full max-w-[520px] rounded-3xl bg-white/90 px-6 py-6 ">
         {/* Icono destacado */}
-        <div className="mx-auto grid size-12 place-items-center rounded-2xl border border-blue-200 shadow-sm" >
-          <MapPin className="size-6" style={{ color: HIGHLIGHT }}/>
+        <div className="mx-auto grid size-12 place-items-center rounded-2xl border border-blue-300/70 shadow-sm">
+          <MapPin className="size-6" style={{ color: COLOR }}/>
         </div>
 
         {/* Texto */}
@@ -45,8 +45,8 @@ export default function VenueBlock({
           {/* Hora como “pill” visible */}
           {time && (
             <div className="mt-2">
-              <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs border border-blue-200 font-medium" style={{ color: HIGHLIGHT }}>
-                <Clock className="size-3" style={{ color: HIGHLIGHT }}/>
+              <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs border border-blue-300/70 font-medium" style={{ color: COLOR }}>
+                <Clock className="size-3" style={{ color: COLOR }}/>
                 {time}
               </span>
             </div>
@@ -64,8 +64,8 @@ export default function VenueBlock({
               rel="noopener noreferrer"
               aria-label={`Ver ${name} en el mapa`}
               className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-md transition
-                         focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2
-                         hover:bg-blue-600/75 active:bg-rose-800 bg-blue-600/50"
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2
+                         hover:bg-blue-600/75 active:bg-blue-600/75 bg-blue-300/90"
                          
             >
               Ver mapa

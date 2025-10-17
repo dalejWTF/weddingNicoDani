@@ -1,7 +1,7 @@
 // components/Timeline.tsx
 "use client";
 
-const HIGHLIGHT = "#77C3EC";
+const HIGHLIGHT = "#55BAE9FF";
 const TEXTTIMELINE = "#7b7c7cff";
 
 import { Lora } from "next/font/google";

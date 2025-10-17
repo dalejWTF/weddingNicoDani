@@ -13,6 +13,9 @@ import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { DialogClose } from "@/components/ui/dialog";
 
+const COLOR = "#88CFF1";
+const BACKGROUNDCOLOR = "#FEFEFA"
+
 type Family = { id: string; nombreFamilia: string; nroPersonas: number };
 
 export default function RsvpButton({
@@ -114,7 +117,7 @@ export default function RsvpButton({
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" style={{backgroundColor: BACKGROUNDCOLOR}}>
           <DialogHeader>
             <DialogTitle>Confirmar asistencia</DialogTitle>
           </DialogHeader>
@@ -165,7 +168,9 @@ export default function RsvpButton({
               </div>
 
               <DialogFooter>
-                <Button type="submit" disabled={!selected || submitting}>
+                <Button type="submit" disabled={!selected || submitting} className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-md transition
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2
+                         hover:bg-blue-600/75 active:bg-blue-600/75 bg-blue-400/90">
                   {submitting ? "Enviando..." : "Enviar confirmación"}
                 </Button>
               </DialogFooter>
@@ -200,7 +205,6 @@ export default function RsvpButton({
                 Registramos la respuesta de <b>{successData?.nombreFamilia}</b> para{" "}
                 <b>{successData?.nroPersonas}</b> {successData?.nroPersonas === 1 ? "persona" : "personas"}.
               </p>
-              <p>Estado: <b>{successData?.asistencia ? "Asistirá" : "No asistirá"}</b>.</p>
               {successData?.asistencia && <p>¡Qué emoción, nos vemos en la boda! 🎉</p>}
             </div>
 

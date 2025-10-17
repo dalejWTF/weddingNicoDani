@@ -19,6 +19,7 @@ import BackgroundAudio from "@/components/BackgroundAudio";
 import HeroCover from "@/components/HeroCover";
 import RsvpButton from "@/components/RsvpButton";
 
+
 const tangerine = Tangerine({
     subsets: ["latin"],
     weight: "700",
@@ -52,13 +53,13 @@ const CHURCH_NAME = "Iglesia San Isidro";
 const CHURCH_MAPS_URL = "https://maps.google.com/?q=Iglesia+San+Francisco";
 const RECEPTION_NAME = "Quinta Carbonero";
 const RECEPTION_MAPS_URL = "https://maps.google.com/?q=Hacienda+La+Esperanza";
-
-
+const BACKGROUNDCOLOR = "#FEFEFA"
+const COLOR = "#65C2EEFF";
 export default function InvitacionPage() {
     return (
         <main
             className="relative h-dvh w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth overflow-y-scroll no-scrollbar"
-            style={{ overscrollBehaviorY: "contain" }}
+            style={{ overscrollBehaviorY: "contain", backgroundColor: BACKGROUNDCOLOR }}
         >
             <BackgroundAudio
                 src="/audio/cancion.mp3"
@@ -77,25 +78,25 @@ export default function InvitacionPage() {
 
                 {/* 2 — TextBlock + Countdown */}
                 <RevealSection>
-                    <section className="grid gap-4 pt-6">
+                    <section className="grid gap-4 pt-9 my-4">
                         <TextBlock
                             paragraphs={[
                                 "Dios nos ha concedido el privilegio de conocernos y amarnos con su bendición y la de nuestros padres.",
                                 "Queremos unir nuestras vidas para siempre y celebrarlo contigo.",
                             ]}
                         />
-                        <CountdownBanner date={WEDDING_DATE} className="mx-3 my-3" />
+                        <CountdownBanner date={WEDDING_DATE} className="my-3" />
                     </section>
                 </RevealSection>
 
 
                 {/* 3 — CalendarMonth (con título opcional dentro para que no cuente aparte) */}
                 <RevealSection>
-                    <section className="grid gap-2 pt-6">
+                    <section className="grid gap-2 pt-3">
                         {/* Si no quieres este encabezado, bórralo */}
                         <div className="text-center py-2">
                             <div className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-neutral-500`}>El gran día</div>
-                            <div className="flex items-center justify-center gap-2 text-sm text-blue-600/75 pt-2">
+                            <div className="flex items-center justify-center gap-2 text-sm pt-2" style={{ color: COLOR }}>
                                 <CalendarIcon className="size-4" />
                                 <span className="uppercase ">{WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}</span>
                             </div>
@@ -105,9 +106,9 @@ export default function InvitacionPage() {
                 </RevealSection>
                 {/* 4 — VenueBlock (título + ambos venues en la misma página) */}
                 <RevealSection>
-                    <section className="grid gap-4 pt-6">
-                        <div className="text-center py-4">
-                            <div className="flex items-center justify-center gap-2 text-sm font-medium">
+                    <section className="grid gap-4 pt-6 my-3">
+                        <div className="text-center pt-6">
+                            <div className="flex items-center justify-center gap-1 text-sm font-medium">
                                 <Heart className="size-5 text-neutral-500" /> <span className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-neutral-500`}>Lugar</span>
                             </div>
                         </div>

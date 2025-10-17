@@ -11,7 +11,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
+const BACKGROUNDCOLOR = "#FEFEFA"
 export type BankAccount = {
   bank: string;     // nombre banco
   holder: string;   // nombre titular
@@ -34,7 +34,7 @@ export default function BankAccountsDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg sm:max-w-2xl">
+      <DialogContent className="max-w-lg sm:max-w-2xl" style={{backgroundColor: BACKGROUNDCOLOR}}>
         <DialogHeader>
           <DialogTitle className="text-2xl tracking-wide">{title}</DialogTitle>
           <DialogDescription className="text-sm">{description}</DialogDescription>
@@ -44,7 +44,7 @@ export default function BankAccountsDialog({
           {accounts.map((acc, i) => (
             <li
               key={i}
-              className="rounded-2xl border bg-white/90 p-4 sm:p-5 shadow-sm ring-1 ring-rose-100/50"
+              className="rounded-2xl border p-4 sm:p-5 shadow-sm ring-1 ring-blue-300/70" style={{backgroundColor: BACKGROUNDCOLOR}}
             >
               <div className="mb-2 text-base font-semibold">{acc.bank}</div>
 
@@ -93,9 +93,10 @@ function FieldRow({
         <Button
           size="sm"
           variant="outline"
-          className="h-8 rounded-xl"
+          className="h-8 rounded-xl shadow-sm ring-1 ring-blue-300/70"
           onClick={handleCopy}
           aria-label={`Copiar ${label}`}
+          style={{backgroundColor: BACKGROUNDCOLOR}}
         >
           {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
         </Button>
@@ -117,7 +118,7 @@ function CopyAllButton({ acc }: { acc: BankAccount }) {
   };
 
   return (
-    <Button onClick={handleCopy} variant="secondary" className="rounded-xl">
+    <Button onClick={handleCopy} variant="secondary" className="rounded-xl ring-1 ring-blue-300/70 shadow-sm" style={{backgroundColor: BACKGROUNDCOLOR}}>
       {copied ? (
         <>
           <Check className="mr-2 size-4" /> Copiado

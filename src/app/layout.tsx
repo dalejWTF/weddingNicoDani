@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="es"
-      className={`${tangerine.variable} ${inter.variable} bg-rose-50 max-w-[100dvw] overflow-x-clip`}
+      className={`${tangerine.variable} ${inter.variable} bg-blue-500/20 max-w-[100dvw] overflow-x-clip`}
     >
       <body className="antialiased font-sans max-w-[100dvw] w-full overflow-x-clip">
         {children}

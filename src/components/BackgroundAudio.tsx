@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { setupMediaSession } from "@/lib/mediaSession";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 
 type Props = {
@@ -36,6 +37,7 @@ export default function BackgroundAudio({
     }
   }, []);
 
+
   React.useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
@@ -43,21 +45,12 @@ export default function BackgroundAudio({
     el.volume = initialVolume;
     el.muted = false;
 
-    // Metadata para controles del SO
-    if ("mediaSession" in navigator) {
-      try {
-        
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title,
-          artist,
-          artwork: cover ? [{ src: cover, sizes: "512x512", type: "image/png" }] : [],
-        });
-        
-        navigator.mediaSession.setActionHandler?.("play", () => play());
-        
-        navigator.mediaSession.setActionHandler?.("pause", () => pause());
-      } catch {}
-    }
+    // ⬇️ configura Media Session (metadatos + handlers + position state)
+    const cleanupMs = setupMediaSession(el, {
+      title,
+      artist,
+      artwork: cover ? [{ src: cover, sizes: "512x512", type: "image/png" }] : [],
+    });
 
     const tryAutoplay = async () => {
       try {
@@ -71,11 +64,8 @@ export default function BackgroundAudio({
       }
     };
 
-    if (localStorage.getItem("bg-music") !== "off") {
-      void tryAutoplay();
-    } else {
-      setReady(true);
-    }
+    if (localStorage.getItem("bg-music") !== "off") void tryAutoplay();
+    else setReady(true);
 
     const onFirstGesture = async () => {
       if (!audioRef.current) return;
@@ -87,7 +77,7 @@ export default function BackgroundAudio({
           window.removeEventListener("pointerdown", onFirstGesture);
           window.removeEventListener("keydown", onFirstGesture);
           window.removeEventListener("touchstart", onFirstGesture);
-        } catch {}
+        } catch { }
       }
     };
 
@@ -96,12 +86,13 @@ export default function BackgroundAudio({
     window.addEventListener("touchstart", onFirstGesture, { once: true, passive: true });
 
     return () => {
+      cleanupMs(); // ⬅️ importante
       window.removeEventListener("pointerdown", onFirstGesture);
       window.removeEventListener("keydown", onFirstGesture);
       window.removeEventListener("touchstart", onFirstGesture);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [src]);
+  }, [src, title, artist, cover]);
 
   const play = async () => {
     try {
