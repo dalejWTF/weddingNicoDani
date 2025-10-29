@@ -2,6 +2,7 @@
 "use client";
 
 import { Calendar as CalendarIcon, Heart } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import CalendarMonth from "@/components/CalendarMonth";
 import GalleryCarousel from "@/components/GalleryCarousel";
 import QuoteBlock from "@/components/QuoteBlock";
@@ -18,12 +19,12 @@ import RecGiftsSection from "@/components/RecGiftsSection";
 import BackgroundAudio from "@/components/BackgroundAudio";
 import HeroCover from "@/components/HeroCover";
 import RsvpButton from "@/components/RsvpButton";
+import { FAMILIAS } from "@/data/familias"; // ← usamos tu data local
 
-// Paleta baby blue sutil (coherente con el resto de componentes)
+// Paleta baby blue sutil
 const SOFT_BG_CARD = "#FFFFFF";    // tarjetas
 const SOFT_BORDER = "#DBEAF5";     // bordes
 const SOFT_ACCENT = "#8FBFD9";     // acentos/iconos
-const SOFT_BG_APP = "#F7FBFE";
 
 const tangerine = Tangerine({
     subsets: ["latin"],
@@ -47,7 +48,7 @@ const merienda = Merienda({
     display: "swap",
 });
 
-// Contador estilo banner (CSR para evitar hydration)
+// Contador (CSR)
 const CountdownBanner = dynamic(() => import("@/components/CountdownBanner"), { ssr: false });
 
 const WEDDING_DATE = new Date("2025-12-20T17:00:00");
@@ -59,10 +60,22 @@ const RECEPTION_NAME = "Quinta Carbonero";
 const RECEPTION_MAPS_URL = "https://maps.google.com/?q=Hacienda+La+Esperanza";
 
 export default function InvitacionPage() {
+    const search = useSearchParams();
+    const familyIdFromUrl = search.get("id") ?? undefined;
+
+    // Buscamos la familia localmente (a prueba de filtros del API)
+    const prefillFamily = familyIdFromUrl
+        ? FAMILIAS.find((f) => f.id === familyIdFromUrl)
+        : undefined;
+
+    const saludoHero = prefillFamily
+        ? `Estimada ${prefillFamily.nombreFamilia}, ¡Estás invitad@ a nuestra boda!`
+        : "¡Estás invitad@ a nuestra boda!";
+
     return (
         <main
             className="relative h-dvh w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth no-scrollbar"
-            style={{ overscrollBehaviorY: "contain", backgroundColor: SOFT_BG_CARD }} // ← aplica #F7FBFE
+            style={{ overscrollBehaviorY: "contain", backgroundColor: SOFT_BG_CARD }}
         >
             <BackgroundAudio
                 src="/audio/cancion.mp3"
@@ -74,13 +87,17 @@ export default function InvitacionPage() {
             <div className="mx-auto max-w-[640px]">
                 {/* 1 — Hero */}
                 <HeroCover src="/assets/1.jpg" alt="Daniel y Nicole">
-                    <h1 className={`text-center text-5xl sm:text-8xl font-semibold ${tangerine.className} text-white drop-shadow`}>
+                    <h1
+                        className={`text-center text-5xl sm:text-8xl font-semibold ${tangerine.className} text-white drop-shadow`}
+                    >
                         Daniel &amp; Nicole
                     </h1>
-                    <p className={`mt-2 text-center text-white/90 ${merienda.className}`}>¡Estás invitad@ a nuestra boda!</p>
+                    <p className={`mt-2 text-center text-white/90 ${merienda.className}`}>
+                        {saludoHero}
+                    </p>
                 </HeroCover>
 
-                {/* 2 — TextBlock + Countdown */}
+                {/* 2 — Texto + Countdown */}
                 <RevealSection>
                     <section className="grid gap-4 pt-9 my-4">
                         <TextBlock
@@ -97,25 +114,40 @@ export default function InvitacionPage() {
                 <RevealSection>
                     <section className="grid gap-2 pt-3">
                         <div className="text-center py-2">
-                            <div className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}>El gran día</div>
-                            <div className="flex items-center justify-center gap-2 text-sm pt-2" style={{ color: SOFT_ACCENT }}>
+                            <div
+                                className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}
+                            >
+                                El gran día
+                            </div>
+                            <div
+                                className="flex items-center justify-center gap-2 text-sm pt-2"
+                                style={{ color: SOFT_ACCENT }}
+                            >
                                 <CalendarIcon className="size-4" />
                                 <span className="uppercase ">
                                     {WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}
                                 </span>
                             </div>
                         </div>
-                        <CalendarMonth date={WEDDING_DATE} highlightDate={WEDDING_DATE} startOnSunday />
+                        <CalendarMonth
+                            date={WEDDING_DATE}
+                            highlightDate={WEDDING_DATE}
+                            startOnSunday
+                        />
                     </section>
                 </RevealSection>
 
-                {/* 4 — VenueBlock (dos venues) */}
+                {/* 4 — Venues */}
                 <RevealSection>
                     <section className="grid gap-4 pt-6 my-3">
                         <div className="text-center pt-6">
                             <div className="flex items-center justify-center gap-1 text-sm font-medium">
                                 <Heart className="size-5 text-slate-500" />{" "}
-                                <span className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}>Lugar</span>
+                                <span
+                                    className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}
+                                >
+                                    Lugar
+                                </span>
                             </div>
                         </div>
 
@@ -128,7 +160,10 @@ export default function InvitacionPage() {
                                 mapUrl={CHURCH_MAPS_URL}
                             />
                             <div className="px-6">
-                                <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
+                                <Separator
+                                    className="my-6"
+                                    style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }}
+                                />
                             </div>
                             <VenueBlock
                                 title="Recepción"
@@ -158,7 +193,11 @@ export default function InvitacionPage() {
 
                         <div
                             className="relative mt-6 w-full aspect-[16/10] overflow-hidden rounded-xl"
-                            style={{ backgroundColor: SOFT_BG_CARD, border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
+                            style={{
+                                backgroundColor: SOFT_BG_CARD,
+                                border: `1px solid ${SOFT_BORDER}`,
+                                boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
+                            }}
                         >
                             <Image
                                 src="/assets/3.jpg"
@@ -176,8 +215,18 @@ export default function InvitacionPage() {
                 <RevealSection>
                     <DressCode
                         className="pt-6"
-                        womenColors={[{ color: "#D9EDF9" }, { color: "#E6F3FB" }, { color: "#F0F8FD" }, { color: "#F6FAFE" }]}
-                        menColors={[{ color: "#191919" }, { color: "#393939" }, { color: "#4B4B4B" }, { color: "#535353" }]}
+                        womenColors={[
+                            { color: "#D9EDF9" },
+                            { color: "#E6F3FB" },
+                            { color: "#F0F8FD" },
+                            { color: "#F6FAFE" },
+                        ]}
+                        menColors={[
+                            { color: "#191919" },
+                            { color: "#393939" },
+                            { color: "#4B4B4B" },
+                            { color: "#535353" },
+                        ]}
                     />
                 </RevealSection>
 
@@ -186,8 +235,18 @@ export default function InvitacionPage() {
                     <RecGiftsSection
                         className="pt-6"
                         accounts={[
-                            { bank: "Banco Pichincha", holder: "Daniel Ulloa", account: "1234567890", dni: "0102030405" },
-                            { bank: "Banco Guayaquil", holder: "Nicole Torres", account: "0987654321", dni: "1122334455" },
+                            {
+                                bank: "Banco Pichincha",
+                                holder: "Daniel Ulloa",
+                                account: "1234567890",
+                                dni: "0102030405",
+                            },
+                            {
+                                bank: "Banco Guayaquil",
+                                holder: "Nicole Torres",
+                                account: "0987654321",
+                                dni: "1122334455",
+                            },
                         ]}
                     />
                 </RevealSection>
@@ -210,11 +269,13 @@ export default function InvitacionPage() {
                     </section>
                 </RevealSection>
 
-                {/* 9 — Confirmación + Foto final */}
+                {/* 9 — Confirmación */}
                 <RevealSection>
                     <HeroCover src="/assets/2.jpg" alt="Nos vemos pronto">
                         <div className="max-w-screen-sm mx-auto px-3 text-center">
-                            <div className={`text-center text-5xl sm:text-8xl font-semibold ${tangerine.className} text-white drop-shadow`}>
+                            <div
+                                className={`text-center text-5xl sm:text-8xl font-semibold ${tangerine.className} text-white drop-shadow`}
+                            >
                                 Confirmar asistencia
                             </div>
 
@@ -226,6 +287,8 @@ export default function InvitacionPage() {
                                 <RsvpButton
                                     triggerClassName="rounded-2xl px-10 border-white text-black hover:bg-white/10 bg-white/10"
                                     triggerLabel="Confirmar"
+                                    prefillFamilyId={familyIdFromUrl} // compat
+                                    prefillFamily={prefillFamily}     // ← la familia completa
                                 />
                             </div>
                         </div>
