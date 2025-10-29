@@ -19,6 +19,11 @@ import BackgroundAudio from "@/components/BackgroundAudio";
 import HeroCover from "@/components/HeroCover";
 import RsvpButton from "@/components/RsvpButton";
 
+// Paleta baby blue sutil (coherente con el resto de componentes)
+const SOFT_BG_CARD = "#FFFFFF";    // tarjetas
+const SOFT_BORDER = "#DBEAF5";     // bordes
+const SOFT_ACCENT = "#8FBFD9";     // acentos/iconos
+const SOFT_BG_APP = "#F7FBFE";
 
 const tangerine = Tangerine({
     subsets: ["latin"],
@@ -34,7 +39,6 @@ const cookie = Cookie({
     variable: "--font-cookie",
     display: "swap",
 });
-
 const merienda = Merienda({
     subsets: ["latin"],
     weight: "400",
@@ -48,18 +52,17 @@ const CountdownBanner = dynamic(() => import("@/components/CountdownBanner"), { 
 
 const WEDDING_DATE = new Date("2025-12-20T17:00:00");
 
-// Ubicaciones independientes (reemplaza por tus datos reales)
+// Ubicaciones (demo)
 const CHURCH_NAME = "Iglesia San Isidro";
 const CHURCH_MAPS_URL = "https://maps.google.com/?q=Iglesia+San+Francisco";
 const RECEPTION_NAME = "Quinta Carbonero";
 const RECEPTION_MAPS_URL = "https://maps.google.com/?q=Hacienda+La+Esperanza";
-const BACKGROUNDCOLOR = "#FEFEFA"
-const COLOR = "#65C2EEFF";
+
 export default function InvitacionPage() {
     return (
         <main
-            className="relative h-dvh w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth overflow-y-scroll no-scrollbar"
-            style={{ overscrollBehaviorY: "contain", backgroundColor: BACKGROUNDCOLOR }}
+            className="relative h-dvh w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth no-scrollbar"
+            style={{ overscrollBehaviorY: "contain", backgroundColor: SOFT_BG_CARD }} // ← aplica #F7FBFE
         >
             <BackgroundAudio
                 src="/audio/cancion.mp3"
@@ -67,6 +70,7 @@ export default function InvitacionPage() {
                 artist="Daniel & Nicole"
                 cover="/assets/1.jpg"
             />
+
             <div className="mx-auto max-w-[640px]">
                 {/* 1 — Hero */}
                 <HeroCover src="/assets/1.jpg" alt="Daniel y Nicole">
@@ -89,29 +93,32 @@ export default function InvitacionPage() {
                     </section>
                 </RevealSection>
 
-
-                {/* 3 — CalendarMonth (con título opcional dentro para que no cuente aparte) */}
+                {/* 3 — CalendarMonth */}
                 <RevealSection>
                     <section className="grid gap-2 pt-3">
-                        {/* Si no quieres este encabezado, bórralo */}
                         <div className="text-center py-2">
-                            <div className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-neutral-500`}>El gran día</div>
-                            <div className="flex items-center justify-center gap-2 text-sm pt-2" style={{ color: COLOR }}>
+                            <div className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}>El gran día</div>
+                            <div className="flex items-center justify-center gap-2 text-sm pt-2" style={{ color: SOFT_ACCENT }}>
                                 <CalendarIcon className="size-4" />
-                                <span className="uppercase ">{WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}</span>
+                                <span className="uppercase ">
+                                    {WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}
+                                </span>
                             </div>
                         </div>
                         <CalendarMonth date={WEDDING_DATE} highlightDate={WEDDING_DATE} startOnSunday />
                     </section>
                 </RevealSection>
-                {/* 4 — VenueBlock (título + ambos venues en la misma página) */}
+
+                {/* 4 — VenueBlock (dos venues) */}
                 <RevealSection>
                     <section className="grid gap-4 pt-6 my-3">
                         <div className="text-center pt-6">
                             <div className="flex items-center justify-center gap-1 text-sm font-medium">
-                                <Heart className="size-5 text-neutral-500" /> <span className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-neutral-500`}>Lugar</span>
+                                <Heart className="size-5 text-slate-500" />{" "}
+                                <span className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}>Lugar</span>
                             </div>
                         </div>
+
                         <div>
                             <VenueBlock
                                 title="Ceremonia religiosa"
@@ -121,7 +128,7 @@ export default function InvitacionPage() {
                                 mapUrl={CHURCH_MAPS_URL}
                             />
                             <div className="px-6">
-                                <Separator className="my-6 opacity-50" />
+                                <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
                             </div>
                             <VenueBlock
                                 title="Recepción"
@@ -133,6 +140,7 @@ export default function InvitacionPage() {
                         </div>
                     </section>
                 </RevealSection>
+
                 {/* 5 — Timeline + Imagen */}
                 <RevealSection>
                     <section className="grid gap-3 pt-6">
@@ -147,7 +155,11 @@ export default function InvitacionPage() {
                             className="px-3 pt-2"
                             title="Itinerario"
                         />
-                        <div className="relative mt-6 w-full aspect-[16/10] overflow-hidden rounded-xl">
+
+                        <div
+                            className="relative mt-6 w-full aspect-[16/10] overflow-hidden rounded-xl"
+                            style={{ backgroundColor: SOFT_BG_CARD, border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
+                        >
                             <Image
                                 src="/assets/3.jpg"
                                 alt="Momentos"
@@ -157,19 +169,22 @@ export default function InvitacionPage() {
                                 loading="lazy"
                             />
                         </div>
-
                     </section>
                 </RevealSection>
+
                 {/* 6 — DressCode */}
                 <RevealSection>
-                    <DressCode className="pt-6"
-                        womenColors={[{ color: "#9DD9F3" }, { color: "#A1D7F0FF" }, { color: "#ABDCF1" }, { color: "#B8E2F2" }]}
+                    <DressCode
+                        className="pt-6"
+                        womenColors={[{ color: "#D9EDF9" }, { color: "#E6F3FB" }, { color: "#F0F8FD" }, { color: "#F6FAFE" }]}
                         menColors={[{ color: "#191919" }, { color: "#393939" }, { color: "#4B4B4B" }, { color: "#535353" }]}
                     />
                 </RevealSection>
+
                 {/* 7 — Recomendaciones + Regalos */}
                 <RevealSection>
-                    <RecGiftsSection className="pt-6"
+                    <RecGiftsSection
+                        className="pt-6"
                         accounts={[
                             { bank: "Banco Pichincha", holder: "Daniel Ulloa", account: "1234567890", dni: "0102030405" },
                             { bank: "Banco Guayaquil", holder: "Nicole Torres", account: "0987654321", dni: "1122334455" },
@@ -194,6 +209,7 @@ export default function InvitacionPage() {
                         />
                     </section>
                 </RevealSection>
+
                 {/* 9 — Confirmación + Foto final */}
                 <RevealSection>
                     <HeroCover src="/assets/2.jpg" alt="Nos vemos pronto">
@@ -207,9 +223,8 @@ export default function InvitacionPage() {
                             </p>
 
                             <div className="pt-3">
-
                                 <RsvpButton
-                                    triggerClassName="rounded-2xl px-10 border-white text-white hover:bg-white/10 bg-white/10"
+                                    triggerClassName="rounded-2xl px-10 border-white text-black hover:bg-white/10 bg-white/10"
                                     triggerLabel="Confirmar"
                                 />
                             </div>

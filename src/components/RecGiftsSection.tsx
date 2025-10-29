@@ -7,42 +7,50 @@ import InfoCard from "@/components/InfoCard";
 import { Button } from "@/components/ui/button";
 import BankAccountsDialog, { type BankAccount } from "@/components/BankAccountsDialog";
 
-const COLOR = "#55BAE9FF";
+const SOFT_BTN_BG = "#EAF3FB";
+const SOFT_BTN_BG_HOVER = "#E1EEF8";
+const SOFT_TEXT = "#0F172A";
 
 export default function RecGiftsSection({
   recommendations = "Llega con anticipación, sigue las indicaciones del personal y considera llevar un abrigo ligero (locación al aire libre).",
   gifts = "Tu presencia es lo más valioso; si deseas obsequiarnos algo, agradecemos el detalle en sobre o transferencia.",
   registryLabel,
   registryUrl,
-  accounts = [],              // <— NUEVO
+  accounts = [],
   className,
 }: {
   recommendations?: string;
   gifts?: string;
   registryLabel?: string;
   registryUrl?: string;
-  accounts?: BankAccount[];   // <— NUEVO
+  accounts?: BankAccount[];
   className?: string;
 }) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <section className={"w-full px-3 " + (className ?? "")} >
-      <div className="mx-auto grid max-w-[880px] gap-4" >
-        <InfoCard title="Recomendaciones" icon={<Sparkles className="size-6" style={{ color: COLOR }}/>}>
+    <section className={"w-full px-3 " + (className ?? "")}>
+      <div className="mx-auto grid max-w-[880px] gap-4">
+        <InfoCard title="Recomendaciones" icon={<Sparkles className="size-6" style={{ color: "#8FBFD9" }} />}>
           {recommendations}
         </InfoCard>
 
-        <InfoCard title="Regalos" icon={<Gift className="size-6" style={{ color: COLOR }}/>}>
+        <InfoCard title="Regalos" icon={<Gift className="size-6" style={{ color: "#8FBFD9" }} />}>
           <p>{gifts}</p>
 
-          <div className="mt-4 items-center gap-3">
+          <div className="mt-4 flex items-center gap-3">
             {accounts.length > 0 && (
               <Button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="rounded-xl hover:bg-blue-600/75 active:bg-blue-600/75 bg-blue-600/50 items-center"
-                
+                className="rounded-xl px-4 py-2 text-sm font-semibold"
+                style={{
+                  backgroundColor: SOFT_BTN_BG,
+                  color: SOFT_TEXT,
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                }}
+                onMouseEnter={(e) => ((e.currentTarget.style.backgroundColor = SOFT_BTN_BG_HOVER))}
+                onMouseLeave={(e) => ((e.currentTarget.style.backgroundColor = SOFT_BTN_BG))}
               >
                 <Banknote className="mr-2 size-4" />
                 Ver cuentas
@@ -54,9 +62,12 @@ export default function RecGiftsSection({
                 href={registryUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-md transition
-                         focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2
-                         hover:bg-blue-600/75 active:bg-blue-600/75 bg-blue-300/90"
+                className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-md transition"
+                style={{
+                  backgroundColor: SOFT_BTN_BG,
+                  color: SOFT_TEXT,
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                }}
               >
                 {registryLabel ?? "Ver mesa de regalos"}
               </a>
@@ -65,7 +76,6 @@ export default function RecGiftsSection({
         </InfoCard>
       </div>
 
-      {/* Modal de cuentas */}
       {accounts.length > 0 && (
         <BankAccountsDialog
           open={open}
