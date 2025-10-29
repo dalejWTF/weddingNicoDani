@@ -12,11 +12,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
+const SOFT_BG = "#F7FBFE";
+const SOFT_BORDER = "#DBEAF5";
+
+
 export type BankAccount = {
-  bank: string;     // nombre banco
-  holder: string;   // nombre titular
-  account: string;  // nro de cuenta
-  dni: string;      // dni
+  bank: string;
+  holder: string;
+  account: string;
+  dni: string;
 };
 
 export default function BankAccountsDialog({
@@ -34,19 +38,23 @@ export default function BankAccountsDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg sm:max-w-2xl">
+      <DialogContent
+        className="max-w-lg sm:max-w-2xl rounded-3xl border shadow-sm"
+        style={{ borderColor: SOFT_BORDER }}
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl tracking-wide">{title}</DialogTitle>
-          <DialogDescription className="text-sm">{description}</DialogDescription>
+          <DialogDescription className="text-sm text-slate-600">{description}</DialogDescription>
         </DialogHeader>
 
         <ul className="grid gap-4">
           {accounts.map((acc, i) => (
             <li
               key={i}
-              className="rounded-2xl border bg-white/90 p-4 sm:p-5 shadow-sm ring-1 ring-rose-100/50"
+              className="rounded-2xl border p-4 sm:p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+              style={{ borderColor: SOFT_BORDER }}
             >
-              <div className="mb-2 text-base font-semibold">{acc.bank}</div>
+              <div className="mb-2 text-base font-semibold text-slate-800">{acc.bank}</div>
 
               <FieldRow label="Titular" value={acc.holder} />
               <FieldRow label="Nro. de cuenta" value={acc.account} copyable />
@@ -85,17 +93,18 @@ function FieldRow({
   return (
     <div className="flex items-center justify-between gap-2 py-1">
       <div className="text-sm">
-        <span className="text-neutral-500">{label}:</span>{" "}
-        <span className="font-medium text-neutral-900">{value}</span>
+        <span className="text-slate-500">{label}:</span>{" "}
+        <span className="font-medium text-slate-900">{value}</span>
       </div>
 
       {copyable && (
         <Button
           size="sm"
           variant="outline"
-          className="h-8 rounded-xl"
+          className="h-8 rounded-xl shadow-sm"
           onClick={handleCopy}
           aria-label={`Copiar ${label}`}
+          style={{ backgroundColor: "#FFFFFF", borderColor: SOFT_BORDER, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.02)" }}
         >
           {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
         </Button>
@@ -117,7 +126,17 @@ function CopyAllButton({ acc }: { acc: BankAccount }) {
   };
 
   return (
-    <Button onClick={handleCopy} variant="secondary" className="rounded-xl">
+    <Button
+      onClick={handleCopy}
+      variant="secondary"
+      className="rounded-xl"
+      style={{
+        backgroundColor: "#EEF6FC",
+        borderColor: SOFT_BORDER,
+        color: "#0F172A",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+      }}
+    >
       {copied ? (
         <>
           <Check className="mr-2 size-4" /> Copiado

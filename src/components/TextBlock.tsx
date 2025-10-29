@@ -1,11 +1,16 @@
 // components/TextBlock.tsx
 "use client";
 
+const SOFT_BG = "#FFFFFF";
+
 export default function TextBlock({ title, paragraphs }: { title?: string; paragraphs: string[] }) {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-md border border-rose-200">
-      {title && <h2 className="text-lg font-medium text-center mb-2">{title}</h2>}
-      <div className="space-y-2 text-sm text-neutral-700">
+    <div
+      className="sm:rounded-2xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+      style={{ backgroundColor: SOFT_BG }}
+    >
+      {title && <h2 className="text-lg font-medium text-center mb-2 text-slate-800">{title}</h2>}
+      <div className="space-y-2 text-sm text-slate-700">
         {paragraphs.map((p, i) => (
           <p key={i}>{p}</p>
         ))}

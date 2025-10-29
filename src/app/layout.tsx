@@ -2,7 +2,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Tangerine, Inter } from "next/font/google";
+
 export const metadata: Metadata = { title: "Invitación de Boda" };
+
+// Paleta base para layout
+const SOFT_BG_APP = "#F7FBFE";
 
 const tangerine = Tangerine({
   subsets: ["latin"],
@@ -21,7 +25,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="es"
-      className={`${tangerine.variable} ${inter.variable} bg-rose-50 max-w-[100dvw] overflow-x-clip`}
+      className={`${tangerine.variable} ${inter.variable} max-w-[100dvw] overflow-x-clip`}
+      style={{ backgroundColor: SOFT_BG_APP }}  // ← aplica #F7FBFE
     >
       <body className="antialiased font-sans max-w-[100dvw] w-full overflow-x-clip">
         {children}

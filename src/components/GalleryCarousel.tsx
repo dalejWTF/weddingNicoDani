@@ -5,10 +5,13 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image, { StaticImageData } from "next/image";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
-// 👇 añade DialogTitle
 import { Dialog, DialogContent, DialogTrigger, DialogClose, DialogTitle } from "@/components/ui/dialog";
 
 type Img = { src: StaticImageData | string; alt?: string };
+
+const SOFT_BG = "#FFFFFF";
+const SOFT_BORDER = "#DBEAF5";
+const SOFT_ACCENT = "#8FBFD9";
 
 export default function GalleryCarousel({
   images,
@@ -37,22 +40,19 @@ export default function GalleryCarousel({
   const current = images[index];
 
   return (
-    <div className="relative w-full max-w-full overflow-hidden rounded-2xl bg-white shadow-lg">
-      {/* marco con alto fijo */}
-      <div
-        className="relative w-full overflow-hidden"
-        style={{ aspectRatio: aspect }}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-      >
+    <div
+      className="relative w-full max-w-full overflow-hidden rounded-2xl bg-white"
+      style={{ border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
+    >
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio: aspect }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={index}
             className="absolute inset-0"
-            initial={{ x: direction > 0 ? 100 : -100, opacity: 0 }}
+            initial={{ x: direction > 0 ? 80 : -80, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: direction > 0 ? -100 : 100, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            exit={{ x: direction > 0 ? -80 : 80, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 280, damping: 30 }}
           >
             <Image
               src={current.src}
@@ -71,7 +71,8 @@ export default function GalleryCarousel({
       <button
         type="button"
         aria-label="Anterior"
-        className="absolute left-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full bg-white/80 p-2 shadow"
+        className="absolute left-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full p-2 shadow"
+        style={{ backgroundColor: "rgba(255,255,255,0.9)", border: `1px solid ${SOFT_BORDER}` }}
         onClick={() => paginate(-1)}
       >
         <ChevronLeft className="size-5" />
@@ -79,7 +80,8 @@ export default function GalleryCarousel({
       <button
         type="button"
         aria-label="Siguiente"
-        className="absolute right-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full bg-white/80 p-2 shadow"
+        className="absolute right-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full p-2 shadow"
+        style={{ backgroundColor: "rgba(255,255,255,0.9)", border: `1px solid ${SOFT_BORDER}` }}
         onClick={() => paginate(1)}
       >
         <ChevronRight className="size-5" />
@@ -91,23 +93,18 @@ export default function GalleryCarousel({
           <button
             type="button"
             aria-label="Ampliar imagen"
-            className="absolute right-2 top-2 grid place-items-center rounded-full bg-white/90 p-2 shadow"
+            className="absolute right-2 top-2 grid place-items-center rounded-full p-2 shadow"
+            style={{ backgroundColor: "rgba(255,255,255,0.95)", border: `1px solid ${SOFT_BORDER}` }}
           >
             <Maximize2 className="size-4" />
           </button>
         </DialogTrigger>
 
         <DialogContent className="p-0 bg-black/95 border-none w-[min(1100px,100dvw-24px)] rounded-2xl">
-          {/* ✅ Título obligatorio para a11y (oculto visualmente) */}
-          <DialogTitle className="sr-only">
-            Imagen {index + 1} de {count}
-          </DialogTitle>
+          <DialogTitle className="sr-only">Imagen {index + 1} de {count}</DialogTitle>
 
           <DialogClose asChild>
-            <button
-              className="absolute right-3 top-3 text-white/80 hover:text-white rounded-full p-1"
-              aria-label="Cerrar"
-            >
+            <button className="absolute right-3 top-3 text-white/80 hover:text-white rounded-full p-1" aria-label="Cerrar">
               <X className="size-5" />
             </button>
           </DialogClose>
@@ -125,12 +122,13 @@ export default function GalleryCarousel({
         </DialogContent>
       </Dialog>
 
-      {/* indicadores (restauro posición y evito capturar toques) */}
+      {/* indicadores */}
       <div className="pointer-events-none absolute bottom-2 left-0 right-0 flex justify-center gap-1">
         {images.map((_, i) => (
           <div
             key={i}
-            className={`h-1.5 w-5 rounded-full ${i === index ? "bg-rose-500" : "bg-white/70"}`}
+            className="h-1.5 w-5 rounded-full"
+            style={{ backgroundColor: i === index ? SOFT_ACCENT : "rgba(255,255,255,0.8)", boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)" }}
           />
         ))}
       </div>
