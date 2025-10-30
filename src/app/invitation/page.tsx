@@ -178,14 +178,14 @@ export default function InvitacionPage() {
 
                 {/* 5 — Timeline + Imagen */}
                 <RevealSection>
-                    <section className="grid gap-3 pt-6">
+                    <section className="grid gap-4 pt-6">
                         <Timeline
                             items={[
-                                { time: "5:00 PM", label: "Ceremonia" },
-                                { time: "6:00 PM", label: "Fotos" },
-                                { time: "7:00 PM", label: "Recepción" },
-                                { time: "9:00 PM", label: "Brindis & cena" },
-                                { time: "10:00 PM", label: "Baile" },
+                                { time: "5:00 PM", label: "Ceremonia", icon: "/assets/TimelineSVG/church.svg" },
+                                { time: "6:00 PM", label: "Fotos", icon: "/assets/TimelineSVG/photos.svg" },
+                                { time: "7:00 PM", label: "Recepción", icon: "/assets/TimelineSVG/church.svg" },
+                                { time: "9:00 PM", label: "Brindis & cena", icon: "/assets/TimelineSVG/church.svg" },
+                                { time: "10:00 PM", label: "Baile", icon: "/assets/TimelineSVG/church.svg" },
                             ]}
                             className="px-3 pt-2"
                             title="Itinerario"
