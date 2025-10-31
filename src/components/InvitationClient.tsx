@@ -118,8 +118,35 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 time="5:00 PM"
                 mapUrl={CHURCH_MAPS_URL}
               />
-              <div className="px-6">
-                <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
+              <div
+                className="relative px-6
+             [--rose:clamp(90px,34vw,200px)]   /* móvil: grande */
+             sm:[--rose:clamp(72px,22vw,180px)]" /* desktop: moderado */
+              >
+                <Separator
+                  className="my-6"
+                  style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }}
+                />
+
+                {/* Flor superpuesta (costado derecho) */}
+                <img
+                  src="/blueroses.png"   // ajusta la ruta si es distinta
+                  alt=""
+                  aria-hidden
+                  className="pointer-events-none select-none"
+                  style={{
+                    position: "absolute",
+                    right: "calc(-0.20 * var(--rose))",   // que salga un poco del borde
+                    top: "50%",
+                    transform: "translateY(-50%) rotate(180deg)",        // centrada verticalmente al separador
+                    width: "var(--rose)",                 // tamaño responsivo
+                    height: "auto",
+                    zIndex: 20,
+                    // Si quieres integrarlo más con el “papel”:
+                    // mixBlendMode: "multiply",
+                    // opacity: 0.95,
+                  }}
+                />
               </div>
               <VenueBlock
                 title="Recepción"
