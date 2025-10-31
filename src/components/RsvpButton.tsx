@@ -25,7 +25,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const SOFT_BG = "#F7FBFE";
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_BTN_BG = "#EAF3FB";
 const SOFT_BTN_BG_HOVER = "#E1EEF8";
@@ -137,7 +136,7 @@ export default function RsvpButton({
             className={`rounded-2xl px-10 ${triggerClassName}`}
             disabled={noneLeft}
             title={noneLeft ? "Ya no hay familias pendientes" : ""}
-            style={{ borderColor: SOFT_BORDER, backgroundColor: "#FFFFFF" }}
+            style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
           >
             {noneLeft ? "Sin pendientes" : triggerLabel}
           </Button>
@@ -146,7 +145,7 @@ export default function RsvpButton({
         {/* Formulario */}
         <DialogContent
           className="sm:max-w-md rounded-3xl"
-          style={{ backgroundColor: "#FFFFFF", borderColor: SOFT_BORDER }}
+          style={{ backgroundColor: "#f7f7f7ff", borderColor: SOFT_BORDER }}
         >
           <DialogHeader>
             <DialogTitle>Confirmar asistencia</DialogTitle>
@@ -164,7 +163,7 @@ export default function RsvpButton({
               {hasPrefill && selected && (
                 <div
                   className="px-3 py-2 text-sm"
-                  style={{ borderColor: SOFT_BORDER, backgroundColor: "#FFFFFF" }}
+                  style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
                 >
                   Invitación para: <b>{selected.nombreFamilia}</b> 
                 </div>
@@ -176,7 +175,7 @@ export default function RsvpButton({
                   <Label>Familia</Label>
                   <Select value={familyId} onValueChange={setFamilyId}>
                     <SelectTrigger
-                      style={{ borderColor: SOFT_BORDER, backgroundColor: "#FFFFFF" }}
+                      style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
                     >
                       <SelectValue placeholder="Selecciona tu familia" />
                     </SelectTrigger>
@@ -213,7 +212,7 @@ export default function RsvpButton({
                         ? "bg-white shadow-sm ring-2 ring-offset-0"
                         : "bg-white hover:bg-slate-50",
                     ].join(" ")}
-                    style={{ borderColor: SOFT_BORDER }}
+                    style={{ borderColor: SOFT_BORDER,backgroundColor: "#f7f7f7ff" }}
                   >
                     <div className="flex items-center gap-2">
                       {/* El Radio real (clickeable vía el label) */}
@@ -231,7 +230,7 @@ export default function RsvpButton({
                         ? "bg-white shadow-sm ring-2 ring-offset-0"
                         : "bg-white hover:bg-slate-50",
                     ].join(" ")}
-                    style={{ borderColor: SOFT_BORDER }}
+                    style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
                   >
                     <div className="flex items-center gap-2">
                       <RadioGroupItem id="asist-no" value="no" />
@@ -247,7 +246,7 @@ export default function RsvpButton({
                   disabled={!selected || submitting}
                   className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition"
                   style={{
-                    backgroundColor: SOFT_BTN_BG,
+                    backgroundColor: "#f7f7f7ff",
                     border: `1px solid ${SOFT_BORDER}`,
                     color: "#0F172A",
                     boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
@@ -275,7 +274,7 @@ export default function RsvpButton({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
             className="rounded-xl p-6 shadow-2xl"
-            style={{ backgroundColor: "#FFFFFF", border: `1px solid ${SOFT_BORDER}` }}
+            style={{ backgroundColor: "#f7f7f7ff", border: `1px solid ${SOFT_BORDER}` }}
           >
             <DialogHeader className="items-center">
               <div
