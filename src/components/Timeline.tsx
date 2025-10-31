@@ -4,7 +4,7 @@
 import Image from "next/image";
 import { Lora } from "next/font/google";
 
-const HIGHLIGHT = "#A7CDE6"; // línea/puntos
+const HIGHLIGHT = "#A7CDE6";
 const TEXTTIMELINE = "#7B7C7C";
 
 const lora = Lora({
@@ -34,10 +34,10 @@ export default function Timeline({
   return (
     <section className={className}>
       {title && (
-        <div className="mb-6 text-center">
+        <div className="mb-4 sm:mb-6 text-center">
           <div
             className={`mb-2 tracking-wide ${lora.className}`}
-            style={{ color: TEXTTIMELINE, fontSize: "54px", lineHeight: 1.06 }}
+            style={{ color: TEXTTIMELINE, fontSize: "clamp(28px, 6vw, 54px)", lineHeight: 1.06 }}
           >
             {title}
           </div>
@@ -45,14 +45,24 @@ export default function Timeline({
         </div>
       )}
 
-      <div className="relative mx-auto w-full max-w-[1280px] px-3">
-        {/* Línea vertical central (como el original) */}
+      <div className="relative mx-auto w-full max-w-[1280px] px-2 sm:px-3">
+        {/* Línea vertical central */}
         <div
           className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2"
           style={{ backgroundColor: HIGHLIGHT }}
         />
 
-        <ol className="grid grid-cols-[max-content_1px_max-content] auto-rows-[60px] gap-y-4 justify-center">
+        {/* MISMO LAYOUT EN MÓVIL: dos lados, pero todo escala */}
+        <ol
+          className="
+            grid
+            grid-cols-[minmax(120px,40vw)_1px_minmax(120px,40vw)]
+            sm:grid-cols-[max-content_1px_max-content]
+            auto-rows-[minmax(50px,auto)]
+            gap-y-3 sm:gap-y-5
+            justify-center
+          "
+        >
           {items.map((it, i) => {
             const side: "left" | "right" = it.side ?? (i % 2 === 0 ? "left" : "right");
             return (
@@ -61,10 +71,12 @@ export default function Timeline({
                 <div className="relative flex items-center justify-end pr-3 sm:pr-6">
                   {side === "left" ? (
                     <>
-                      {/* líneas horizontales más largas */}
                       <span
-                        className="absolute right-0 top-1/2 h-px w-24 sm:w-32"
-                        style={{ backgroundColor: HIGHLIGHT }}
+                        className="absolute right-0 top-1/2 h-px"
+                        style={{
+                          backgroundColor: HIGHLIGHT,
+                          width: "clamp(28px, 12vw, 88px)",
+                        }}
                       />
                       <ItemBox
                         time={it.time}
@@ -83,7 +95,12 @@ export default function Timeline({
                 <div className="relative">
                   <span
                     className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                    style={{ backgroundColor: HIGHLIGHT, width: 10, height: 10, display: "block" }}
+                    style={{
+                      backgroundColor: HIGHLIGHT,
+                      width: "clamp(8px, 1.8vw, 10px)",
+                      height: "clamp(8px, 1.8vw, 10px)",
+                      display: "block",
+                    }}
                   />
                 </div>
 
@@ -91,10 +108,12 @@ export default function Timeline({
                 <div className="relative flex items-center justify-start pl-3 sm:pl-6">
                   {side === "right" ? (
                     <>
-                      {/* líneas horizontales más largas */}
                       <span
-                        className="absolute left-0 top-1/2 h-px w-24 sm:w-32"
-                        style={{ backgroundColor: HIGHLIGHT }}
+                        className="absolute left-0 top-1/2 h-px"
+                        style={{
+                          backgroundColor: HIGHLIGHT,
+                          width: "clamp(28px, 12vw, 88px)",
+                        }}
                       />
                       <ItemBox
                         time={it.time}
@@ -130,36 +149,45 @@ function ItemBox({
   color: string;
   icon?: string;
 }) {
-  // Icono al FINAL del item (borde externo), 25% más grande.
-  // Acercamos más el icono al contenido con gap más pequeño.
   const rowDir = align === "left" ? "flex-row" : "flex-row-reverse";
 
+  // Ocupa todo el track lateral (fluido). En desktop limitamos un poco más.
+  const widthClass =
+    "w-[min(40vw,260px)] xs:w-[min(42vw,260px)] sm:w-[clamp(200px,34vw,260px)]";
+
+  const iconSize = "clamp(36px, 10vw, 72px)";
+  const timeSize = "clamp(14px, 3.8vw, 18px)";
+  const labelSize = "clamp(12px, 3.2vw, 15px)";
+
   return (
-    <div
-      className={`w-[clamp(200px,54vw,200px)] leading-tight ${
-        align === "left" ? "text-left" : "text-right"
-      }`}
-    >
+    <div className={`${widthClass} leading-tight ${align === "left" ? "text-left" : "text-right"}`}>
       <div className={`flex ${rowDir} items-center justify-between gap-2`}>
         {/* Texto */}
         <div>
-          <div className="font-extrabold uppercase tracking-wide" style={{ color, fontSize: 18 }}>
+          <div
+            className="font-extrabold uppercase tracking-wide"
+            style={{ color, fontSize: timeSize }}
+          >
             {time}
           </div>
-          <div className="uppercase tracking-wide" style={{ color: TEXTTIMELINE, fontSize: 15 }}>
+          <div
+            className="uppercase tracking-wide"
+            style={{ color: TEXTTIMELINE, fontSize: labelSize }}
+          >
             {label}
           </div>
         </div>
 
-        {/* Icono final (40px base, 45px en sm+) */}
+        {/* Icono (escala fluida) */}
         {icon && (
           <Image
             src={icon}
-            width={40}
-            height={40}
+            width={72}
+            height={72}
             alt=""
             aria-hidden
-            className="shrink-0 w-[64px] h-[64px] sm:w-[72px] sm:h-[72px]"
+            className="shrink-0"
+            style={{ width: iconSize, height: iconSize }}
             priority={false}
           />
         )}
@@ -173,7 +201,7 @@ function TitleOrnament({ color }: { color: string }) {
   return (
     <svg
       aria-hidden
-      className="mx-auto block h-8 w-72"
+      className="mx-auto block h-8 w-[min(70vw,18rem)]"
       viewBox="0 0 260 36"
       fill="none"
     >
@@ -186,5 +214,3 @@ function TitleOrnament({ color }: { color: string }) {
     </svg>
   );
 }
-
-
