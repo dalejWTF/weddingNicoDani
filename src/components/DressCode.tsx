@@ -5,10 +5,9 @@ import { Mars, Venus } from "lucide-react";
 
 type Swatch = { color: string; name?: string };
 
-const SOFT_BG = "#FFFFFF";
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
-
+const COUPLE = "/couple.png";
 export default function DressCode({
   title = "CÓDIGO DE VESTIMENTA",
   message1 = "Se recomienda no usar blanco ni tonalidades similares ya que es el color de la novia.",
@@ -31,12 +30,21 @@ export default function DressCode({
 
   return (
     <section className={`w-full ${className ?? ""}`}>
+
       <div
-        className="mx-auto max-w-[640px] rounded-3xl px-6 py-7 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
-        style={{ backgroundColor: SOFT_BG }}
-      >
+        className="mx-auto max-w-[640px] rounded-3xl px-6 py-7">
         <div className="text-center">
           <h3 className="text-3xl sm:text-4xl tracking-[0.18em] font-medium uppercase text-slate-800">{title}</h3>
+          <img
+            src={COUPLE}
+            alt=""
+            width="200"
+            height="auto"
+            className="pointer-events-none mx-auto mt-4"
+            style={{
+              height: "auto",
+            }}
+          />
           <p className="mt-3 text-sm text-slate-600">{message1}</p>
         </div>
 
@@ -85,7 +93,7 @@ function PaletteGroup({
 }
 
 const DEFAULT_COLORS: Swatch[] = [
-   // Mujeres
+  // Mujeres
   { color: "#77C3EC" },
   { color: "#89CFF0" },
   { color: "#9DD9F3" },

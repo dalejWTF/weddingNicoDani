@@ -3,7 +3,6 @@
 
 import * as React from "react";
 
-const SOFT_BG = "#FFFFFF";
 const SOFT_ACCENT = "#8FBFD9";
 
 export default function InfoCard({
@@ -18,7 +17,6 @@ export default function InfoCard({
   return (
     <div
       className="mx-auto w-full max-w-[520px] rounded-3xl px-6 py-6"
-      style={{ backgroundColor: SOFT_BG }}
     >
       {icon && (
         <div

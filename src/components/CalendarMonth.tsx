@@ -22,8 +22,16 @@ export default function CalendarMonth({
   const daysShort = startOnSunday ? ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"] : ["L", "M", "X", "J", "V", "S", "D"];
 
   return (
-    <div className="w-full select-none px-3">
-      <div className="border-t border-b" style={{ borderColor: SOFT_BORDER }}>
+    // Contenedor posicionable + padding para el adorno inferior
+    <div
+      className="relative w-full select-none px-3
+             [--corner:clamp(112px,38vw,260px)]
+             sm:[--corner:clamp(52px,16vw,210px)]"
+      style={{
+        paddingBottom: "calc(var(--corner) * 0.25)",
+      }}
+    >
+      <div className="border-t" style={{ borderColor: SOFT_BORDER }}>
         <div className="grid grid-cols-7 text-center text-[11px] uppercase tracking-wide text-slate-600">
           {daysShort.map((d) => (
             <div key={d} className="py-2">{d}</div>
@@ -62,6 +70,23 @@ export default function CalendarMonth({
           })}
         </div>
       </div>
+
+      {/* Adorno: MISMO PORTE (usa --corner) y pegado al final del calendario */}
+      <img
+        src="/leaves.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none select-none"
+        style={{
+          position: "absolute",
+          zIndex: 20,
+          width: "var(--corner)",   // ← mismo porte que el countdown
+          height: "auto",
+          left: "calc(-0.22 * var(--corner))",
+          bottom: "calc(-0.12 * var(--corner))",
+          transform: "rotate(180deg)",
+        }}
+      />
     </div>
   );
 }

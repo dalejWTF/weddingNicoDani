@@ -1,51 +1,150 @@
 // components/Timeline.tsx
 "use client";
 
-const HIGHLIGHT = "#A7CDE6"; // línea/puntos más suaves
+import Image from "next/image";
+import { Lora } from "next/font/google";
+import * as React from "react";
+
+const HIGHLIGHT = "#A7CDE6";
 const TEXTTIMELINE = "#7B7C7C";
 
-import { Lora } from "next/font/google";
-const lora = Lora({ subsets: ["latin"], weight: "400", style: "italic", variable: "--font-lora", display: "swap" });
+const lora = Lora({
+  subsets: ["latin"],
+  weight: "400",
+  style: "italic",
+  variable: "--font-lora",
+  display: "swap",
+});
 
-type Item = { time: string; label: string; side?: "left" | "right" };
+// Tipo utilitario para permitir CSS variables sin usar `any`
+type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
-export default function Timeline({ items, title, className }: { items: Item[]; title?: string; className?: string; }) {
+type Item = {
+  time: string;
+  label: string;
+  side?: "left" | "right";
+  icon?: string; // ej: "/assets/church.svg"
+};
+
+export default function Timeline({
+  items,
+  title,
+  className,
+}: {
+  items: Item[];
+  title?: string;
+  className?: string;
+}) {
+  // Variable para el tamaño de las esquinas
+  const cornerVarStyle: CSSVarProps<"--corner"> = { ["--corner"]: "clamp(120px,28vw,220px)" };
+
   return (
-    <section className={className}>
+    <section className={`relative ${className ?? ""}`} style={cornerVarStyle}>
       {title && (
-        <div className={`mb-2 text-center text-4xl tracking-wide ${lora.className}`} style={{ color: TEXTTIMELINE }}>
-          {title}
+        <div className="mb-4 sm:mb-6 text-center relative z-10">
+          <div
+            className={`mb-2 tracking-wide ${lora.className}`}
+            style={{ color: TEXTTIMELINE, fontSize: "clamp(28px, 6vw, 54px)", lineHeight: 1.06 }}
+          >
+            {title}
+          </div>
+          <TitleOrnament color={HIGHLIGHT} />
         </div>
       )}
 
-      <div className="relative mx-auto w-full max-w-[920px] px-3">
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2" style={{ backgroundColor: HIGHLIGHT }} />
+      {/* Esquina superior derecha (anclada al título) */}
+      <img
+        src="/leaves.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none select-none"
+        style={{
+          position: "absolute",
+          zIndex: 0,
+          width: "var(--corner)",
+          height: "auto",
+          top: "calc(-0.10 * var(--corner))", // sube/ baja respecto del título
+          right: "calc(-0.18 * var(--corner))",
+        }}
+      />
+      {/* Esquina inferior izquierda (más separación del último item) */}
+      <img
+        src="/leaves.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none select-none"
+        style={{
+          position: "absolute",
+          zIndex: 0,
+          width: "var(--corner)",
+          height: "auto",
+          left: "calc(-0.22 * var(--corner))",
+          bottom: "calc(-0.28 * var(--corner))", // separada del último item
+          transform: "rotate(180deg)",
+        }}
+      />
 
-        <ol className="grid grid-cols-[max-content_1px_max-content] auto-rows-[40px] gap-y-3 justify-center">
+      {/* Contenedor del timeline, con padding-bottom para no tapar la hoja inferior */}
+      <div className="relative mx-auto w-full max-w-[1280px] px-2 sm:px-3 pb-[calc(0.22*var(--corner))]">
+        {/* Línea vertical central */}
+        <div
+          className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 z-10"
+          style={{ backgroundColor: HIGHLIGHT }}
+        />
+
+        {/* Layout */}
+        <ol
+          className="
+            relative z-10
+            grid
+            grid-cols-[minmax(120px,40vw)_1px_minmax(120px,40vw)]
+            sm:grid-cols-[max-content_1px_max-content]
+            auto-rows-[minmax(50px,auto)]
+            gap-y-3 sm:gap-y-5
+            justify-center
+          "
+        >
           {items.map((it, i) => {
             const side: "left" | "right" = it.side ?? (i % 2 === 0 ? "left" : "right");
             return (
               <li key={i} className="contents">
-                <div className="relative flex items-center justify-end pr-3 sm:pr-5">
+                {/* Columna izquierda */}
+                <div className="relative flex items-center justify-end pr-3 sm:pr-6">
                   {side === "left" ? (
                     <>
-                      <span className="absolute right-0 top-1/2 h-px w-8 sm:w-10" style={{ backgroundColor: HIGHLIGHT }} />
-                      <ItemBox time={it.time} label={it.label} align="right" color={HIGHLIGHT} />
+                      <span
+                        className="absolute right-0 top-1/2 h-px"
+                        style={{ backgroundColor: HIGHLIGHT, width: "clamp(28px, 12vw, 88px)" }}
+                      />
+                      <ItemBox time={it.time} label={it.label} align="right" color={HIGHLIGHT} icon={it.icon} />
                     </>
                   ) : (
                     <span className="sr-only">spacer</span>
                   )}
                 </div>
 
+                {/* Punto central */}
                 <div className="relative">
-                  <span className="absolute left-1/2 top-1/2 z-10 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ backgroundColor: HIGHLIGHT }} />
+                  <span
+                    className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                    style={{
+                      backgroundColor: HIGHLIGHT,
+                      width: "clamp(8px, 1.8vw, 10px)",
+                      height: "clamp(8px, 1.8vw, 10px)",
+                      display: "block",
+                    }}
+                  />
                 </div>
 
-                <div className="relative flex items-center justify-start pl-3 sm:pl-5">
+                {/* Columna derecha */}
+                <div className="relative flex items-center justify-start pl-3 sm:pl-6">
                   {side === "right" ? (
                     <>
-                      <span className="absolute left-0 top-1/2 h-px w-8 sm:w-10" style={{ backgroundColor: HIGHLIGHT }} />
-                      <ItemBox time={it.time} label={it.label} align="left" color={HIGHLIGHT} />
+                      <span
+                        className="absolute left-0 top-1/2 h-px"
+                        style={{ backgroundColor: HIGHLIGHT, width: "clamp(28px, 12vw, 88px)" }}
+                      />
+                      <ItemBox time={it.time} label={it.label} align="left" color={HIGHLIGHT} icon={it.icon} />
                     </>
                   ) : (
                     <span className="sr-only">spacer</span>
@@ -60,11 +159,81 @@ export default function Timeline({ items, title, className }: { items: Item[]; t
   );
 }
 
-function ItemBox({ time, label, align, color }: { time: string; label: string; align: "left" | "right"; color: string; }) {
+function ItemBox({
+  time,
+  label,
+  align,
+  color,
+  icon,
+}: {
+  time: string;
+  label: string;
+  align: "left" | "right";
+  color: string;
+  icon?: string;
+}) {
+  const rowDir = align === "left" ? "flex-row" : "flex-row-reverse";
+
+  // Ocupa todo el track lateral (fluido). En desktop limitamos un poco más.
+  const widthClass =
+    "w-[min(40vw,260px)] xs:w-[min(42vw,260px)] sm:w-[clamp(200px,34vw,260px)]";
+
+  const iconSize = "clamp(36px, 10vw, 72px)";
+  const timeSize = "clamp(14px, 3.8vw, 18px)";
+  const labelSize = "clamp(12px, 3.2vw, 15px)";
+
   return (
-    <div className={`w-[clamp(140px,40vw,220px)] leading-tight ${align === "left" ? "text-left" : "text-right"}`}>
-      <div className="text-[13px] font-extrabold uppercase tracking-wide" style={{ color }}>{time}</div>
-      <div className="text-[11px] uppercase tracking-wide" style={{ color: TEXTTIMELINE }}>{label}</div>
+    <div className={`${widthClass} leading-tight ${align === "left" ? "text-left" : "text-right"}`}>
+      <div className={`flex ${rowDir} items-center justify-between gap-2`}>
+        {/* Texto */}
+        <div>
+          <div
+            className="font-extrabold uppercase tracking-wide"
+            style={{ color, fontSize: timeSize }}
+          >
+            {time}
+          </div>
+          <div
+            className="uppercase tracking-wide"
+            style={{ color: TEXTTIMELINE, fontSize: labelSize }}
+          >
+            {label}
+          </div>
+        </div>
+
+        {/* Icono (escala fluida) */}
+        {icon && (
+          <Image
+            src={icon}
+            width={72}
+            height={72}
+            alt=""
+            aria-hidden
+            className="shrink-0"
+            style={{ width: iconSize, height: iconSize }}
+            priority={false}
+          />
+        )}
+      </div>
     </div>
+  );
+}
+
+/* Adorno bajo el título */
+function TitleOrnament({ color }: { color: string }) {
+  return (
+    <svg
+      aria-hidden
+      className="mx-auto block h-8 w-[min(70vw,18rem)]"
+      viewBox="0 0 260 36"
+      fill="none"
+    >
+      <g opacity="0.9" stroke={color} strokeWidth="1.4">
+        <path d="M6 18 Q 44 6, 82 18" />
+        <path d="M254 18 Q 216 6, 178 18" />
+        <circle cx="130" cy="18" r="3" fill={color} />
+        <path d="M98 18 Q 130 30, 162 18" />
+      </g>
+    </svg>
   );
 }

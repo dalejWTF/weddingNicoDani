@@ -3,7 +3,6 @@
 
 import { MapPin, Clock } from "lucide-react";
 
-const SOFT_BG = "#FFFFFF";
 const SOFT_ACCENT = "#8FBFD9";
 
 type Props = {
@@ -19,8 +18,8 @@ export default function VenueBlock({ title, name, address, time, mapUrl, classNa
   return (
     <section className={`w-full ${className ?? ""}`}>
       <div
-        className="mx-auto w-full max-w-[520px] rounded-3xl px-6 py-6"
-        style={{ backgroundColor: SOFT_BG }}
+        className="mx-auto w-full max-w-[520px] rounded-3xl px-6 py-6 "
+        
       >
         <div
           className="mx-auto grid size-12 place-items-center rounded-2xl shadow-sm"
