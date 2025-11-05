@@ -11,7 +11,7 @@ const SOFT_BTN_BG = "#EAF3FB";
 const SOFT_BTN_BG_HOVER = "#E1EEF8";
 const SOFT_TEXT = "#0F172A";
 
-// Tipo utilitario para permitir CSS variables sin usar `any`
+// util para CSS vars sin any
 type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
 export default function RecGiftsSection({
@@ -31,12 +31,30 @@ export default function RecGiftsSection({
 }) {
   const [open, setOpen] = React.useState(false);
 
-  // Declaramos la var de tamaño para la flor
-  const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(90px,22vw,180px)" };
+  const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(160px,32vw,360px)" };
 
   return (
-    <section className={"w-full px-3 " + (className ?? "")}>
-      <div className="mx-auto grid max-w-[880px] gap-6">
+    <section
+      className={[
+        "relative overflow-visible w-full px-3",               // ← ancla para la rama
+        // tamaño de la rama (igual que en la sección de “Lugar”)
+        "[--corner:clamp(72px,22vw,120px)]",
+        "sm:[--corner:clamp(84px,16vw,180px)]",
+        className ?? "",
+      ].join(" ")}
+    >
+      {/* 🌿 Rama esquina superior derecha de ESTA sección */}
+      <img
+        src="/blueleaves.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none select-none absolute z-0
+                   w-[var(--corner)] h-auto
+                   sm:top-[calc(-0.01_*_var(--corner))] right-[calc(-0.30_*_var(--corner))]"
+      />
+
+      {/* contenido por encima de la rama */}
+      <div className="relative z-10 mx-auto grid max-w-[880px] gap-6">
         <InfoCard
           title="Recomendaciones"
           icon={<Sparkles className="size-6" style={{ color: "#8FBFD9" }} />}
@@ -44,17 +62,14 @@ export default function RecGiftsSection({
           {recommendations}
         </InfoCard>
 
-        {/* Imagen centrada entre Recomendaciones y Regalos */}
+        {/* Flor horizontal entre tarjetas */}
         <div className="relative flex items-center justify-center" style={lilyVarStyle}>
           <img
-            src="/bluelilly.png"
+            src="/blueflower_horizontal.png"
             alt=""
             aria-hidden
             className="pointer-events-none select-none"
-            style={{
-              width: "var(--lily)",
-              height: "auto",
-            }}
+            style={{ width: "var(--lily)", height: "auto" }}
           />
         </div>
 

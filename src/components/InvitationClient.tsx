@@ -62,7 +62,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
       <div className="mx-auto max-w-[640px]">
         {/* 1 — Hero */}
-        <HeroCover src="/assets/1.jpg" alt="Daniel y Nicole">
+        <HeroCover src="/assets/1.jpg" alt="Daniel y Nicole" >
           <h1 className={`text-center text-5xl sm:text-8xl font-semibold ${tangerine.className} text-white drop-shadow`}>
             Daniel &amp; Nicole
           </h1>
@@ -102,17 +102,38 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
         {/* 4 — Venues */}
         <RevealSection>
-          <section className="grid gap-4 pt-6 my-3">
-            <div className="text-center pt-6">
-              <div className="flex items-center justify-center gap-1 text-sm font-medium">
-                <Heart className="size-5 text-slate-500" />{" "}
+          <section
+            className={[
+              // móvil: grande
+              "[--corner:clamp(112px,38vw,260px)]",
+              // sm+ (>=640px): tu valor actual
+              "sm:[--corner:clamp(52px,16vw,210px)]",
+              "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
+
+            ].join(" ")}
+          >
+            <img
+              src="/blueleaves.png"
+              alt=""
+              aria-hidden
+              className="pointer-events-none select-none absolute z-0
+                        w-[var(--corner)] h-auto
+                        top-[calc(-0.01_*_var(--corner))] right-[calc(-0.18_*_var(--corner))]"
+
+            />
+
+            {/* header sin imagen dentro */}
+            <div className="text-center pt-6 z-10">
+              <div className="mx-auto flex max-w-fit items-center justify-center gap-1 text-sm font-medium">
+                <Heart className="size-5 text-slate-500" />
                 <span className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}>
                   Lugar
                 </span>
               </div>
             </div>
 
-            <div>
+            {/* resto igual */}
+            <div className="z-10">
               <VenueBlock
                 title="Ceremonia religiosa"
                 name={CHURCH_NAME}
@@ -120,17 +141,9 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 time="5:00 PM"
                 mapUrl={CHURCH_MAPS_URL}
               />
-              <div
-                className="relative px-6
-             [--rose:clamp(90px,34vw,200px)]   /* móvil: grande */
-             sm:[--rose:clamp(72px,22vw,180px)]" /* desktop: moderado */
-              >
-                <Separator
-                  className="my-6"
-                  style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }}
-                />
 
-                {/* Flor superpuesta (costado derecho) */}
+              <div className="relative px-6 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
+                <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
                 <img
                   src="/blueroses.png"   // ajusta la ruta si es distinta
                   alt=""
@@ -138,9 +151,9 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                   className="pointer-events-none select-none"
                   style={{
                     position: "absolute",
-                    right: "calc(-0.20 * var(--rose))",   // que salga un poco del borde
+                    left: "calc(-0.20 * var(--rose))",   // que salga un poco del borde
                     top: "50%",
-                    transform: "translateY(-50%) rotate(180deg)",        // centrada verticalmente al separador
+                    transform: "translateY(-50%)",        // centrada verticalmente al separador
                     width: "var(--rose)",                 // tamaño responsivo
                     height: "auto",
                     zIndex: 20,
@@ -149,7 +162,9 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                     // opacity: 0.95,
                   }}
                 />
+
               </div>
+
               <VenueBlock
                 title="Recepción"
                 name={RECEPTION_NAME}
@@ -160,6 +175,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             </div>
           </section>
         </RevealSection>
+
 
         {/* 5 — Timeline + Imagen */}
         <RevealSection>
