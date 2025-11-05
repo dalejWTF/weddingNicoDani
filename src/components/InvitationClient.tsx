@@ -1,3 +1,5 @@
+//components/InvitationClient.tsx
+
 "use client";
 
 import { Calendar as CalendarIcon, Heart } from "lucide-react";
@@ -161,7 +163,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
         {/* 5 — Timeline + Imagen */}
         <RevealSection>
-          <section className="grid gap-4 pt-6">
+          <section className="grid gap-4 pt-6 pb-6">
             <Timeline
               items={[
                 { time: "5:00 PM", label: "Ceremonia", icon: "/assets/TimelineSVG/church.svg" },
@@ -173,7 +175,10 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               className="px-3 pt-2"
               title="Itinerario"
             />
-
+          </section>
+        </RevealSection>
+        <RevealSection>
+          <section className="grid gap-4 pt-8">
             <div
               className="relative mt-6 w-full aspect-[16/10] overflow-hidden rounded-xl"
               style={{
