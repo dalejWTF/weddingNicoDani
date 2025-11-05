@@ -11,6 +11,9 @@ const SOFT_BTN_BG = "#EAF3FB";
 const SOFT_BTN_BG_HOVER = "#E1EEF8";
 const SOFT_TEXT = "#0F172A";
 
+// Tipo utilitario para permitir CSS variables sin usar `any`
+type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
+
 export default function RecGiftsSection({
   recommendations = "Llega con anticipación, sigue las indicaciones del personal y considera llevar un abrigo ligero (locación al aire libre).",
   gifts = "Tu presencia es lo más valioso; si deseas obsequiarnos algo, agradecemos el detalle en sobre o transferencia.",
@@ -28,6 +31,9 @@ export default function RecGiftsSection({
 }) {
   const [open, setOpen] = React.useState(false);
 
+  // Declaramos la var de tamaño para la flor
+  const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(90px,22vw,180px)" };
+
   return (
     <section className={"w-full px-3 " + (className ?? "")}>
       <div className="mx-auto grid max-w-[880px] gap-6">
@@ -39,10 +45,7 @@ export default function RecGiftsSection({
         </InfoCard>
 
         {/* Imagen centrada entre Recomendaciones y Regalos */}
-        <div
-          className="relative flex items-center justify-center"
-          style={{ ["--lily" as any]: "clamp(90px,22vw,180px)" } as React.CSSProperties}
-        >
+        <div className="relative flex items-center justify-center" style={lilyVarStyle}>
           <img
             src="/bluelilly.png"
             alt=""
