@@ -41,7 +41,7 @@ export default function GalleryCarousel({
 
   return (
     <div
-      className="relative w-full max-w-full overflow-hidden rounded-2xl bg-white"
+      className="relative w-full max-w-full overflow-hidden bg-white"
       style={{ border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
     >
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: aspect }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>

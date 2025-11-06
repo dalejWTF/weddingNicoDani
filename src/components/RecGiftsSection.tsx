@@ -31,14 +31,14 @@ export default function RecGiftsSection({
 }) {
   const [open, setOpen] = React.useState(false);
 
-  const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(160px,32vw,360px)" };
+  const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(320px,32vw,360px)" };
 
   return (
     <section
       className={[
         "relative overflow-visible w-full px-3",               // ← ancla para la rama
         // tamaño de la rama (igual que en la sección de “Lugar”)
-        "[--corner:clamp(72px,22vw,120px)]",
+        "[--corner:clamp(120px,22vw,120px)]",
         "sm:[--corner:clamp(84px,16vw,180px)]",
         className ?? "",
       ].join(" ")}
@@ -83,6 +83,7 @@ export default function RecGiftsSection({
             {accounts.length > 0 && (
               <Button
                 type="button"
+                
                 onClick={() => setOpen(true)}
                 className="rounded-xl px-4 py-2 text-sm font-semibold"
                 style={{

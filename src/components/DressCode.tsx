@@ -7,7 +7,7 @@ type Swatch = { color: string; name?: string };
 
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
-const COUPLE = "/couple.png";
+const COUPLE = "/couple2.png";
 export default function DressCode({
   title = "CÓDIGO DE VESTIMENTA",
   message1 = "Se recomienda no usar blanco ni tonalidades similares ya que es el color de la novia.",
@@ -38,7 +38,7 @@ export default function DressCode({
           <img
             src={COUPLE}
             alt=""
-            width="200"
+            width="100"
             height="auto"
             className="pointer-events-none mx-auto mt-4"
             style={{

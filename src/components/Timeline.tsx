@@ -48,7 +48,6 @@ export default function Timeline({
           >
             {title}
           </div>
-          <TitleOrnament color={HIGHLIGHT} />
         </div>
       )}
 
@@ -219,21 +218,4 @@ function ItemBox({
   );
 }
 
-/* Adorno bajo el título */
-function TitleOrnament({ color }: { color: string }) {
-  return (
-    <svg
-      aria-hidden
-      className="mx-auto block h-8 w-[min(70vw,18rem)]"
-      viewBox="0 0 260 36"
-      fill="none"
-    >
-      <g opacity="0.9" stroke={color} strokeWidth="1.4">
-        <path d="M6 18 Q 44 6, 82 18" />
-        <path d="M254 18 Q 216 6, 178 18" />
-        <circle cx="130" cy="18" r="3" fill={color} />
-        <path d="M98 18 Q 130 30, 162 18" />
-      </g>
-    </svg>
-  );
-}
+

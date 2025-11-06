@@ -176,10 +176,30 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-
         {/* 5 — Timeline + Imagen */}
         <RevealSection>
-          <section className="grid gap-4 pt-6 pb-6">
+          <section
+            className={[
+              // móvil: grande
+              "grid gap-4 pt-6 pb-6 [--corner:clamp(112px,38vw,260px)]",
+              // sm+ (>=640px): tu valor actual
+              "grid gap-4 pt-6 pb-6 sm:[--corner:clamp(52px,16vw,210px)]",
+              "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
+
+            ].join(" ")}
+          >
+            <img
+                  src="/blue_leaves.png"   // ajusta la ruta si es distinta
+                  alt=""
+                  aria-hidden
+                  className="pointer-events-none select-none absolute z-0
+                        w-[var(--corner)] h-auto
+                        top-[calc(-0.5_*_var(--corner))] left-[calc(-0.18_*_var(--corner))]"
+                  style={{
+                    transform: "rotate(-10deg)",
+                  }}
+                  
+                />
             <Timeline
               items={[
                 { time: "5:00 PM", label: "Ceremonia", icon: "/assets/TimelineSVG/church.svg" },
@@ -194,9 +214,9 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
         <RevealSection>
-          <section className="grid gap-4 pt-8">
+          <section className="grid gap-4 pt-3">
             <div
-              className="relative mt-6 w-full aspect-[16/10] overflow-hidden rounded-xl"
+              className="relative mt-3 w-full aspect-[16/10] overflow-hidden"
               style={{
                 backgroundColor: SOFT_BG_CARD,
                 border: `1px solid ${SOFT_BORDER}`,
