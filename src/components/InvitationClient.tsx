@@ -1,7 +1,8 @@
-//components/InvitationClient.tsx
+// components/InvitationClient.tsx
 
 "use client";
 
+import * as React from "react";
 import { Calendar as CalendarIcon, Heart } from "lucide-react";
 import CalendarMonth from "@/components/CalendarMonth";
 import GalleryCarousel from "@/components/GalleryCarousel";
@@ -35,18 +36,43 @@ const CountdownBanner = dynamic(() => import("@/components/CountdownBanner"), { 
 const WEDDING_DATE = new Date("2025-12-20T17:00:00");
 
 const CHURCH_NAME = "Iglesia San Isidro";
-const CHURCH_MAPS_URL = "https://maps.google.com/?q=Iglesia+San+Francisco";
+const CHURCH_MAPS_URL = "https://maps.app.goo.gl/12A17Y3gianjggvA9";
 const RECEPTION_NAME = "Quinta Carbonero";
-const RECEPTION_MAPS_URL = "https://maps.google.com/?q=Hacienda+La+Esperanza";
+const RECEPTION_MAPS_URL = "https://maps.app.goo.gl/kdwiUihm8pJUfiQv8";
 
 export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?: string }) {
   const prefillFamily = familyIdFromUrl
     ? FAMILIAS.find((f) => f.id === familyIdFromUrl)
     : undefined;
 
-  const saludoHero = prefillFamily
-    ? `Estimada ${prefillFamily.nombreFamilia}, ¡Estás invitad@ a nuestra boda!`
-    : "¡Estás invitad@ a nuestra boda!";
+  // Estado de confirmación global para el Hero y el botón
+  const [confirmed, setConfirmed] = React.useState(false);
+  const [checking, setChecking] = React.useState(true);
+
+  // Al montar, si viene id en la URL verificamos si esa familia sigue "eligible".
+  // Si NO está en elegibles => ya confirmó => confirmed = true
+  React.useEffect(() => {
+    if (!familyIdFromUrl) {
+      setChecking(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/rsvp/eligible", { cache: "no-store" });
+        const data = await res.json();
+        const stillEligible = (data.families ?? []).some(
+          (f: { id: string }) => f.id === familyIdFromUrl
+        );
+        if (!cancelled) setConfirmed(!stillEligible);
+      } catch {
+        // Si falla, no bloqueamos: asumimos no confirmado.
+      } finally {
+        if (!cancelled) setChecking(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [familyIdFromUrl]);
 
   return (
     <main
@@ -67,7 +93,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             Daniel &amp; Nicole
           </h1>
           <p className={`mt-2 text-center text-white/90 ${merienda.className}`}>
-            {saludoHero}
+            ¡Estás invitad@ a nuestra boda!
           </p>
         </HeroCover>
 
@@ -104,12 +130,9 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <section
             className={[
-              // móvil: grande
               "[--corner:clamp(112px,38vw,260px)]",
-              // sm+ (>=640px): tu valor actual
               "sm:[--corner:clamp(52px,16vw,210px)]",
               "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
-
             ].join(" ")}
           >
             <img
@@ -119,7 +142,6 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               className="pointer-events-none select-none absolute z-0
                         w-[var(--corner)] h-auto
                         top-[calc(-0.01_*_var(--corner))] right-[calc(-0.18_*_var(--corner))]"
-
             />
 
             {/* header sin imagen dentro */}
@@ -145,24 +167,20 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               <div className="relative px-6 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
                 <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
                 <img
-                  src="/blueroses.png"   // ajusta la ruta si es distinta
+                  src="/blueroses.png"
                   alt=""
                   aria-hidden
                   className="pointer-events-none select-none"
                   style={{
                     position: "absolute",
-                    left: "calc(-0.20 * var(--rose))",   // que salga un poco del borde
+                    left: "calc(-0.20 * var(--rose))",
                     top: "50%",
-                    transform: "translateY(-50%)",        // centrada verticalmente al separador
-                    width: "var(--rose)",                 // tamaño responsivo
+                    transform: "translateY(-50%)",
+                    width: "var(--rose)",
                     height: "auto",
                     zIndex: 20,
-                    // Si quieres integrarlo más con el “papel”:
-                    // mixBlendMode: "multiply",
-                    // opacity: 0.95,
                   }}
                 />
-
               </div>
 
               <VenueBlock
@@ -180,26 +198,20 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <section
             className={[
-              // móvil: grande
               "grid gap-4 pt-6 pb-6 [--corner:clamp(112px,38vw,260px)]",
-              // sm+ (>=640px): tu valor actual
               "grid gap-4 pt-6 pb-6 sm:[--corner:clamp(52px,16vw,210px)]",
               "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
-
             ].join(" ")}
           >
             <img
-                  src="/blue_leaves.png"   // ajusta la ruta si es distinta
-                  alt=""
-                  aria-hidden
-                  className="pointer-events-none select-none absolute z-0
+              src="/blue_leaves.png"
+              alt=""
+              aria-hidden
+              className="pointer-events-none select-none absolute z-0
                         w-[var(--corner)] h-auto
                         top-[calc(-0.5_*_var(--corner))] left-[calc(-0.18_*_var(--corner))]"
-                  style={{
-                    transform: "rotate(-10deg)",
-                  }}
-                  
-                />
+              style={{ transform: "rotate(-10deg)" }}
+            />
             <Timeline
               items={[
                 { time: "5:00 PM", label: "Ceremonia", icon: "/assets/TimelineSVG/church.svg" },
@@ -257,7 +269,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
         {/* 8 — Carrusel + Cita */}
         <RevealSection>
-          <section className="grid gap-3 py-6">
+          <section className="grid gap-3 py-6 [--garland:clamp(110px,26vw,200px)]">
             <GalleryCarousel
               aspect={4 / 3}
               images={[
@@ -266,10 +278,46 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 { src: "/assets/6.jpg", alt: "Foto 3" },
               ]}
             />
-            <QuoteBlock
-              quote="El amor nunca se da por vencido, jamás pierde la fe, siempre tiene esperanzas y se mantiene firme en toda circunstancia."
-              author="1 Corintios 13:7"
-            />
+
+            {/* Wrapper del quote con espacio para las guirnaldas */}
+            <div className="relative mx-auto max-w-[880px] py-[calc(var(--garland)*0.40)]">
+              {/* Arriba */}
+              <img
+                src="/blue_horizontal.png"
+                alt=""
+                aria-hidden
+                className="pointer-events-none select-none absolute z-0"
+                style={{
+                  top: "15%",
+                  left: "50%",
+                  transform: "translate(-50%, -30%)",
+                  width: "var(--garland)",
+                  height: "auto",
+                }}
+              />
+              {/* Abajo */}
+              <img
+                src="/blue_horizontal.png"
+                alt=""
+                aria-hidden
+                className="pointer-events-none select-none absolute z-0"
+                style={{
+                  bottom: "10%",
+                  left: "50%",
+                  transform: "translate(-50%, 30%)",
+                  width: "var(--garland)",
+                  height: "auto",
+                }}
+              />
+
+              {/* El quote */}
+              <div className="relative z-10">
+                <QuoteBlock
+                  quote="El amor nunca se da por vencido, jamás pierde la fe, siempre tiene esperanzas y se mantiene firme en toda circunstancia."
+                  author="1 Corintios 13:7"
+                />
+              </div>
+            </div>
           </section>
         </RevealSection>
 
@@ -278,21 +326,30 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           <HeroCover src="/assets/2.jpg" alt="Nos vemos pronto">
             <div className="max-w-screen-sm mx-auto px-3 text-center">
               <div className={`text-center text-5xl sm:text-8xl font-semibold ${tangerine.className} text-white drop-shadow`}>
-                Confirmar asistencia
+                {confirmed ? "¡Gracias por confirmar!" : "Confirmar asistencia"}
               </div>
 
-              <p className={`mt-2 text-center text-white/90 ${merienda.className}`}>
-                Por favor confirma tu asistencia antes del 10 de diciembre de 2025
-              </p>
+              {/* Ocultar deadline si ya confirmó */}
+              {!confirmed && (
+                <p className={`mt-2 text-center text-white/90 ${merienda.className}`}>
+                  Por favor confirma tu asistencia antes del 10 de diciembre de 2025
+                </p>
+              )}
 
-              <div className="pt-3">
-                <RsvpButton
-                  triggerClassName="rounded-2xl px-10 border-white text-black hover:bg-white/10 bg-white/10"
-                  triggerLabel="Confirmar"
-                  prefillFamilyId={familyIdFromUrl}
-                  prefillFamily={prefillFamily}
-                />
-              </div>
+              {/* Ocultar botón si ya confirmó.
+                  'checking' evita parpadeo mientras consultamos elegibles */}
+              {!confirmed && !checking && (
+                <div className="pt-3">
+                  <RsvpButton
+                    triggerClassName="rounded-2xl px-10 border-white text-black hover:bg-white/10 bg-white/10"
+                    triggerLabel="Confirmar"
+                    prefillFamilyId={familyIdFromUrl}
+                    prefillFamily={prefillFamily}
+                    confirmed={confirmed}
+                    onConfirmed={() => setConfirmed(true)}
+                  />
+                </div>
+              )}
             </div>
           </HeroCover>
         </RevealSection>

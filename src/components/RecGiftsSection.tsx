@@ -79,13 +79,13 @@ export default function RecGiftsSection({
         >
           <p>{gifts}</p>
 
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-4 flex items-center justify-center gap-3 flex-wrap text-center">
             {accounts.length > 0 && (
               <Button
                 type="button"
                 
                 onClick={() => setOpen(true)}
-                className="rounded-xl px-4 py-2 text-sm font-semibold"
+                className="rounded-xl px-5 py-2 text-sm font-semibold w-auto"
                 style={{
                   backgroundColor: SOFT_BTN_BG,
                   color: SOFT_TEXT,

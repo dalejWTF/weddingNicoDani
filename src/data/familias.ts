@@ -34,23 +34,8 @@ export const FAMILIAS: Family[] = [
   },
   {
     id: "fam-juarez-lopez",
-    nombreFamilia: "Sra. Juárez López",
-    nroPersonas: 4
-  },
-  {
-    id: "sra-germania-marquez",
-    nombreFamilia: "Sra. Germania Márquez",
-    nroPersonas: 1
-  },
-  {
-    id: "sra-jenny-marquez",
-    nombreFamilia: "Sra. Jenny Márquez",
-    nroPersonas: 1
-  },
-  {
-    id: "srta-yossy-salinas",
-    nombreFamilia: "Srta. Yosselyn Salinas",
-    nroPersonas: 1
+    nombreFamilia: "Familia Juárez López",
+    nroPersonas: 5
   },
   {
     id: "fam-marquez-espinoza",
@@ -58,8 +43,8 @@ export const FAMILIAS: Family[] = [
     nroPersonas: 2
   },
   {
-    id: "fam-maribel-marquez",
-    nombreFamilia: "Sra. Maribel Márquez y esposo",
+    id: "fam-castellano-marquez",
+    nombreFamilia: "Familia Castellano Márquez",
     nroPersonas: 2
   },
   {
@@ -113,18 +98,18 @@ export const FAMILIAS: Family[] = [
     nroPersonas: 2
   },
   {
-    id: "sr-bryan-criollo",
-    nombreFamilia: "Sr. Bryan Criollo",
+    id: "arq-bryan-criollo",
+    nombreFamilia: "Arq. Bryan Criollo",
     nroPersonas: 1
   },
   {
-    id: "sr-alexis-armijos",
-    nombreFamilia: "Sr. Alexis Armijos",
+    id: "ing-alexis-armijos",
+    nombreFamilia: "Ing. Alexis Armijos",
     nroPersonas: 1
   },
   {
-    id: "sr-marco-caicedo",
-    nombreFamilia: "Sr. Marco Caicedo",
+    id: "ing-marco-caicedo",
+    nombreFamilia: "Ing. Marco Caicedo",
     nroPersonas: 1
   },
   {
@@ -142,7 +127,21 @@ export const FAMILIAS: Family[] = [
     nombreFamilia: "Sr. Néstor Torres",
     nroPersonas: 1
   },
-  
+  {
+    id: "sra-germania-marquez",
+    nombreFamilia: "Sra. Germania Márquez",
+    nroPersonas: 1
+  },
+  {
+    id: "sra-jenny-marquez",
+    nombreFamilia: "Sra. Jenny Márquez",
+    nroPersonas: 1
+  },
+  {
+    id: "srta-yossy-salinas",
+    nombreFamilia: "Srta. Yosselyn Salinas",
+    nroPersonas: 1
+  },
 ];
 
 

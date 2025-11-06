@@ -20,7 +20,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -35,12 +34,16 @@ export default function RsvpButton({
   triggerClassName = "",
   triggerLabel = "Confirmar",
   prefillFamilyId,
-  prefillFamily, // ← NUEVO: familia completa
+  prefillFamily,
+  confirmed,              // ← NUEVO (controlado desde el padre)
+  onConfirmed,            // ← NUEVO (callback al confirmar)
 }: {
   triggerClassName?: string;
   triggerLabel?: string;
-  prefillFamilyId?: string; // compat
-  prefillFamily?: Family;   // preferido
+  prefillFamilyId?: string;
+  prefillFamily?: Family;
+  confirmed?: boolean;
+  onConfirmed?: () => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const [families, setFamilies] = React.useState<Family[]>([]);
@@ -55,13 +58,47 @@ export default function RsvpButton({
     null | { nombreFamilia: string; nroPersonas: number; asistencia: boolean }
   >(null);
 
-  // La selección puede venir del API o del prefill local
+  // Estados internos para autochequeo cuando hay prefill
+  const [alreadyResponded, setAlreadyResponded] = React.useState(false);
+  const [checkingStatus, setCheckingStatus] = React.useState(false);
+
+  const hasPrefill = Boolean(prefillFamily || prefillFamilyId);
   const selected: Family | null =
     families.find((f) => f.id === familyId) || prefillFamily || null;
 
-  // Cargar familias al abrir
+  // Si el padre pasa "confirmed", ése es la fuente de la verdad; si no, usamos el interno.
+  const isConfirmed = (confirmed ?? alreadyResponded) === true;
+
+  // Si viene prefill y el padre NO controla "confirmed", verificamos con eligible
   React.useEffect(() => {
-    if (!open || loadedOnce) return;
+    if (!hasPrefill) return;
+    if (confirmed !== undefined) return; // padre controla, no auto-checkeamos aquí
+    const id = prefillFamily?.id ?? prefillFamilyId!;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        setCheckingStatus(true);
+        const res = await fetch("/api/rsvp/eligible", { cache: "no-store" });
+        const data = await res.json();
+        const list: Family[] = data.families ?? [];
+        const stillEligible = list.some((f) => f.id === id);
+        if (!cancelled) setAlreadyResponded(!stillEligible);
+      } catch {
+        // en error no bloqueamos
+      } finally {
+        if (!cancelled) setCheckingStatus(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasPrefill, confirmed, prefillFamily, prefillFamilyId]);
+
+  // Cargar familias solo para el selector (sin prefill)
+  React.useEffect(() => {
+    if (!open || loadedOnce || hasPrefill) return;
     (async () => {
       try {
         setLoadingFamilies(true);
@@ -69,22 +106,16 @@ export default function RsvpButton({
         const data = await res.json();
         const list: Family[] = data.families ?? [];
         setFamilies(list);
-
-        // Compatibilidad: si solo vino el ID, intenta asignarlo
-        if (!prefillFamily && prefillFamilyId) {
-          const exists = list.find((f) => f.id === prefillFamilyId);
-          if (exists) setFamilyId(prefillFamilyId);
-        }
       } finally {
         setLoadingFamilies(false);
         setLoadedOnce(true);
       }
     })();
-  }, [open, loadedOnce, prefillFamily, prefillFamilyId]);
+  }, [open, loadedOnce, hasPrefill]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selected) return;
+    if (!selected || isConfirmed) return; // bloquea doble envío
     setSubmitting(true);
     try {
       const asistenciaBool = attendance === "si";
@@ -103,6 +134,9 @@ export default function RsvpButton({
         // ya respondió
         setFamilies((prev) => prev.filter((f) => f.id !== selected.id));
         setFamilyId("");
+        setAlreadyResponded(true);
+        onConfirmed?.();       // ← avisa al padre
+        setOpen(false);
         return;
       }
       if (!res.ok) throw new Error(await res.text());
@@ -115,6 +149,12 @@ export default function RsvpButton({
         nroPersonas: selected.nroPersonas,
         asistencia: asistenciaBool,
       });
+
+      // ← marca como confirmado y avisa al padre (oculta el botón inmediatamente)
+      setAlreadyResponded(true);
+      onConfirmed?.();
+
+      // mostramos el modal de éxito
       setTimeout(() => setSuccessOpen(true), 0);
     } catch (err) {
       console.error(err);
@@ -124,7 +164,11 @@ export default function RsvpButton({
   }
 
   const noneLeft = loadedOnce && !loadingFamilies && families.length === 0;
-  const hasPrefill = Boolean(prefillFamily || prefillFamilyId);
+
+  // Si viene por link (prefill) y ya está confirmado (o mientras chequea), no muestres el botón
+  if (hasPrefill && (isConfirmed || checkingStatus)) {
+    return null;
+  }
 
   return (
     <>
@@ -165,7 +209,7 @@ export default function RsvpButton({
                   className="px-3 py-2 text-sm"
                   style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
                 >
-                  Invitación para: <b>{selected.nombreFamilia}</b> 
+                  Invitación para: <b>{selected.nombreFamilia}</b>
                 </div>
               )}
 
@@ -191,8 +235,9 @@ export default function RsvpButton({
               )}
 
               <div className="px-3 py-2 text-sm">
-                <Label>Número de personas <b> {selected?.nroPersonas ?? ""} </b></Label>
-
+                <Label>
+                  Número de personas <b>{selected?.nroPersonas ?? ""}</b>
+                </Label>
               </div>
 
               <div className="px-3 grid gap-2 display-flex">
@@ -203,7 +248,6 @@ export default function RsvpButton({
                   onValueChange={(v: "si" | "no") => setAttendance(v)}
                   className="grid grid-cols-4 gap-2 flex "
                 >
-                  {/* Sí */}
                   <Label
                     htmlFor="asist-si"
                     className={[
@@ -212,16 +256,14 @@ export default function RsvpButton({
                         ? "bg-white shadow-sm ring-2 ring-offset-0"
                         : "bg-white hover:bg-slate-50",
                     ].join(" ")}
-                    style={{ borderColor: SOFT_BORDER,backgroundColor: "#f7f7f7ff" }}
+                    style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
                   >
                     <div className="flex items-center gap-2">
-                      {/* El Radio real (clickeable vía el label) */}
                       <RadioGroupItem id="asist-si" value="si" />
                       <span>Sí</span>
                     </div>
                   </Label>
 
-                  {/* No */}
                   <Label
                     htmlFor="asist-no"
                     className={[
