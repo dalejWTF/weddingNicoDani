@@ -45,7 +45,7 @@ export default function Timeline({
       {title && (
         <div className="mb-4 sm:mb-6 text-center relative z-10">
           <div
-            className={`mb-2 tracking-wide ${lora.className} ${titleClassName ?? ""}`}
+            className={`mb-2 tracking-wide ${titleClassName ?? ""}`}
             style={{ color: TEXTTIMELINE, fontSize: "clamp(28px, 6vw, 54px)", lineHeight: 1.06 }}
           >
             {title}

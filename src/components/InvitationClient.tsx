@@ -24,7 +24,7 @@ import RecGiftsSection from "@/components/RecGiftsSection";
 import BackgroundAudio from "@/components/BackgroundAudio";
 import HeroCover from "@/components/HeroCover";
 import RsvpButton from "@/components/RsvpButton";
-import { FAMILIAS } from "@/data/familias";
+
 
 const SOFT_BG_CARD = "#FFFFFF";
 const SOFT_BORDER = "#DBEAF5";
@@ -61,9 +61,9 @@ const RECEPTION_NAME = "Quinta Carbonero";
 const RECEPTION_MAPS_URL = "https://maps.app.goo.gl/kdwiUihm8pJUfiQv8";
 
 export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?: string }) {
-  const prefillFamily = familyIdFromUrl
-    ? FAMILIAS.find((f) => f.id === familyIdFromUrl)
-    : undefined;
+  const [prefillFamily, setPrefillFamily] = React.useState<
+    { id: string; nombreFamilia: string; nroPersonas: number } | undefined
+  >(undefined);
 
   // Estado de confirmación global para el Hero y el botón
   const [confirmed, setConfirmed] = React.useState(false);
@@ -72,25 +72,20 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
   // Al montar, si viene id en la URL verificamos si esa familia sigue "eligible".
   // Si NO está en elegibles => ya confirmó => confirmed = true
   React.useEffect(() => {
-    if (!familyIdFromUrl) {
-      setChecking(false);
-      return;
-    }
+    if (!familyIdFromUrl) return;
     let cancelled = false;
+
     (async () => {
       try {
-        const res = await fetch("/api/rsvp/eligible", { cache: "no-store" });
+        const res = await fetch(`/api/guests?familyId=${encodeURIComponent(familyIdFromUrl)}`, { cache: "no-store" });
+        if (!res.ok) return;
         const data = await res.json();
-        const stillEligible = (data.families ?? []).some(
-          (f: { id: string }) => f.id === familyIdFromUrl
-        );
-        if (!cancelled) setConfirmed(!stillEligible);
-      } catch {
-        // Si falla, no bloqueamos: asumimos no confirmado.
-      } finally {
-        if (!cancelled) setChecking(false);
+        if (!cancelled) setConfirmed(Boolean(data.confirmed));
+      } catch (e) {
+        console.error(e);
       }
     })();
+
     return () => { cancelled = true; };
   }, [familyIdFromUrl]);
 

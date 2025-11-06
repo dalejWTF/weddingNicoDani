@@ -8,28 +8,28 @@ export type Family = {
 
 export const FAMILIAS: Family[] = [
   {
-    id: "fam-ulloa-marquez",
-    nombreFamilia: "Familia Ulloa Márquez",
+    id: "dr-carlos-ulloa",
+    nombreFamilia: "Dr. Carlos Ulloa y esposa",
     nroPersonas: 2
   },
   {
-    id: "fam-proano-ulloa",
-    nombreFamilia: "Familia Proaño Ulloa",
+    id: "ing-marcelo-proano",
+    nombreFamilia: "Ing. Marcelo Proaño y esposa",
     nroPersonas: 2
   },
   {
-    id: "fam-salinas-marquez",
-    nombreFamilia: "Familia Salinas Márquez",
+    id: "ing-richard-salinas",
+    nombreFamilia: "Ing. Richard Salinas y esposa",
     nroPersonas: 3
   },
   {
-    id: "fam-marquez-carrion",
-    nombreFamilia: "Familia Márquez Carrión",
+    id: "abg-jorge-marquez",
+    nombreFamilia: "Abg. Jorge Márquez y esposa",
     nroPersonas: 2
   },
   {
-    id: "fam-blacio-carrion",
-    nombreFamilia: "Familia Blacio Carrión",
+    id: "sr-david-blacio",
+    nombreFamilia: "Sr. David Blacio y esposa",
     nroPersonas: 2
   },
   {
@@ -38,18 +38,18 @@ export const FAMILIAS: Family[] = [
     nroPersonas: 5
   },
   {
-    id: "fam-marquez-espinoza",
-    nombreFamilia: "Familia Marquez Espinoza",
+    id: "abg-edgar-marquez",
+    nombreFamilia: "Abg. Edgar Márquez y esposa",
     nroPersonas: 2
   },
   {
-    id: "fam-castellano-marquez",
-    nombreFamilia: "Familia Castellano Márquez",
+    id: "sr-edmundo-castellano",
+    nombreFamilia: "Sr. Edmundo Castellano y esposa",
     nroPersonas: 2
   },
   {
-    id: "fam-lopez-carrion",
-    nombreFamilia: "Familia López Carrión",
+    id: "sr-reinaldo-lopez",
+    nombreFamilia: "Sr. Reinaldo López y esposa",
     nroPersonas: 2
   },
   {
@@ -58,8 +58,23 @@ export const FAMILIAS: Family[] = [
     nroPersonas: 3
   },
   {
-    id: "fam-villamagua-torres",
-    nombreFamilia: "Familia Villamagua Torres",
+    id: "dr-carlos-chuchuca",
+    nombreFamilia: "Dr. Carlos Chuchuca y familia",
+    nroPersonas: 3
+  },
+  {
+    id: "med-carlos-chuchuca",
+    nombreFamilia: "Med. Carlos Chuchuca y esposa",
+    nroPersonas: 2
+  },
+  {
+    id: "ing-alex-arias",
+    nombreFamilia: "Ing. Alex Arias y esposa",
+    nroPersonas: 2
+  },
+  {
+    id: "ing-manuel-villamagua",
+    nombreFamilia: "Ing. Manuel Villamagua y familia",
     nroPersonas: 5
   },
   {
@@ -83,19 +98,9 @@ export const FAMILIAS: Family[] = [
     nroPersonas: 2
   },
   {
-    id: "fam-chuchuca-pardo",
-    nombreFamilia: "Familia Chuchuca Pardo",
-    nroPersonas: 3
-  },
-  {
-    id: "fam-chuchuca-zaruma",
-    nombreFamilia: "Familia Chuchuca Zaruma",
-    nroPersonas: 2
-  },
-  {
-    id: "fam-arias-sanchez",
-    nombreFamilia: "Familia Arias Sánchez",
-    nroPersonas: 2
+    id: "ing-pablo-marquez",
+    nombreFamilia: "Ing. Pablo Márquez",
+    nroPersonas: 1
   },
   {
     id: "arq-bryan-criollo",
@@ -142,6 +147,41 @@ export const FAMILIAS: Family[] = [
     nombreFamilia: "Srta. Yosselyn Salinas",
     nroPersonas: 1
   },
+  {
+    id: "sr-estalyn-riofrio",
+    nombreFamilia: "Sr. Estalyn Riofrío",
+    nroPersonas: 1
+  },
+  {
+    id: "srta-genesis-gonzalez",
+    nombreFamilia: "Srta. Génesis González",
+    nroPersonas: 1
+  },
+  {
+    id: "med-belen-vacacela",
+    nombreFamilia: "Med. Belén Vacacela y pareja",
+    nroPersonas: 2
+  },
+  {
+    id: "med-maria-reyes",
+    nombreFamilia: "Med. María Reyes y pareja",
+    nroPersonas: 2
+  },
+  {
+    id: "med-shirley-castillo",
+    nombreFamilia: "Med. Shirley Castillo y pareja",
+    nroPersonas: 2
+  },
+  {
+    id: "med-rebeca-arevalo",
+    nombreFamilia: "Med. Rebeca Arévalo y pareja",
+    nroPersonas: 2
+  },
+  {
+    id: "abg-ricardo-leon",
+    nombreFamilia: "Abg. Ricardo León y pareja",
+    nroPersonas: 2
+  },
 ];
 
 
@@ -155,17 +195,8 @@ tia Lila	1
 tia Bertha	1
 Karen Carrion	2
 Carmen Luisa	2
-Stalin	1
-Genesis	1
 Wilson	1
 Jhonatan	1
-Belen	2
-Suka	2
-Shirley	2
-Rebeca	2
-Karina	2
-
-
 
 
 */
