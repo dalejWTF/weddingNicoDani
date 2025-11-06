@@ -16,26 +16,28 @@ const lora = Lora({
   display: "swap",
 });
 
-// Tipo utilitario para permitir CSS variables sin usar `any`
 type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
 type Item = {
   time: string;
   label: string;
   side?: "left" | "right";
-  icon?: string; // ej: "/assets/church.svg"
+  icon?: string;
 };
 
 export default function Timeline({
   items,
   title,
   className,
+  titleClassName,
+  itemClassName,
 }: {
   items: Item[];
   title?: string;
   className?: string;
+  titleClassName?: string;
+  itemClassName?: string;
 }) {
-  // Variable para el tamaño de las esquinas
   const cornerVarStyle: CSSVarProps<"--corner"> = { ["--corner"]: "clamp(120px,28vw,220px)" };
 
   return (
@@ -43,7 +45,7 @@ export default function Timeline({
       {title && (
         <div className="mb-4 sm:mb-6 text-center relative z-10">
           <div
-            className={`mb-2 tracking-wide ${lora.className}`}
+            className={`mb-2 tracking-wide ${lora.className} ${titleClassName ?? ""}`}
             style={{ color: TEXTTIMELINE, fontSize: "clamp(28px, 6vw, 54px)", lineHeight: 1.06 }}
           >
             {title}
@@ -51,7 +53,6 @@ export default function Timeline({
         </div>
       )}
 
-      {/* Esquina superior derecha (anclada al título) */}
       <img
         src="/leaves.png"
         alt=""
@@ -62,11 +63,10 @@ export default function Timeline({
           zIndex: 0,
           width: "var(--corner)",
           height: "auto",
-          top: "calc(-0.10 * var(--corner))", // sube/ baja respecto del título
+          top: "calc(-0.10 * var(--corner))",
           right: "calc(-0.18 * var(--corner))",
         }}
       />
-      {/* Esquina inferior izquierda (más separación del último item) */}
       <img
         src="/leaves.png"
         alt=""
@@ -78,20 +78,17 @@ export default function Timeline({
           width: "var(--corner)",
           height: "auto",
           left: "calc(-0.22 * var(--corner))",
-          bottom: "calc(-0.28 * var(--corner))", // separada del último item
+          bottom: "calc(-0.28 * var(--corner))",
           transform: "rotate(180deg)",
         }}
       />
 
-      {/* Contenedor del timeline, con padding-bottom para no tapar la hoja inferior */}
       <div className="relative mx-auto w-full max-w-[1280px] px-2 sm:px-3 pb-[calc(0.22*var(--corner))]">
-        {/* Línea vertical central */}
         <div
           className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 z-10"
           style={{ backgroundColor: HIGHLIGHT }}
         />
 
-        {/* Layout */}
         <ol
           className="
             relative z-10
@@ -107,7 +104,6 @@ export default function Timeline({
             const side: "left" | "right" = it.side ?? (i % 2 === 0 ? "left" : "right");
             return (
               <li key={i} className="contents">
-                {/* Columna izquierda */}
                 <div className="relative flex items-center justify-end pr-3 sm:pr-6">
                   {side === "left" ? (
                     <>
@@ -115,14 +111,20 @@ export default function Timeline({
                         className="absolute right-0 top-1/2 h-px"
                         style={{ backgroundColor: HIGHLIGHT, width: "clamp(28px, 12vw, 88px)" }}
                       />
-                      <ItemBox time={it.time} label={it.label} align="right" color={HIGHLIGHT} icon={it.icon} />
+                      <ItemBox
+                        time={it.time}
+                        label={it.label}
+                        align="right"
+                        color={HIGHLIGHT}
+                        icon={it.icon}
+                        itemClassName={itemClassName}
+                      />
                     </>
                   ) : (
                     <span className="sr-only">spacer</span>
                   )}
                 </div>
 
-                {/* Punto central */}
                 <div className="relative">
                   <span
                     className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -135,7 +137,6 @@ export default function Timeline({
                   />
                 </div>
 
-                {/* Columna derecha */}
                 <div className="relative flex items-center justify-start pl-3 sm:pl-6">
                   {side === "right" ? (
                     <>
@@ -143,7 +144,14 @@ export default function Timeline({
                         className="absolute left-0 top-1/2 h-px"
                         style={{ backgroundColor: HIGHLIGHT, width: "clamp(28px, 12vw, 88px)" }}
                       />
-                      <ItemBox time={it.time} label={it.label} align="left" color={HIGHLIGHT} icon={it.icon} />
+                      <ItemBox
+                        time={it.time}
+                        label={it.label}
+                        align="left"
+                        color={HIGHLIGHT}
+                        icon={it.icon}
+                        itemClassName={itemClassName}
+                      />
                     </>
                   ) : (
                     <span className="sr-only">spacer</span>
@@ -164,16 +172,16 @@ function ItemBox({
   align,
   color,
   icon,
+  itemClassName,
 }: {
   time: string;
   label: string;
   align: "left" | "right";
   color: string;
   icon?: string;
+  itemClassName?: string;
 }) {
   const rowDir = align === "left" ? "flex-row" : "flex-row-reverse";
-
-  // Ocupa todo el track lateral (fluido). En desktop limitamos un poco más.
   const widthClass =
     "w-[min(40vw,260px)] xs:w-[min(42vw,260px)] sm:w-[clamp(200px,34vw,260px)]";
 
@@ -182,9 +190,8 @@ function ItemBox({
   const labelSize = "clamp(12px, 3.2vw, 15px)";
 
   return (
-    <div className={`${widthClass} leading-tight ${align === "left" ? "text-left" : "text-right"}`}>
+    <div className={`${widthClass} leading-tight ${align === "left" ? "text-left" : "text-right"} ${itemClassName ?? ""}`}>
       <div className={`flex ${rowDir} items-center justify-between gap-2`}>
-        {/* Texto */}
         <div>
           <div
             className="font-extrabold uppercase tracking-wide"
@@ -200,7 +207,6 @@ function ItemBox({
           </div>
         </div>
 
-        {/* Icono (escala fluida) */}
         {icon && (
           <Image
             src={icon}
@@ -217,5 +223,3 @@ function ItemBox({
     </div>
   );
 }
-
-

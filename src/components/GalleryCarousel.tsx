@@ -16,9 +16,11 @@ const SOFT_ACCENT = "#8FBFD9";
 export default function GalleryCarousel({
   images,
   aspect = 16 / 10,
+  className,
 }: {
   images: Img[];
   aspect?: number;
+  className?: string;
 }) {
   const [[index, direction], setIndex] = React.useState<[number, 1 | -1]>([0, 1]);
   const [open, setOpen] = React.useState(false);
@@ -41,7 +43,7 @@ export default function GalleryCarousel({
 
   return (
     <div
-      className="relative w-full max-w-full overflow-hidden bg-white"
+      className={`relative w-full max-w-full overflow-hidden bg-white ${className ?? ""}`}
       style={{ border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
     >
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: aspect }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>

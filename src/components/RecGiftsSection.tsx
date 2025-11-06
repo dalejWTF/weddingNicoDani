@@ -11,7 +11,6 @@ const SOFT_BTN_BG = "#EAF3FB";
 const SOFT_BTN_BG_HOVER = "#E1EEF8";
 const SOFT_TEXT = "#0F172A";
 
-// util para CSS vars sin any
 type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
 export default function RecGiftsSection({
@@ -21,6 +20,8 @@ export default function RecGiftsSection({
   registryUrl,
   accounts = [],
   className,
+  titleClassName,
+  itemClassName,
 }: {
   recommendations?: string;
   gifts?: string;
@@ -28,22 +29,21 @@ export default function RecGiftsSection({
   registryUrl?: string;
   accounts?: BankAccount[];
   className?: string;
+  titleClassName?: string;   // aplica a títulos de las tarjetas
+  itemClassName?: string;    // aplica a textos internos
 }) {
   const [open, setOpen] = React.useState(false);
-
   const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(320px,32vw,360px)" };
 
   return (
     <section
       className={[
-        "relative overflow-visible w-full px-3",               // ← ancla para la rama
-        // tamaño de la rama (igual que en la sección de “Lugar”)
+        "relative overflow-visible w-full px-3",
         "[--corner:clamp(120px,22vw,120px)]",
         "sm:[--corner:clamp(84px,16vw,180px)]",
         className ?? "",
       ].join(" ")}
     >
-      {/* 🌿 Rama esquina superior derecha de ESTA sección */}
       <img
         src="/blueleaves.png"
         alt=""
@@ -53,16 +53,14 @@ export default function RecGiftsSection({
                    sm:top-[calc(-0.01_*_var(--corner))] right-[calc(-0.30_*_var(--corner))]"
       />
 
-      {/* contenido por encima de la rama */}
       <div className="relative z-10 mx-auto grid max-w-[880px] gap-6">
         <InfoCard
-          title="Recomendaciones"
+          title={<span className={titleClassName}>{`Recomendaciones`}</span>}
           icon={<Sparkles className="size-6" style={{ color: "#8FBFD9" }} />}
         >
-          {recommendations}
+          <p className={itemClassName}>{recommendations}</p>
         </InfoCard>
 
-        {/* Flor horizontal entre tarjetas */}
         <div className="relative flex items-center justify-center" style={lilyVarStyle}>
           <img
             src="/blueflower_horizontal.png"
@@ -74,16 +72,15 @@ export default function RecGiftsSection({
         </div>
 
         <InfoCard
-          title="Regalos"
+          title={<span className={titleClassName}>{`Regalos`}</span>}
           icon={<Gift className="size-6" style={{ color: "#8FBFD9" }} />}
         >
-          <p>{gifts}</p>
+          <p className={itemClassName}>{gifts}</p>
 
           <div className="mt-4 flex items-center justify-center gap-3 flex-wrap text-center">
             {accounts.length > 0 && (
               <Button
                 type="button"
-                
                 onClick={() => setOpen(true)}
                 className="rounded-xl px-5 py-2 text-sm font-semibold w-auto"
                 style={{

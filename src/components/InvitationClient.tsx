@@ -14,7 +14,11 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import RevealSection from "@/components/RevealSection";
-import { Tangerine, Cookie, Merienda } from "next/font/google";
+import {
+  Great_Vibes,
+  Cormorant_Garamond,
+  Lora,
+} from "next/font/google";
 import DressCode from "@/components/DressCode";
 import RecGiftsSection from "@/components/RecGiftsSection";
 import BackgroundAudio from "@/components/BackgroundAudio";
@@ -26,9 +30,25 @@ const SOFT_BG_CARD = "#FFFFFF";
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 
-const tangerine = Tangerine({ subsets: ["latin"], weight: "700", variable: "--font-tangerine", display: "swap" });
-const cookie = Cookie({ subsets: ["latin"], weight: "400", variable: "--font-cookie", display: "swap" });
-const merienda = Merienda({ subsets: ["latin"], weight: "400", variable: "--font-merienda", display: "swap" });
+// Tipografías elegantes
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-greatvibes",
+  display: "swap",
+});
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-lora",
+  display: "swap",
+});
 
 // CSR only
 const CountdownBanner = dynamic(() => import("@/components/CountdownBanner"), { ssr: false });
@@ -76,7 +96,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
   return (
     <main
-      className="paper-invite relative h-dvh w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth no-scrollbar"
+      className={`paper-invite relative h-dvh w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth no-scrollbar ${lora.className}`}
       style={{ overscrollBehaviorY: "contain" }}
     >
       <BackgroundAudio
@@ -89,10 +109,10 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
       <div className="mx-auto max-w-[640px]">
         {/* 1 — Hero */}
         <HeroCover src="/assets/1.jpg" alt="Daniel y Nicole" >
-          <h1 className={`text-center text-5xl sm:text-8xl font-semibold ${tangerine.className} text-white drop-shadow`}>
+          <h1 className={`text-center text-5xl sm:text-8xl ${greatVibes.className} text-white drop-shadow`}>
             Daniel &amp; Nicole
           </h1>
-          <p className={`mt-2 text-center text-white/90 ${merienda.className}`}>
+          <p className={`mt-2 text-center text-white/90 ${lora.className}`}>
             ¡Estás invitad@ a nuestra boda!
           </p>
         </HeroCover>
@@ -101,6 +121,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <section className="grid gap-4 pt-9 my-4">
             <TextBlock
+              className={`${lora.className}`}
               paragraphs={[
                 "Dios nos ha concedido el privilegio de conocernos y amarnos con su bendición y la de nuestros padres.",
                 "Queremos unir nuestras vidas para siempre y celebrarlo contigo.",
@@ -114,12 +135,12 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <section className="grid gap-2 pt-3">
             <div className="text-center py-2">
-              <div className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}>
+              <div className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
                 El gran día
               </div>
               <div className="flex items-center justify-center gap-2 text-sm pt-2" style={{ color: SOFT_ACCENT }}>
                 <CalendarIcon className="size-4" />
-                <span className="uppercase ">{WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}</span>
+                <span className="uppercase tracking-wide">{WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}</span>
               </div>
             </div>
             <CalendarMonth date={WEDDING_DATE} highlightDate={WEDDING_DATE} startOnSunday />
@@ -148,7 +169,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             <div className="text-center pt-6 z-10">
               <div className="mx-auto flex max-w-fit items-center justify-center gap-1 text-sm font-medium">
                 <Heart className="size-5 text-slate-500" />
-                <span className={`${cookie.className} text-5xl sm:text-5xl font-semibold text-slate-500`}>
+                <span className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
                   Lugar
                 </span>
               </div>
@@ -222,6 +243,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               ]}
               className="px-3 pt-2"
               title="Itinerario"
+              titleClassName={`${cormorant.className} text-3xl`}
+              itemClassName={`${lora.className}`}
             />
           </section>
         </RevealSection>
@@ -251,6 +274,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <DressCode
             className="pt-6"
+            titleClassName={`${cormorant.className} text-3xl`}
+            captionClassName={`${lora.className}`}
             womenColors={[{ color: "#D9EDF9" }, { color: "#E6F3FB" }, { color: "#F0F8FD" }, { color: "#F6FAFE" }]}
             menColors={[{ color: "#191919" }, { color: "#393939" }, { color: "#4B4B4B" }, { color: "#535353" }]}
           />
@@ -260,6 +285,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <RecGiftsSection
             className="pt-6"
+            titleClassName={`${cormorant.className} text-3xl`}
+            itemClassName={`${lora.className}`}
             accounts={[
               { bank: "Banco Pichincha", holder: "Daniel Ulloa", account: "1234567890", dni: "0102030405" },
               { bank: "Banco Guayaquil", holder: "Nicole Torres", account: "0987654321", dni: "1122334455" },
@@ -277,6 +304,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 { src: "/assets/5.jpg", alt: "Foto 2" },
                 { src: "/assets/6.jpg", alt: "Foto 3" },
               ]}
+              className={`${cormorant.className} text-3xl`}
             />
 
             {/* Wrapper del quote con espacio para las guirnaldas */}
@@ -313,6 +341,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               {/* El quote */}
               <div className="relative z-10">
                 <QuoteBlock
+                  classNameAuthor={`${cormorant.className}`}
+                  classNameQuote={`${lora.className}`}
                   quote="El amor nunca se da por vencido, jamás pierde la fe, siempre tiene esperanzas y se mantiene firme en toda circunstancia."
                   author="1 Corintios 13:7"
                 />
@@ -325,23 +355,22 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <HeroCover src="/assets/2.jpg" alt="Nos vemos pronto">
             <div className="max-w-screen-sm mx-auto px-3 text-center">
-              <div className={`text-center text-5xl sm:text-8xl font-semibold ${tangerine.className} text-white drop-shadow`}>
+              <div className={`text-center text-5xl sm:text-8xl ${greatVibes.className} text-white drop-shadow`}>
                 {confirmed ? "¡Gracias por confirmar!" : "Confirmar asistencia"}
               </div>
 
               {/* Ocultar deadline si ya confirmó */}
               {!confirmed && (
-                <p className={`mt-2 text-center text-white/90 ${merienda.className}`}>
+                <p className={`mt-2 text-center text-white/90 ${lora.className}`}>
                   Por favor confirma tu asistencia antes del 10 de diciembre de 2025
                 </p>
               )}
 
-              {/* Ocultar botón si ya confirmó.
-                  'checking' evita parpadeo mientras consultamos elegibles */}
+              {/* Ocultar botón si ya confirmó. */}
               {!confirmed && !checking && (
                 <div className="pt-3">
                   <RsvpButton
-                    triggerClassName="rounded-2xl px-10 border-white text-black hover:bg-white/10 bg-white/10"
+                    triggerClassName={`rounded-2xl px-10 border-white text-black hover:bg-white/10 bg-white/10 ${cormorant.className}`}
                     triggerLabel="Confirmar"
                     prefillFamilyId={familyIdFromUrl}
                     prefillFamily={prefillFamily}
