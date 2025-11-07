@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Gift, Sparkles, Banknote } from "lucide-react";
 import InfoCard from "@/components/InfoCard";
 import { Button } from "@/components/ui/button";
@@ -29,8 +30,8 @@ export default function RecGiftsSection({
   registryUrl?: string;
   accounts?: BankAccount[];
   className?: string;
-  titleClassName?: string;   // aplica a títulos de las tarjetas
-  itemClassName?: string;    // aplica a textos internos
+  titleClassName?: string;
+  itemClassName?: string;
 }) {
   const [open, setOpen] = React.useState(false);
   const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(320px,32vw,360px)" };
@@ -44,13 +45,15 @@ export default function RecGiftsSection({
         className ?? "",
       ].join(" ")}
     >
-      <img
+      <Image
         src="/blueleaves.png"
         alt=""
+        width={400}
+        height={400}
         aria-hidden
-        className="pointer-events-none select-none absolute z-0
-                   w-[var(--corner)] h-auto
-                   sm:top-[calc(-0.01_*_var(--corner))] right-[calc(-0.30_*_var(--corner))]"
+        className="pointer-events-none select-none absolute z-0 sm:top-[calc(-0.01_*_var(--corner))] right-[calc(-0.30_*_var(--corner))]"
+        style={{ width: "var(--corner)", height: "auto" }}
+        priority={false}
       />
 
       <div className="relative z-10 mx-auto grid max-w-[880px] gap-6">
@@ -62,12 +65,15 @@ export default function RecGiftsSection({
         </InfoCard>
 
         <div className="relative flex items-center justify-center" style={lilyVarStyle}>
-          <img
+          <Image
             src="/blueflower_horizontal.png"
             alt=""
+            width={640}
+            height={200}
             aria-hidden
             className="pointer-events-none select-none"
             style={{ width: "var(--lily)", height: "auto" }}
+            priority={false}
           />
         </div>
 
@@ -77,12 +83,12 @@ export default function RecGiftsSection({
         >
           <p className={itemClassName}>{gifts}</p>
 
-          <div className="mt-4 flex items-center justify-center gap-3 flex-wrap text-center">
+          <div className={`mt-4 flex items-center justify-center gap-3 flex-wrap text-center ${itemClassName ?? ""}`}>
             {accounts.length > 0 && (
               <Button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="rounded-xl px-5 py-2 text-sm font-semibold w-auto"
+                className="rounded-xl px-5 py-2 text-sm w-auto"
                 style={{
                   backgroundColor: SOFT_BTN_BG,
                   color: SOFT_TEXT,

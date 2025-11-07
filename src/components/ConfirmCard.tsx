@@ -84,6 +84,7 @@ export default function ConfirmCard({
                   textClassName={textClassName}
                   note="Nos encantará contar con tu presencia. Con su confirmación, nos ayudará a planificar mejor este día tan especial."
                   requirePrefill // ⬅️ exige id
+                  onConfirmed={onConfirmed}  
                 />
               </div>
             )}

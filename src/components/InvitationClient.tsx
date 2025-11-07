@@ -29,6 +29,8 @@ import {
   Mr_De_Haviland,
 } from "next/font/google";
 
+type Family = { id: string; nombreFamilia: string; nroPersonas: number };
+
 const SOFT_BG_CARD = "#FFFFFF";
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
@@ -50,7 +52,7 @@ const RECEPTION_NAME = "Quinta Carbonero";
 const RECEPTION_MAPS_URL = "https://maps.app.goo.gl/kdwiUihm8pJUfiQv8";
 
 export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?: string }) {
-  const [prefillFamily, setPrefillFamily] = React.useState<{ id: string; nombreFamilia: string; nroPersonas: number } | undefined>(undefined);
+  const [prefillFamily, setPrefillFamily] = React.useState<Family | undefined>(undefined);
   const [confirmed, setConfirmed] = React.useState(false);
   const [checking, setChecking] = React.useState(true);
 
@@ -73,7 +75,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
     return () => { cancelled = true; };
   }, [familyIdFromUrl]);
 
-  // Prefill de familia
+  // Prefill de familia (sin any)
   React.useEffect(() => {
     if (!familyIdFromUrl) return;
     let cancelled = false;
@@ -82,7 +84,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         const res = await fetch("/api/guests", { cache: "no-store" });
         if (!res.ok) return;
         const data = await res.json();
-        const fam = (data.families ?? []).find((f: any) => f.id === familyIdFromUrl);
+        const list: Family[] = data.families ?? [];
+        const fam = list.find((f) => f.id === familyIdFromUrl);
         if (!cancelled) setPrefillFamily(fam);
       } catch (e) {
         console.error(e);
@@ -221,20 +224,21 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
               <div className="relative px-6 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
                 <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
-                <img
+                <Image
                   src="/blueroses.png"
                   alt=""
                   aria-hidden
-                  className="pointer-events-none select-none"
+                  width={240}
+                  height={240}
+                  className="pointer-events-none select-none absolute z-20"
                   style={{
-                    position: "absolute",
                     left: "calc(-0.20 * var(--rose))",
                     top: "50%",
                     transform: "translateY(-50%)",
                     width: "var(--rose)",
                     height: "auto",
-                    zIndex: 20,
                   }}
+                  priority={false}
                 />
               </div>
 
@@ -258,12 +262,21 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
             ].join(" ")}
           >
-            <img
+            <Image
               src="/blue_leaves.png"
               alt=""
               aria-hidden
-              className="pointer-events-none select-none absolute z-0 w-[var(--corner)] h-auto top-[calc(-0.5_*_var(--corner))] left-[calc(-0.18_*_var(--corner))]"
-              style={{ transform: "rotate(-10deg)" }}
+              width={360}
+              height={360}
+              className="pointer-events-none select-none absolute z-0"
+              style={{
+                width: "var(--corner)",
+                height: "auto",
+                top: "calc(-0.5 * var(--corner))",
+                left: "calc(-0.18 * var(--corner))",
+                transform: "rotate(-10deg)",
+              }}
+              priority={false}
             />
             <Timeline
               items={[
@@ -330,19 +343,25 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               className={`${cormorant.className} text-3xl`}
             />
             <div className="relative mx-auto max-w-[880px] py-[calc(var(--garland)*0.40)]">
-              <img
+              <Image
                 src="/blue_horizontal.png"
                 alt=""
                 aria-hidden
+                width={320}
+                height={120}
                 className="pointer-events-none select-none absolute z-0"
                 style={{ top: "15%", left: "50%", transform: "translate(-50%, -30%)", width: "var(--garland)", height: "auto" }}
+                priority={false}
               />
-              <img
+              <Image
                 src="/blue_horizontal.png"
                 alt=""
                 aria-hidden
+                width={320}
+                height={120}
                 className="pointer-events-none select-none absolute z-0"
                 style={{ bottom: "10%", left: "50%", transform: "translate(-50%, 30%)", width: "var(--garland)", height: "auto" }}
+                priority={false}
               />
               <div className="relative z-10">
                 <QuoteBlock

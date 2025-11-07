@@ -4,7 +4,6 @@
 import { Great_Vibes, Cormorant_Garamond } from "next/font/google";
 
 const SOFT_BORDER = "#DBEAF5";
-const SOFT_ACCENT  = "#8FBFD9";
 
 const greatVibes = Great_Vibes({
   subsets: ["latin"],

@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -51,7 +52,7 @@ export default function RsvpButton({
   note,
   titleClassName,
   textClassName,
-  requirePrefill = true, // ⬅️ por defecto exigimos prefill
+  requirePrefill = true,
 }: {
   triggerClassName?: string;
   triggerLabel?: string;
@@ -59,15 +60,10 @@ export default function RsvpButton({
   prefillFamily?: Family;
   confirmed?: boolean;
   onConfirmed?: () => void;
-  /** Renderiza algo como “Estimad@ {{nombre}}” (default) */
   greetingTemplate?: string;
-  /** Frase opcional debajo del saludo */
   note?: string;
-  /** Clases para el título del modal */
   titleClassName?: string;
-  /** Clases para textos secundarios */
   textClassName?: string;
-  /** Si es true, no se muestra nada sin prefill (id) */
   requirePrefill?: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
@@ -90,12 +86,9 @@ export default function RsvpButton({
   const selected: Family | null =
     families.find((f) => f.id === familyId) || prefillFamily || null;
 
-  // Si no hay prefill y se requiere, NO renderizamos nada.
-  if (requirePrefill && !hasPrefill) return null;
-
   const isConfirmed = (confirmed ?? alreadyResponded) === true;
 
-  // Autochequeo de “eligible” cuando hay prefill (y el padre no controla confirmed)
+  // SIEMPRE declarado: autochequeo de “eligible”
   React.useEffect(() => {
     if (!hasPrefill) return;
     if (confirmed !== undefined) return;
@@ -120,7 +113,7 @@ export default function RsvpButton({
     };
   }, [hasPrefill, confirmed, prefillFamily, prefillFamilyId]);
 
-  // Cargar familias solo si NO exigimos prefill y abre el modal sin prefill
+  // SIEMPRE declarado: carga de familias (cuando no exigimos prefill)
   React.useEffect(() => {
     if (!open || loadedOnce || hasPrefill || requirePrefill) return;
     (async () => {
@@ -183,8 +176,13 @@ export default function RsvpButton({
     }
   }
 
+  // decidir ocultar después de declarar hooks
   const noneLeft = loadedOnce && !loadingFamilies && families.length === 0;
-  if (hasPrefill && (isConfirmed || checkingStatus)) return null;
+  const shouldHide =
+    (requirePrefill && !hasPrefill) ||
+    (hasPrefill && (isConfirmed || checkingStatus));
+
+  if (shouldHide) return null;
 
   const displayName = selected?.nombreFamilia ?? "__________";
   const greeting = greetingTemplate.replace("{{nombre}}", displayName);
@@ -214,19 +212,25 @@ export default function RsvpButton({
           }}
         >
           {/* adornos */}
-          <img
+          <Image
             src={CORNER_TOP}
             alt=""
+            width={192}
+            height={192}
             aria-hidden
-            className="pointer-events-none select-none absolute right-[-18%] top-[-10%] w-40 sm:w-48"
-            style={{ transform: "rotate(8deg)", opacity: 0.9 }}
+            className="pointer-events-none select-none absolute right-[-10%] top-[-8%]"
+            style={{ transform: "rotate(8deg)", opacity: 0.9, width: "10rem", height: "auto" }}
+            priority={false}
           />
-          <img
+          <Image
             src={CORNER_BOTTOM}
             alt=""
+            width={192}
+            height={192}
             aria-hidden
-            className="pointer-events-none select-none absolute left-[-20%] bottom-[-18%] w-40 sm:w-48"
-            style={{ transform: "rotate(180deg)", opacity: 0.9 }}
+            className="pointer-events-none select-none absolute left-[-8%] bottom-[-10%]"
+            style={{ transform: "rotate(180deg)", opacity: 0.9, width: "10rem", height: "auto" }}
+            priority={false}
           />
 
           {/* header */}
@@ -246,7 +250,6 @@ export default function RsvpButton({
                 {greeting}
               </div>
 
-              {/* ⬇️ dinámica, se oculta si no hay número */}
               {typeof selected?.nroPersonas === "number" && (
                 <div className={`mt-1 text-xl ${titleClassName ?? ""}`} style={{ color: SOFT_TEXT }}>
                   Pase válido para {personasLabel(selected.nroPersonas)}
@@ -264,14 +267,12 @@ export default function RsvpButton({
               <div className="text-sm text-slate-600">No hay familias pendientes por responder.</div>
             ) : (
               <form onSubmit={onSubmit} className="grid gap-4">
-                {/* nota opcional */}
                 <div className="px-4 py-4 text-center">
                   {note && (
                     <p className={`mt-2 text-sm text-slate-600 ${textClassName ?? ""}`}>{note}</p>
                   )}
                 </div>
 
-                {/* selector (solo si NO exigimos prefill y no hay prefill) */}
                 {!requirePrefill && !hasPrefill && (
                   <div className="grid gap-2">
                     <Label className={`text-slate-700 ${textClassName ?? ""}`}>Familia</Label>
@@ -290,7 +291,6 @@ export default function RsvpButton({
                   </div>
                 )}
 
-                {/* Radios — mismo fondo, resalte al seleccionar */}
                 <div className="grid gap-2">
                   <Label className={`text-slate-700 text-2xl ${titleClassName ?? ""}`}>¿Asistirán?</Label>
 
@@ -335,7 +335,6 @@ export default function RsvpButton({
                   </RadioGroup>
                 </div>
 
-                {/* botón centrado */}
                 <DialogFooter className="pt-1">
                   <div className="w-full flex justify-center">
                     <Button

@@ -1,6 +1,7 @@
 // components/DressCode.tsx
 "use client";
 
+import Image from "next/image";
 import { Mars, Venus } from "lucide-react";
 
 type Swatch = { color: string; name?: string };
@@ -40,14 +41,17 @@ export default function DressCode({
           <h3 className={`text-3xl sm:text-4xl tracking-[0.18em] font-medium uppercase text-slate-800 ${titleClassName ?? ""}`}>
             {title}
           </h3>
-          <img
+
+          <Image
             src={COUPLE}
             alt=""
-            width="100"
-            height="auto"
+            width={100}
+            height={100}
             className="pointer-events-none mx-auto mt-4"
             style={{ height: "auto" }}
+            priority={false}
           />
+
           <p className={`mt-3 text-sm text-slate-600 ${captionClassName ?? ""}`}>{message1}</p>
         </div>
 

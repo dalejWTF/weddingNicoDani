@@ -2,19 +2,10 @@
 "use client";
 
 import Image from "next/image";
-import { Lora } from "next/font/google";
 import * as React from "react";
 
 const HIGHLIGHT = "#A7CDE6";
 const TEXTTIMELINE = "#7B7C7C";
-
-const lora = Lora({
-  subsets: ["latin"],
-  weight: "400",
-  style: "italic",
-  variable: "--font-lora",
-  display: "swap",
-});
 
 type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
@@ -53,9 +44,11 @@ export default function Timeline({
         </div>
       )}
 
-      <img
+      <Image
         src="/leaves.png"
         alt=""
+        width={400}
+        height={400}
         aria-hidden
         className="pointer-events-none select-none"
         style={{
@@ -66,10 +59,13 @@ export default function Timeline({
           top: "calc(-0.10 * var(--corner))",
           right: "calc(-0.18 * var(--corner))",
         }}
+        priority={false}
       />
-      <img
+      <Image
         src="/leaves.png"
         alt=""
+        width={400}
+        height={400}
         aria-hidden
         className="pointer-events-none select-none"
         style={{
@@ -81,6 +77,7 @@ export default function Timeline({
           bottom: "calc(-0.28 * var(--corner))",
           transform: "rotate(180deg)",
         }}
+        priority={false}
       />
 
       <div className="relative mx-auto w-full max-w-[1280px] px-2 sm:px-3 pb-[calc(0.22*var(--corner))]">

@@ -4,10 +4,6 @@ import * as React from "react";
 
 function pad(n: number) { return String(n).padStart(2, "0"); }
 
-const BABY_BLUE_TOP = "#F7FBFE";
-const BABY_BLUE_BOTTOM = "#EFF7FD";
-const BABY_BLUE_BORDER = "#DBEAF5";
-
 // Alternativa con import:
 // import corner from "@/assets/blue-corner.png"; const CORNER = corner.src;
 

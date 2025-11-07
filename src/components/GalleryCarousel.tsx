@@ -9,7 +9,6 @@ import { Dialog, DialogContent, DialogTrigger, DialogClose, DialogTitle } from "
 
 type Img = { src: StaticImageData | string; alt?: string };
 
-const SOFT_BG = "#FFFFFF";
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 
