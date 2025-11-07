@@ -21,22 +21,37 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, CalendarHeart, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 const SOFT_BORDER = "#DBEAF5";
-const SOFT_BTN_BG = "#EAF3FB";
-const SOFT_BTN_BG_HOVER = "#E1EEF8";
+const SOFT_ACCENT = "#8FBFD9";
+const SOFT_TEXT = "#0F172A";
+const BABY_BLUE_TOP = "#F7FBFE";
+const BABY_BLUE_BOTTOM = "#EFF7FD";
+
+const CORNER_TOP = "/blueleaves.png";
+const CORNER_BOTTOM = "/blueroses.png";
 
 type Family = { id: string; nombreFamilia: string; nroPersonas: number };
+
+function personasLabel(n?: number) {
+  if (typeof n !== "number") return "";
+  return n === 1 ? "1 persona" : `${n} personas`;
+}
 
 export default function RsvpButton({
   triggerClassName = "",
   triggerLabel = "Confirmar",
   prefillFamilyId,
   prefillFamily,
-  confirmed,              // ← NUEVO (controlado desde el padre)
-  onConfirmed,            // ← NUEVO (callback al confirmar)
+  confirmed,
+  onConfirmed,
+  greetingTemplate = "Estimad@ {{nombre}}",
+  note,
+  titleClassName,
+  textClassName,
+  requirePrefill = true, // ⬅️ por defecto exigimos prefill
 }: {
   triggerClassName?: string;
   triggerLabel?: string;
@@ -44,6 +59,16 @@ export default function RsvpButton({
   prefillFamily?: Family;
   confirmed?: boolean;
   onConfirmed?: () => void;
+  /** Renderiza algo como “Estimad@ {{nombre}}” (default) */
+  greetingTemplate?: string;
+  /** Frase opcional debajo del saludo */
+  note?: string;
+  /** Clases para el título del modal */
+  titleClassName?: string;
+  /** Clases para textos secundarios */
+  textClassName?: string;
+  /** Si es true, no se muestra nada sin prefill (id) */
+  requirePrefill?: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
   const [families, setFamilies] = React.useState<Family[]>([]);
@@ -58,7 +83,6 @@ export default function RsvpButton({
     null | { nombreFamilia: string; nroPersonas: number; asistencia: boolean }
   >(null);
 
-  // Estados internos para autochequeo cuando hay prefill
   const [alreadyResponded, setAlreadyResponded] = React.useState(false);
   const [checkingStatus, setCheckingStatus] = React.useState(false);
 
@@ -66,13 +90,15 @@ export default function RsvpButton({
   const selected: Family | null =
     families.find((f) => f.id === familyId) || prefillFamily || null;
 
-  // Si el padre pasa "confirmed", ése es la fuente de la verdad; si no, usamos el interno.
+  // Si no hay prefill y se requiere, NO renderizamos nada.
+  if (requirePrefill && !hasPrefill) return null;
+
   const isConfirmed = (confirmed ?? alreadyResponded) === true;
 
-  // Si viene prefill y el padre NO controla "confirmed", verificamos con eligible
+  // Autochequeo de “eligible” cuando hay prefill (y el padre no controla confirmed)
   React.useEffect(() => {
     if (!hasPrefill) return;
-    if (confirmed !== undefined) return; // padre controla, no auto-checkeamos aquí
+    if (confirmed !== undefined) return;
     const id = prefillFamily?.id ?? prefillFamilyId!;
     let cancelled = false;
 
@@ -84,8 +110,6 @@ export default function RsvpButton({
         const list: Family[] = data.families ?? [];
         const stillEligible = list.some((f) => f.id === id);
         if (!cancelled) setAlreadyResponded(!stillEligible);
-      } catch {
-        // en error no bloqueamos
       } finally {
         if (!cancelled) setCheckingStatus(false);
       }
@@ -96,9 +120,9 @@ export default function RsvpButton({
     };
   }, [hasPrefill, confirmed, prefillFamily, prefillFamilyId]);
 
-  // Cargar familias solo para el selector (sin prefill)
+  // Cargar familias solo si NO exigimos prefill y abre el modal sin prefill
   React.useEffect(() => {
-    if (!open || loadedOnce || hasPrefill) return;
+    if (!open || loadedOnce || hasPrefill || requirePrefill) return;
     (async () => {
       try {
         setLoadingFamilies(true);
@@ -111,11 +135,11 @@ export default function RsvpButton({
         setLoadedOnce(true);
       }
     })();
-  }, [open, loadedOnce, hasPrefill]);
+  }, [open, loadedOnce, hasPrefill, requirePrefill]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selected || isConfirmed) return; // bloquea doble envío
+    if (!selected || isConfirmed) return;
     setSubmitting(true);
     try {
       const asistenciaBool = attendance === "si";
@@ -131,11 +155,10 @@ export default function RsvpButton({
       });
 
       if (res.status === 409) {
-        // ya respondió
         setFamilies((prev) => prev.filter((f) => f.id !== selected.id));
         setFamilyId("");
         setAlreadyResponded(true);
-        onConfirmed?.();       // ← avisa al padre
+        onConfirmed?.();
         setOpen(false);
         return;
       }
@@ -150,11 +173,8 @@ export default function RsvpButton({
         asistencia: asistenciaBool,
       });
 
-      // ← marca como confirmado y avisa al padre (oculta el botón inmediatamente)
       setAlreadyResponded(true);
       onConfirmed?.();
-
-      // mostramos el modal de éxito
       setTimeout(() => setSuccessOpen(true), 0);
     } catch (err) {
       console.error(err);
@@ -164,15 +184,14 @@ export default function RsvpButton({
   }
 
   const noneLeft = loadedOnce && !loadingFamilies && families.length === 0;
+  if (hasPrefill && (isConfirmed || checkingStatus)) return null;
 
-  // Si viene por link (prefill) y ya está confirmado (o mientras chequea), no muestres el botón
-  if (hasPrefill && (isConfirmed || checkingStatus)) {
-    return null;
-  }
+  const displayName = selected?.nombreFamilia ?? "__________";
+  const greeting = greetingTemplate.replace("{{nombre}}", displayName);
 
   return (
     <>
-      {/* Botón que abre el diálogo */}
+      {/* Trigger */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
@@ -186,125 +205,157 @@ export default function RsvpButton({
           </Button>
         </DialogTrigger>
 
-        {/* Formulario */}
+        {/* Modal */}
         <DialogContent
-          className="sm:max-w-md rounded-3xl"
-          style={{ backgroundColor: "#f7f7f7ff", borderColor: SOFT_BORDER }}
+          className="sm:max-w-lg rounded-[28px] p-0 overflow-hidden"
+          style={{
+            borderColor: SOFT_BORDER,
+            background: `linear-gradient(180deg, ${BABY_BLUE_TOP}, ${BABY_BLUE_BOTTOM})`,
+          }}
         >
-          <DialogHeader>
-            <DialogTitle>Confirmar asistencia</DialogTitle>
+          {/* adornos */}
+          <img
+            src={CORNER_TOP}
+            alt=""
+            aria-hidden
+            className="pointer-events-none select-none absolute right-[-18%] top-[-10%] w-40 sm:w-48"
+            style={{ transform: "rotate(8deg)", opacity: 0.9 }}
+          />
+          <img
+            src={CORNER_BOTTOM}
+            alt=""
+            aria-hidden
+            className="pointer-events-none select-none absolute left-[-20%] bottom-[-18%] w-40 sm:w-48"
+            style={{ transform: "rotate(180deg)", opacity: 0.9 }}
+          />
+
+          {/* header */}
+          <DialogHeader className="pt-6 pb-2 text-center">
+            <div
+              className="mx-auto grid place-items-center size-11 rounded-2xl border bg-white"
+              style={{ borderColor: SOFT_BORDER }}
+            >
+              <CalendarHeart className="size-5" style={{ color: SOFT_ACCENT }} />
+            </div>
+            <DialogTitle
+              className={`mt-3 text-6xl tracking-wide text-center ${titleClassName ?? ""}`}
+              style={{ color: SOFT_TEXT }}
+            >
+              Para:
+              <div className={`mt-1 text-4xl ${titleClassName ?? ""}`} style={{ color: SOFT_TEXT }}>
+                {greeting}
+              </div>
+
+              {/* ⬇️ dinámica, se oculta si no hay número */}
+              {typeof selected?.nroPersonas === "number" && (
+                <div className={`mt-1 text-xl ${titleClassName ?? ""}`} style={{ color: SOFT_TEXT }}>
+                  Pase válido para {personasLabel(selected.nroPersonas)}
+                </div>
+              )}
+            </DialogTitle>
+            <div className="mx-auto mt-2 h-px w-24" style={{ backgroundColor: SOFT_BORDER }} />
           </DialogHeader>
 
-          {loadingFamilies ? (
-            <div className="text-sm text-slate-500">Cargando familias…</div>
-          ) : noneLeft && !selected ? (
-            <div className="text-sm text-slate-500">
-              No hay familias pendientes por responder.
-            </div>
-          ) : (
-            <form onSubmit={onSubmit} className="grid gap-4">
-              {/* Banda informativa cuando llega por link */}
-              {hasPrefill && selected && (
-                <div
-                  className="px-3 py-2 text-sm"
-                  style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
-                >
-                  Invitación para: <b>{selected.nombreFamilia}</b>
+          {/* contenido */}
+          <div className="px-5 pb-6">
+            {loadingFamilies ? (
+              <div className="text-sm text-slate-600">Cargando familias…</div>
+            ) : noneLeft && !selected ? (
+              <div className="text-sm text-slate-600">No hay familias pendientes por responder.</div>
+            ) : (
+              <form onSubmit={onSubmit} className="grid gap-4">
+                {/* nota opcional */}
+                <div className="px-4 py-4 text-center">
+                  {note && (
+                    <p className={`mt-2 text-sm text-slate-600 ${textClassName ?? ""}`}>{note}</p>
+                  )}
                 </div>
-              )}
 
-              {/* Selector visible solo si NO viene prellenado */}
-              {!hasPrefill && (
+                {/* selector (solo si NO exigimos prefill y no hay prefill) */}
+                {!requirePrefill && !hasPrefill && (
+                  <div className="grid gap-2">
+                    <Label className={`text-slate-700 ${textClassName ?? ""}`}>Familia</Label>
+                    <Select value={familyId} onValueChange={setFamilyId}>
+                      <SelectTrigger className="rounded-xl bg-white" style={{ borderColor: SOFT_BORDER }}>
+                        <SelectValue placeholder="Selecciona tu familia" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {families.map((f) => (
+                          <SelectItem key={f.id} value={f.id}>
+                            {f.nombreFamilia}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Radios — mismo fondo, resalte al seleccionar */}
                 <div className="grid gap-2">
-                  <Label>Familia</Label>
-                  <Select value={familyId} onValueChange={setFamilyId}>
-                    <SelectTrigger
-                      style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
-                    >
-                      <SelectValue placeholder="Selecciona tu familia" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {families.map((f) => (
-                        <SelectItem key={f.id} value={f.id}>
-                          {f.nombreFamilia}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label className={`text-slate-700 text-2xl ${titleClassName ?? ""}`}>¿Asistirán?</Label>
+
+                  <RadioGroup
+                    value={attendance}
+                    onValueChange={(v: "si" | "no") => setAttendance(v)}
+                    className="grid grid-cols-2 gap-3"
+                  >
+                    {(["si", "no"] as const).map((val) => {
+                      const selectedPill = attendance === val;
+                      return (
+                        <label
+                          key={val}
+                          htmlFor={`asist-${val}`}
+                          className="group relative flex cursor-pointer select-none items-center gap-3 rounded-2xl border px-4 py-3 transition"
+                          style={{
+                            background: `linear-gradient(180deg, ${BABY_BLUE_TOP}, ${BABY_BLUE_BOTTOM})`,
+                            borderColor: selectedPill ? SOFT_ACCENT : SOFT_BORDER,
+                            boxShadow: selectedPill ? `0 0 0 3px ${SOFT_ACCENT}22` : "none",
+                          }}
+                        >
+                          <RadioGroupItem id={`asist-${val}`} value={val} className="sr-only" />
+                          {val === "si" ? (
+                            <CheckCircle2
+                              className="size-5"
+                              style={{ color: selectedPill ? SOFT_ACCENT : "#94a3b8" }}
+                              aria-hidden
+                            />
+                          ) : (
+                            <XCircle
+                              className="size-5"
+                              style={{ color: selectedPill ? SOFT_ACCENT : "#94a3b8" }}
+                              aria-hidden
+                            />
+                          )}
+                          <span className={`text-sm ${textClassName ?? ""}`}>
+                            {val === "si" ? "Sí" : "No"}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </RadioGroup>
                 </div>
-              )}
 
-              <div className="px-3 py-2 text-sm">
-                <Label>
-                  Número de personas <b>{selected?.nroPersonas ?? ""}</b>
-                </Label>
-              </div>
-
-              <div className="px-3 grid gap-2 display-flex">
-                <Label>¿Asistirán?</Label>
-
-                <RadioGroup
-                  value={attendance}
-                  onValueChange={(v: "si" | "no") => setAttendance(v)}
-                  className="grid grid-cols-4 gap-2 flex "
-                >
-                  <Label
-                    htmlFor="asist-si"
-                    className={[
-                      "block w-full rounded-md border p-3 cursor-pointer select-none transition",
-                      attendance === "si"
-                        ? "bg-white shadow-sm ring-2 ring-offset-0"
-                        : "bg-white hover:bg-slate-50",
-                    ].join(" ")}
-                    style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="asist-si" value="si" />
-                      <span>Sí</span>
-                    </div>
-                  </Label>
-
-                  <Label
-                    htmlFor="asist-no"
-                    className={[
-                      "block w-full rounded-md border p-3 cursor-pointer select-none transition",
-                      attendance === "no"
-                        ? "bg-white shadow-sm ring-2 ring-offset-0"
-                        : "bg-white hover:bg-slate-50",
-                    ].join(" ")}
-                    style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <RadioGroupItem id="asist-no" value="no" />
-                      <span>No</span>
-                    </div>
-                  </Label>
-                </RadioGroup>
-              </div>
-
-              <DialogFooter>
-                <Button
-                  type="submit"
-                  disabled={!selected || submitting}
-                  className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition"
-                  style={{
-                    backgroundColor: "#f7f7f7ff",
-                    border: `1px solid ${SOFT_BORDER}`,
-                    color: "#0F172A",
-                    boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = SOFT_BTN_BG_HOVER)
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = SOFT_BTN_BG)
-                  }
-                >
-                  {submitting ? "Enviando..." : "Enviar confirmación"}
-                </Button>
-              </DialogFooter>
-            </form>
-          )}
+                {/* botón centrado */}
+                <DialogFooter className="pt-1">
+                  <div className="w-full flex justify-center">
+                    <Button
+                      type="submit"
+                      disabled={!selected || submitting}
+                      className="rounded-2xl px-5 py-2 text-sm font-semibold"
+                      style={{
+                        background: `linear-gradient(180deg, ${BABY_BLUE_TOP}, ${BABY_BLUE_BOTTOM})`,
+                        border: `1px solid ${SOFT_BORDER}`,
+                        color: SOFT_TEXT,
+                        boxShadow: "0 6px 18px rgba(15,23,42,0.06)",
+                      }}
+                    >
+                      {submitting ? "Enviando..." : "Enviar confirmación"}
+                    </Button>
+                  </div>
+                </DialogFooter>
+              </form>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -312,11 +363,14 @@ export default function RsvpButton({
       <Dialog open={successOpen} onOpenChange={setSuccessOpen}>
         <DialogContent className="sm:max-w-md bg-transparent border-0 shadow-none p-0 [&>button]:hidden [&_[data-slot='dialog-close']]:hidden">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 8 }}
+            initial={{ opacity: 0, scale: 0.92, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="rounded-xl p-6 shadow-2xl"
-            style={{ backgroundColor: "#f7f7f7ff", border: `1px solid ${SOFT_BORDER}` }}
+            className="rounded-[24px] p-6 shadow-2xl"
+            style={{
+              background: `linear-gradient(180deg, ${BABY_BLUE_TOP}, ${BABY_BLUE_BOTTOM})`,
+              border: `1px solid ${SOFT_BORDER}`,
+            }}
           >
             <DialogHeader className="items-center">
               <div
@@ -331,10 +385,9 @@ export default function RsvpButton({
             <div className="space-y-1 text-sm text-center text-slate-700">
               <p>
                 Registramos la respuesta de <b>{successData?.nombreFamilia}</b> para{" "}
-                <b>{successData?.nroPersonas}</b>{" "}
-                {successData?.nroPersonas === 1 ? "persona" : "personas"}.
+                <b>{personasLabel(successData?.nroPersonas)}</b>.
               </p>
-              {successData?.asistencia && <p>¡Qué emoción, nos vemos en la boda! 🎉</p>}
+              {successData?.asistencia && <p>¡Qué emoción, nos vemos en la boda! 💙</p>}
             </div>
 
             <DialogFooter className="mt-4 justify-center">
@@ -342,9 +395,9 @@ export default function RsvpButton({
                 <Button
                   className="rounded-xl"
                   style={{
-                    backgroundColor: SOFT_BTN_BG,
+                    background: `linear-gradient(180deg, ${BABY_BLUE_TOP}, ${BABY_BLUE_BOTTOM})`,
                     border: `1px solid ${SOFT_BORDER}`,
-                    color: "#0F172A",
+                    color: SOFT_TEXT,
                   }}
                 >
                   Aceptar

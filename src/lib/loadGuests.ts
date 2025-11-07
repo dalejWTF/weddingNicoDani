@@ -8,6 +8,24 @@ import { FAMILIAS as LOCAL_FAMILIAS } from "@/data/familias";
 
 const GUESTS_PATH = process.env.GITHUB_GUESTS_PATH || "data/guests.json";
 
+/* Helpers de tipado */
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null;
+}
+function toStringSafe(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  return "";
+}
+function toNumberSafe(v: unknown): number {
+  if (typeof v === "number" && Number.isFinite(v)) return v;
+  if (typeof v === "string") {
+    const n = Number(v.trim());
+    return Number.isFinite(n) ? n : NaN;
+  }
+  return NaN;
+}
+
 export async function loadGuests(): Promise<Family[]> {
   try {
     const gh = await getGhFile(GUESTS_PATH);
@@ -21,26 +39,35 @@ export async function loadGuests(): Promise<Family[]> {
     if (GUESTS_PATH.endsWith(".json")) {
       // Soporta JSON con comentarios y comas colgantes (las retiramos)
       const cleaned = raw
-        .replace(/\/\/.*$/gm, "")            // // comentario
-        .replace(/\/\*[\s\S]*?\*\//g, "")    // /* comentario */
-        .replace(/,\s*([\]}])/g, "$1");      // trailing comma
+        .replace(/\/\/.*$/gm, "") // // comentario
+        .replace(/\/\*[\s\S]*?\*\//g, "") // /* comentario */
+        .replace(/,\s*([\]}])/g, "$1"); // trailing comma
 
-      const json = JSON.parse(cleaned);
+      const json: unknown = JSON.parse(cleaned);
 
       // Acepta múltiples formas:
       // { families: [...] } | { FAMILIAS: [...] } | { familias: [...] } | [...]
-      let arr: unknown =
-        Array.isArray(json)
-          ? json
-          : json.families ?? json.FAMILIAS ?? json.familias;
+      let arrCandidate: unknown = [];
 
-      if (!Array.isArray(arr)) {
-        // Como último recurso: toma el PRIMER array que aparezca en el objeto
-        const firstArray = Object.values(json).find((v) => Array.isArray(v));
-        arr = firstArray ?? [];
+      if (Array.isArray(json)) {
+        arrCandidate = json;
+      } else if (isRecord(json)) {
+        const pick =
+          (json as Record<string, unknown>).families ??
+          (json as Record<string, unknown>).FAMILIAS ??
+          (json as Record<string, unknown>).familias;
+
+        if (Array.isArray(pick)) {
+          arrCandidate = pick;
+        } else {
+          // Como último recurso: toma el PRIMER array que aparezca en el objeto
+          const firstArray = Object.values(json).find(Array.isArray);
+          arrCandidate = Array.isArray(firstArray) ? firstArray : [];
+        }
       }
 
-      return normalizeFamilies(arr as any[]);
+      const finalArr: unknown[] = Array.isArray(arrCandidate) ? arrCandidate : [];
+      return normalizeFamilies(finalArr);
     }
 
     // --- TS ---
@@ -55,8 +82,9 @@ export async function loadGuests(): Promise<Family[]> {
         .replace(/\/\*[\s\S]*?\*\//g, "")
         .replace(/,\s*([\]}])/g, "$1");
 
-      const parsed = JSON.parse(cleaned);
-      return normalizeFamilies(parsed);
+      const parsed: unknown = JSON.parse(cleaned);
+      const arr: unknown[] = Array.isArray(parsed) ? parsed : [];
+      return normalizeFamilies(arr);
     }
 
     return LOCAL_FAMILIAS;
@@ -66,10 +94,22 @@ export async function loadGuests(): Promise<Family[]> {
   }
 }
 
-function normalizeFamilies(arr: any[]): Family[] {
-  return arr.map((x) => ({
-    id: String(x.id ?? "").trim(),
-    nombreFamilia: String(x.nombreFamilia ?? x.nombre ?? "").trim(),
-    nroPersonas: Number(x.nroPersonas ?? x.personas ?? x.nro ?? 0),
-  })).filter((f) => f.id && f.nombreFamilia && Number.isFinite(f.nroPersonas));
+function normalizeFamilies(arr: unknown[]): Family[] {
+  return arr
+    .map((x): Family | null => {
+      if (!isRecord(x)) return null;
+
+      const id = toStringSafe(x.id).trim();
+      const nombreFamilia = (toStringSafe(x.nombreFamilia) || toStringSafe(x.nombre)).trim();
+      const nroRaw = isRecord(x)
+        ? (x.nroPersonas ?? x.personas ?? x.nro)
+        : undefined;
+      const nroPersonas = toNumberSafe(nroRaw);
+
+      const fam: Family = { id, nombreFamilia, nroPersonas };
+
+      if (!fam.id || !fam.nombreFamilia || !Number.isFinite(fam.nroPersonas)) return null;
+      return fam;
+    })
+    .filter((f): f is Family => f !== null);
 }
