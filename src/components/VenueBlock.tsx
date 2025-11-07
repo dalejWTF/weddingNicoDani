@@ -1,7 +1,7 @@
 // components/VenueBlock.tsx
 "use client";
 
-import { MapPin, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
 
 const SOFT_ACCENT = "#8FBFD9";
 
@@ -21,13 +21,6 @@ export default function VenueBlock({ title, name, address, time, mapUrl, classNa
         className="mx-auto w-full max-w-[520px] rounded-3xl px-6 py-6 "
         
       >
-        <div
-          className="mx-auto grid size-12 place-items-center rounded-2xl shadow-sm"
-          style={{ color: SOFT_ACCENT }}
-        >
-          <MapPin className="size-6" />
-        </div>
-
         <div className="mt-4 text-center">
           {title && (
             <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">

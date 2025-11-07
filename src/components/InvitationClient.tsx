@@ -8,8 +8,10 @@ import CalendarMonth from "@/components/CalendarMonth";
 import GalleryCarousel from "@/components/GalleryCarousel";
 import QuoteBlock from "@/components/QuoteBlock";
 import TextBlock from "@/components/TextBlock";
+import { Infinity, Coins } from "lucide-react";
 import VenueBlock from "@/components/VenueBlock";
 import Timeline from "@/components/Timeline";
+import InfoCard from "@/components/InfoCard";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
@@ -95,7 +97,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
       style={{ overscrollBehaviorY: "contain" }}
     >
       <BackgroundAudio
-        src="/audio/cancion.mp3"
+        src="/audio/theme.mp3"
         title="Nuestra canción"
         artist="Daniel & Nicole"
         cover="/assets/1.jpg"
@@ -108,7 +110,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             Daniel &amp; Nicole
           </h1>
           <p className={`mt-2 text-center text-white/90 ${lora.className}`}>
-            ¡Estás invitad@ a nuestra boda!
+            Nuestra Boda
           </p>
         </HeroCover>
 
@@ -151,6 +153,25 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
             ].join(" ")}
           >
+            <div className="text-center pt-6 z-10">
+              <div className="mx-auto flex max-w-fit items-center justify-center gap-1 text-sm font-medium">
+                <span className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
+                  Nuestros <br/>Padrinos
+                </span>
+              </div>
+            </div>
+            <InfoCard
+              title={<span className="pt-6">Padrino de Arras</span>}
+              icon={<Coins className="size-6" style={{ color: "#8FBFD9" }} />}
+            >
+              <p className={`${lora.className}`}>Manuel Villamagua y Elizabeth Torres</p>
+            </InfoCard>
+            <InfoCard
+              title={<span className="pt-6">Padrino de Lazo</span>}
+              icon={<Infinity className="size-6" style={{ color: "#8FBFD9" }} />}
+            >
+              <p className={`${lora.className}`}>Carlos Ulloa y Eliza Marquez</p>
+            </InfoCard>
             <img
               src="/blueleaves.png"
               alt=""
@@ -172,13 +193,15 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
             {/* resto igual */}
             <div className="z-10">
-              <VenueBlock
+             <div className="border">
+             <VenueBlock
                 title="Ceremonia religiosa"
                 name={CHURCH_NAME}
                 address="Dirección de la iglesia"
                 time="5:00 PM"
                 mapUrl={CHURCH_MAPS_URL}
               />
+             </div>
 
               <div className="relative px-6 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
                 <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
