@@ -3,50 +3,62 @@ import { getGhFile, decodeBase64ToUtf8 } from "./githubFiles";
 
 export type Family = { id: string; nombreFamilia: string; nroPersonas: number };
 
-// fallback local opcional:
+// Fallback local
 import { FAMILIAS as LOCAL_FAMILIAS } from "@/data/familias";
 
-// Usa una env separada para no chocar con el path de RSVPs
 const GUESTS_PATH = process.env.GITHUB_GUESTS_PATH || "data/guests.json";
 
-/**
- * Intenta cargar familias desde GitHub. Si falla o no existe, retorna el fallback local.
- * Soporta JSON nativo. Para .ts, hay un parser simple (no evalúa código).
- */
 export async function loadGuests(): Promise<Family[]> {
   try {
     const gh = await getGhFile(GUESTS_PATH);
     if (!gh) return LOCAL_FAMILIAS;
 
-    const raw = decodeBase64ToUtf8(gh.content);
+    // Decodifica y limpia BOM
+    let raw = decodeBase64ToUtf8(gh.content);
+    if (raw.charCodeAt(0) === 0xfeff) raw = raw.slice(1);
 
+    // --- JSON ---
     if (GUESTS_PATH.endsWith(".json")) {
-      const json = JSON.parse(raw);
-      // Se permiten tanto { families: [...]} como [...]
-      const arr: unknown = Array.isArray(json) ? json : json.families;
-      if (!Array.isArray(arr)) throw new Error("JSON inválido: no es array");
-      return normalizeFamilies(arr);
+      // Soporta JSON con comentarios y comas colgantes (las retiramos)
+      const cleaned = raw
+        .replace(/\/\/.*$/gm, "")            // // comentario
+        .replace(/\/\*[\s\S]*?\*\//g, "")    // /* comentario */
+        .replace(/,\s*([\]}])/g, "$1");      // trailing comma
+
+      const json = JSON.parse(cleaned);
+
+      // Acepta múltiples formas:
+      // { families: [...] } | { FAMILIAS: [...] } | { familias: [...] } | [...]
+      let arr: unknown =
+        Array.isArray(json)
+          ? json
+          : json.families ?? json.FAMILIAS ?? json.familias;
+
+      if (!Array.isArray(arr)) {
+        // Como último recurso: toma el PRIMER array que aparezca en el objeto
+        const firstArray = Object.values(json).find((v) => Array.isArray(v));
+        arr = firstArray ?? [];
+      }
+
+      return normalizeFamilies(arr as any[]);
     }
 
+    // --- TS ---
     if (GUESTS_PATH.endsWith(".ts")) {
-      // Parser SIMPLE para tomar el array que exportas como FAMILIAS
-      // Busca: export const FAMILIAS ... = [ ... ];
+      // Busca el literal del array exportado como FAMILIAS
       const match = raw.match(/export\s+const\s+FAMILIAS[\s\S]*?=\s*(\[[\s\S]*?\]);?/);
       if (!match) throw new Error("No se pudo localizar el array FAMILIAS en el .ts");
       const arrayLiteral = match[1];
 
-      // Convertimos a JSON “lo mejor posible”: quitamos comentarios y trailing commas
       const cleaned = arrayLiteral
-        .replace(/\/\/.*$/gm, "")               // // comentarios
-        .replace(/\/\*[\s\S]*?\*\//g, "")       // /* */ comentarios
-        .replace(/,\s*([\]}])/g, "$1");         // trailing commas
+        .replace(/\/\/.*$/gm, "")
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/,\s*([\]}])/g, "$1");
 
-      // Opción simple: usar JSON.parse si cumple JSON estricto
       const parsed = JSON.parse(cleaned);
       return normalizeFamilies(parsed);
     }
 
-    // Otros formatos no soportados aquí
     return LOCAL_FAMILIAS;
   } catch (e) {
     console.error("[loadGuests] fallback a LOCAL_FAMILIAS:", e);
@@ -56,8 +68,8 @@ export async function loadGuests(): Promise<Family[]> {
 
 function normalizeFamilies(arr: any[]): Family[] {
   return arr.map((x) => ({
-    id: String(x.id),
-    nombreFamilia: String(x.nombreFamilia),
-    nroPersonas: Number(x.nroPersonas),
-  }));
+    id: String(x.id ?? "").trim(),
+    nombreFamilia: String(x.nombreFamilia ?? x.nombre ?? "").trim(),
+    nroPersonas: Number(x.nroPersonas ?? x.personas ?? x.nro ?? 0),
+  })).filter((f) => f.id && f.nombreFamilia && Number.isFinite(f.nroPersonas));
 }

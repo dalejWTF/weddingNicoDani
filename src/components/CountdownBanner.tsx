@@ -8,8 +8,6 @@ const BABY_BLUE_TOP = "#F7FBFE";
 const BABY_BLUE_BOTTOM = "#EFF7FD";
 const BABY_BLUE_BORDER = "#DBEAF5";
 
-// Ruta del PNG (si está en /public/assets/)
-const CORNER = "/leaves.png";
 // Alternativa con import:
 // import corner from "@/assets/blue-corner.png"; const CORNER = corner.src;
 
@@ -43,7 +41,7 @@ export default function CountdownBanner({ date, className }: { date: Date; class
         <React.Fragment key={u.label}>
           <div className="text-center min-w-16">
             <div className="text-4xl sm:text-5xl leading-none text-slate-800">{u.value}</div>
-            <div className="mt-1 text-[11px] uppercase tracking-[0.18em] text-slate-500">{u.label}</div>
+            <div className="mt-1 text-[11px] uppercase tracking-[0.08em] text-slate-500">{u.label}</div>
           </div>
           {i < vs.length - 1 && <span className="pb-6 text-2xl text-slate-400/60">:</span>}
         </React.Fragment>
@@ -53,33 +51,10 @@ export default function CountdownBanner({ date, className }: { date: Date; class
 
   return (
     <section
-      className={[
-        // móvil: grande
-        "[--corner:clamp(112px,38vw,260px)]",
-        // sm+ (>=640px): tu valor actual
-        "sm:[--corner:clamp(52px,16vw,210px)]",
-        "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
+      className={["relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
         className ?? ""
       ].join(" ")}
     >
-      {/* Overlay esquina superior derecha */}
-      <img
-        src={CORNER}
-        alt=""
-        aria-hidden
-        className="pointer-events-none"
-        style={{
-          position: "absolute",
-          zIndex: 20,
-          width: "var(--corner)",   // responsivo
-          height: "auto",
-          top: "calc(-0.28 * var(--corner))",   // sobresale un poco hacia afuera
-          right: "calc(-0.18 * var(--corner))",
-          // Si tu imagen está “pensada” para la esquina superior izquierda,
-          // espejar para usarla en la derecha:
-
-        }}
-      />
 
       {mounted ? (
         <div className="w-full">

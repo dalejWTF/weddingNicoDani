@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 const OWNER  = process.env.GITHUB_OWNER!;
 const REPO   = process.env.GITHUB_REPO!;
 const BRANCH = process.env.GITHUB_BRANCH || "main";
-const PATH   = process.env.GITHUB_DATA_PATH || "data/rsvps.md"; // RSVPs en markdown
+const PATH   = process.env.GITHUB_DATA_PATH || "data/rsvps.md";
 const TOKEN  = process.env.GITHUB_TOKEN!;
 const GH = "https://api.github.com";
 
@@ -26,15 +26,13 @@ async function getRsvpsFile(): Promise<GhFile | null> {
   return (await res.json()) as GhFile;
 }
 
-// Parser para el markdown de RSVPs (mismo formato que ya usas)
-// | family_id | creation_date | nombre_familia | nro_personas | asistencia |
 function parseRespondedSet(md: string) {
   const set = new Set<string>();
   for (const line of md.split("\n")) {
     if (!line.startsWith("|")) continue;
     if (line.includes("|---|")) continue;
     const cells = line.split("|").map((s) => s.trim());
-    const familyId = cells[1];
+    const familyId = (cells[1] || "").trim();
     if (!familyId || familyId === "family_id") continue;
     set.add(familyId);
   }
@@ -44,26 +42,42 @@ function parseRespondedSet(md: string) {
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const familyId = searchParams.get("familyId");       // opcional: estado de una familia
-    const withStatus = searchParams.get("withStatus");   // "1" para incluir confirmed por cada familia
+    const rawId = searchParams.get("familyId");   // opcional
+    const withStatus = searchParams.get("withStatus");
 
-    // 1) Cargar invitados
+    // 1) Invitados
     const families = await loadGuests();
 
-    // 2) Cargar/parsear RSVPs
+    // 2) RSVPs
     const rsvps = await getRsvpsFile();
     const responded = rsvps
       ? parseRespondedSet(Buffer.from(rsvps.content, "base64").toString("utf8"))
       : new Set<string>();
 
-    // 2.a) Si preguntan por una familia específica, respondemos su estado
-    if (familyId) {
-      const fam = families.find((f) => f.id === familyId) || null;
+    // 2.a) status de una familia
+    if (rawId) {
+      const id = rawId.trim();
+      // busca por id EXACTO y además por case-insensitive (por si acaso)
+      const fam =
+        families.find((f) => f.id === id) ??
+        families.find((f) => f.id.toLowerCase() === id.toLowerCase()) ??
+        null;
+
       const confirmed = fam ? responded.has(fam.id) : false;
+
+      // Debug mínimo (aparece en server console)
+      if (!fam) {
+        console.warn(`[GET /api/guests] familyId no encontrado`, {
+          familyId: id,
+          totalFamilies: families.length,
+          sampleIds: families.slice(0, 5).map((f) => f.id),
+        });
+      }
+
       return NextResponse.json({ family: fam, confirmed });
     }
 
-    // 2.b) Si piden withStatus=1 devolvemos confirmed por cada familia
+    // 2.b) lista enriquecida
     if (withStatus === "1") {
       const enriched = families.map((f) => ({
         ...f,
@@ -72,11 +86,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ families: enriched });
     }
 
-    // Default: lista simple (como antes)
+    // default
     return NextResponse.json({ families });
   } catch (e) {
     console.error(e);
-    // fallback: si algo falla, devolvemos lista simple sin estado
     const families = await loadGuests().catch(() => []);
     return NextResponse.json({ families });
   }

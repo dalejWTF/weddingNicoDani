@@ -11,34 +11,40 @@ const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 
 export default function CalendarMonth({
-  date, highlightDate, startOnSunday = false
-}: { date: Date; highlightDate?: Date; startOnSunday?: boolean; }) {
+  date,
+  highlightDate,
+  startOnSunday = false,
+  className,
+}: {
+  date: Date;
+  highlightDate?: Date;
+  startOnSunday?: boolean;
+  className?: string;       // ← NUEVO
+}) {
   const base = startOfMonth(date);
   const total = daysInMonth(date);
   const highlight = highlightDate ? new Date(highlightDate) : undefined;
   const startOffset = startOnSunday ? base.getDay() : ((base.getDay() + 6) % 7);
-  const weeks: (number | null)[] = Array.from({ length: startOffset + total }, (_, i) => (i < startOffset ? null : i - startOffset + 1));
+  const weeks: (number | null)[] = Array.from({ length: startOffset + total }, (_, i) =>
+    (i < startOffset ? null : i - startOffset + 1)
+  );
   while (weeks.length % 7 !== 0) weeks.push(null);
   const daysShort = startOnSunday ? ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"] : ["L", "M", "X", "J", "V", "S", "D"];
 
   return (
-    // Contenedor posicionable + padding para el adorno inferior
-    <div
-      className="relative w-full select-none px-3
-             [--corner:clamp(112px,38vw,260px)]
-             sm:[--corner:clamp(52px,16vw,210px)]"
-      style={{
-        paddingBottom: "calc(var(--corner) * 0.25)",
-      }}
-    >
+    <div className={`relative w-full select-none ${className ?? ""}`}>
       <div className="border-t" style={{ borderColor: SOFT_BORDER }}>
+        {/* cabecera compacta */}
         <div className="grid grid-cols-7 text-center text-[11px] uppercase tracking-wide text-slate-600">
           {daysShort.map((d) => (
-            <div key={d} className="py-2">{d}</div>
+            <div key={d} className="py-1.5">{d}</div>
           ))}
         </div>
+
         <div className="border-t" style={{ borderColor: SOFT_BORDER }} />
-        <div className="grid grid-cols-7">
+
+        {/* filas compactas y simétricas */}
+        <div className="grid grid-cols-7 gap-y-1">
           {weeks.map((day, idx) => {
             const isHighlight =
               day !== null &&
@@ -48,16 +54,17 @@ export default function CalendarMonth({
               highlight.getDate() === day;
 
             return (
-              <div key={idx} className="aspect-square grid place-items-center text-sm">
+              // dentro del map de weeks (no cambies nada más)
+              <div key={idx} className="h-9 sm:h-10 grid place-items-center text-sm">
                 {day === null ? (
                   <span className="invisible">-</span>
                 ) : (
-                  <div className="relative grid place-items-center size-9 sm:size-10">
+                  <div className="relative grid place-items-center h-8 w-8 sm:h-9 sm:w-9">
                     {isHighlight && (
                       <Heart
                         aria-hidden
-                        className="absolute pointer-events-none size-7 sm:size-8 fill-current"
-                        style={{ color: SOFT_ACCENT }}
+                        className="absolute z-0 pointer-events-none size-8 sm:size-9 fill-current"
+                        style={{ color: SOFT_ACCENT, transform: "scale(1.35)" }}
                       />
                     )}
                     <span className={"relative z-10 " + (isHighlight ? "font-semibold text-slate-900" : "text-slate-800")}>
@@ -66,27 +73,11 @@ export default function CalendarMonth({
                   </div>
                 )}
               </div>
+
             );
           })}
         </div>
       </div>
-
-      {/* Adorno: MISMO PORTE (usa --corner) y pegado al final del calendario */}
-      <img
-        src="/leaves.png"
-        alt=""
-        aria-hidden
-        className="pointer-events-none select-none"
-        style={{
-          position: "absolute",
-          zIndex: 20,
-          width: "var(--corner)",   // ← mismo porte que el countdown
-          height: "auto",
-          left: "calc(-0.22 * var(--corner))",
-          bottom: "calc(-0.12 * var(--corner))",
-          transform: "rotate(180deg)",
-        }}
-      />
     </div>
   );
 }

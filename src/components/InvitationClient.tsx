@@ -12,6 +12,8 @@ import { Infinity, Coins } from "lucide-react";
 import VenueBlock from "@/components/VenueBlock";
 import Timeline from "@/components/Timeline";
 import InfoCard from "@/components/InfoCard";
+import BigDate from "@/components/BigDate";
+
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
@@ -20,6 +22,7 @@ import {
   Great_Vibes,
   Cormorant_Garamond,
   Lora,
+  Mr_De_Haviland,
 } from "next/font/google";
 import DressCode from "@/components/DressCode";
 import RecGiftsSection from "@/components/RecGiftsSection";
@@ -51,6 +54,12 @@ const lora = Lora({
   variable: "--font-lora",
   display: "swap",
 });
+const mr_de_haviland = Mr_De_Haviland({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-mrdehaviland",
+  display: "swap",
+});
 
 // CSR only
 const CountdownBanner = dynamic(() => import("@/components/CountdownBanner"), { ssr: false });
@@ -73,23 +82,48 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
   // Al montar, si viene id en la URL verificamos si esa familia sigue "eligible".
   // Si NO está en elegibles => ya confirmó => confirmed = true
+  // 1) Estado de confirmación (y FIN de checking)
   React.useEffect(() => {
-    if (!familyIdFromUrl) return;
+    if (!familyIdFromUrl) {
+      setChecking(false);        // ← importante si no viene id
+      return;
+    }
     let cancelled = false;
 
     (async () => {
       try {
         const res = await fetch(`/api/guests?familyId=${encodeURIComponent(familyIdFromUrl)}`, { cache: "no-store" });
-        if (!res.ok) return;
+        if (!res.ok) throw new Error(`GET /api/guests?familyId failed: ${res.status}`);
         const data = await res.json();
         if (!cancelled) setConfirmed(Boolean(data.confirmed));
       } catch (e) {
         console.error(e);
+      } finally {
+        if (!cancelled) setChecking(false);   // ← aquí estaba faltando
       }
     })();
 
     return () => { cancelled = true; };
   }, [familyIdFromUrl]);
+
+  // 2) Prefill de la familia (opcional pero recomendado para mostrar el nombre)
+  React.useEffect(() => {
+    if (!familyIdFromUrl) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/guests", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        const fam = (data.families ?? []).find((f: any) => f.id === familyIdFromUrl);
+        if (!cancelled) setPrefillFamily(fam);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [familyIdFromUrl]);
+
 
   return (
     <main
@@ -106,7 +140,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
       <div className="mx-auto max-w-[640px]">
         {/* 1 — Hero */}
         <HeroCover src="/assets/1.jpg" alt="Daniel y Nicole" >
-          <h1 className={`text-center text-5xl sm:text-8xl ${greatVibes.className} text-white drop-shadow`}>
+          <h1 className={`text-center text-5xl sm:text-8xl ${mr_de_haviland.className} text-white drop-shadow`}>
             Daniel &amp; Nicole
           </h1>
           <p className={`mt-2 text-center text-white/90 ${lora.className}`}>
@@ -114,37 +148,72 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </p>
         </HeroCover>
 
-        {/* 2 — Texto + Countdown */}
-        <RevealSection>
-          <section className="grid gap-4 pt-9 my-4">
-            <TextBlock
-              className={`${lora.className}`}
-              paragraphs={[
-                "Dios nos ha concedido el privilegio de conocernos y amarnos con su bendición y la de nuestros padres.",
-                "Queremos unir nuestras vidas para siempre y celebrarlo contigo.",
-              ]}
-            />
-            <CountdownBanner date={WEDDING_DATE} className="my-3" />
-          </section>
-        </RevealSection>
+        {/* 2 — Texto + BigDate + Countdown + CalendarMonth (baby blue panel) */}
 
-        {/* 3 — CalendarMonth */}
         <RevealSection>
-          <section className="grid gap-2 pt-3">
-            <div className="text-center py-2">
-              <div className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
-                El gran día
+          <section
+            className="relative px-4 sm:px-6 py-6 sm:py-8"
+            style={{
+              background: "linear-gradient(180deg, #F7FBFE 0%, #EFF7FD 100%)",
+              border: "1px solid #DBEAF5",
+              boxShadow: "0 4px 14px rgba(0,0,0,0.04)",
+            }}
+          >
+            {/* ← contenedor INTERNO ÚNICO: todo se centra con el MISMO ancho */}
+            <div className="mx-auto w-full max-w-[560px] text-center">
+              {/* Texto intro */}
+              <TextBlock
+                className={`bg-transparent shadow-none p-0 ${lora.className}`}
+                paragraphClassName="text-slate-700 text-center"
+                paragraphs={[
+                  "Dios nos ha concedido el privilegio de conocernos y amarnos con su bendición y la de nuestros padres.",
+                  "Queremos unir nuestras vidas para siempre y celebrarlo contigo.",
+                ]}
+              />
+
+              {/* BigDate: centrado y con laterales igualados */}
+              <div className="mt-4">
+                <BigDate
+                  date={WEDDING_DATE}
+                  tone="dark"
+                  className={`mx-auto ${cormorant.className}`}
+                  dayClassName={greatVibes.className}
+                  labelsClassName={lora.className}
+                />
               </div>
-              <div className="flex items-center justify-center gap-2 text-sm pt-2" style={{ color: SOFT_ACCENT }}>
-                <CalendarIcon className="size-4" />
-                <span className="uppercase tracking-wide">{WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}</span>
+
+              {/* Countdown: mismo ancho */}
+              <div className="mt-4">
+                <CountdownBanner date={WEDDING_DATE} className="my-0" />
+              </div>
+
+              {/* Título + mes */}
+              <div className="mt-6">
+                <div className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
+                  El gran día
+                </div>
+                <div className="flex items-center justify-center gap-2 text-sm pt-1" style={{ color: "#8FBFD9" }}>
+                  <CalendarIcon className="size-4" />
+                  <span className="uppercase tracking-wide">
+                    {WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}
+                  </span>
+                </div>
+              </div>
+
+              {/* Calendario: centrado y más compacto */}
+              <div className="mt-3">
+                <CalendarMonth
+                  className="mx-auto w-full max-w-[520px]"
+                  date={WEDDING_DATE}
+                  highlightDate={WEDDING_DATE}
+                  startOnSunday
+                />
               </div>
             </div>
-            <CalendarMonth date={WEDDING_DATE} highlightDate={WEDDING_DATE} startOnSunday />
           </section>
         </RevealSection>
 
-        {/* 4 — Venues */}
+        {/* 3 — Venues */}
         <RevealSection>
           <section
             className={[
@@ -156,7 +225,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             <div className="text-center pt-6 z-10">
               <div className="mx-auto flex max-w-fit items-center justify-center gap-1 text-sm font-medium">
                 <span className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
-                  Nuestros <br/>Padrinos
+                  Nuestros <br />Padrinos
                 </span>
               </div>
             </div>
@@ -193,15 +262,13 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
             {/* resto igual */}
             <div className="z-10">
-             <div className="border">
-             <VenueBlock
-                title="Ceremonia religiosa"
+              <VenueBlock
+                title="Ceremonia"
                 name={CHURCH_NAME}
-                address="Dirección de la iglesia"
-                time="5:00 PM"
+                address="Av. Acueducto 5451, Puerta de Hierro, 45116" // cámbialo por la tuya
+                time="05:00 PM"
                 mapUrl={CHURCH_MAPS_URL}
               />
-             </div>
 
               <div className="relative px-6 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
                 <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
@@ -226,14 +293,14 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 title="Recepción"
                 name={RECEPTION_NAME}
                 address="Dirección de la recepción"
-                time="7:00 PM"
+                time="07:00 PM"
                 mapUrl={RECEPTION_MAPS_URL}
               />
             </div>
           </section>
         </RevealSection>
 
-        {/* 5 — Timeline + Imagen */}
+        {/* 4 — Timeline + Imagen */}
         <RevealSection>
           <section
             className={[
@@ -288,7 +355,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* 6 — DressCode */}
+        {/* 5 — DressCode */}
         <RevealSection>
           <DressCode
             className="pt-6"
@@ -299,7 +366,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           />
         </RevealSection>
 
-        {/* 7 — Recomendaciones + Regalos */}
+        {/* 6 — Recomendaciones + Regalos */}
         <RevealSection>
           <RecGiftsSection
             className="pt-6"
@@ -312,7 +379,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           />
         </RevealSection>
 
-        {/* 8 — Carrusel + Cita */}
+        {/* 7 — Carrusel + Cita */}
         <RevealSection>
           <section className="grid gap-3 py-6 [--garland:clamp(110px,26vw,200px)]">
             <GalleryCarousel
@@ -369,7 +436,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* 9 — Confirmación */}
+        {/* 8 — Confirmación */}
         <RevealSection>
           <HeroCover src="/assets/2.jpg" alt="Nos vemos pronto">
             <div className="max-w-screen-sm mx-auto px-3 text-center">
