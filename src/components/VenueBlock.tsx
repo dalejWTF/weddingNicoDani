@@ -1,69 +1,102 @@
 // components/VenueBlock.tsx
 "use client";
 
-import { MapPin, Clock } from "lucide-react";
+import { Great_Vibes, Cormorant_Garamond } from "next/font/google";
 
-const SOFT_ACCENT = "#8FBFD9";
+const SOFT_BORDER = "#DBEAF5";
+
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-greatvibes",
+  display: "swap",
+});
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
 
 type Props = {
-  title?: string;
-  name: string;
-  address?: string;
-  time?: string;
+  title?: string;      // ej: "Ceremonia"
+  name: string;        // ej: "Parroquia San Juan..."
+  address?: string;    // dirección
+  time?: string;       // ej: "08:00 PM"
   mapUrl: string;
   className?: string;
 };
 
-export default function VenueBlock({ title, name, address, time, mapUrl, className }: Props) {
+export default function VenueBlock({
+  title,
+  name,
+  address,
+  time,
+  mapUrl,
+  className,
+}: Props) {
   return (
     <section className={`w-full ${className ?? ""}`}>
-      <div
-        className="mx-auto w-full max-w-[520px] rounded-3xl px-6 py-6 "
-        
-      >
+      <div className="relative mx-auto w-full max-w-[520px] py-6">
+        {/* Hoja trasera (ligeramente girada) */}
         <div
-          className="mx-auto grid size-12 place-items-center rounded-2xl shadow-sm"
-          style={{ color: SOFT_ACCENT }}
+          aria-hidden
+          className="absolute inset-x-3 top-3 bottom-3 rounded-2xl"
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: `1px solid ${SOFT_BORDER}`,
+            boxShadow: "0 10px 22px rgba(0,0,0,0.06)",
+            transform: "rotate(-1.2deg)",
+          }}
+        />
+        {/* Tarjeta principal */}
+        <div
+          className="relative rounded-2xl px-7 py-7 text-center bg-white"
+          style={{
+            border: `1px solid ${SOFT_BORDER}`,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+          }}
         >
-          <MapPin className="size-6" />
-        </div>
-
-        <div className="mt-4 text-center">
           {title && (
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <div
+              className={`${greatVibes.className} text-[28px] sm:text-[34px] leading-none text-slate-700`}
+            >
               {title}
             </div>
           )}
 
-          <h3 className="mt-1 text-lg font-semibold text-slate-900">
-            {name}
-          </h3>
-
           {time && (
-            <div className="mt-2">
-              <span
-                className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium"
-                style={{ backgroundColor: "#F7FBFE" }}
-              >
-                <Clock className="size-3" />
-                {time}
-              </span>
+            <div
+              className="mt-2 text-[12px] sm:text-[13px] uppercase tracking-[0.18em] text-slate-600"
+            >
+              {time}
             </div>
           )}
 
-          {address && <p className="mt-2 text-sm text-slate-600">{address}</p>}
+          <h3
+            className={`${cormorant.className} mt-3 text-slate-800 uppercase text-[15px] sm:text-[18px]`}
+            style={{ letterSpacing: "0.12em" }}
+          >
+            {name}
+          </h3>
 
-          <div className="mt-4">
+          {address && (
+            <p className={`${cormorant.className} mt-3 text-sm text-slate-600 leading-relaxed`}>
+              {address}
+            </p>
+          )}
+
+          <div className="mt-5">
             <a
               href={mapUrl}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Ver ${name} en el mapa`}
-              className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition"
+              className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold transition"
               style={{
                 backgroundColor: "#EAF3FB",
+                border: `1px solid ${SOFT_BORDER}`,
                 color: "#0F172A",
-                
                 boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
               }}
             >

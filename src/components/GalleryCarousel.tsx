@@ -9,20 +9,24 @@ import { Dialog, DialogContent, DialogTrigger, DialogClose, DialogTitle } from "
 
 type Img = { src: StaticImageData | string; alt?: string };
 
-const SOFT_BG = "#FFFFFF";
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 
 export default function GalleryCarousel({
   images,
   aspect = 16 / 10,
+  className,
 }: {
   images: Img[];
   aspect?: number;
+  className?: string;
 }) {
   const [[index, direction], setIndex] = React.useState<[number, 1 | -1]>([0, 1]);
   const [open, setOpen] = React.useState(false);
   const count = images.length;
+
+  // ID estable para evitar hydration mismatch con Radix
+  const dialogId = React.useId();
 
   function paginate(dir: 1 | -1) {
     setIndex(([i]) => [((i + dir + count) % count), dir]);
@@ -41,10 +45,15 @@ export default function GalleryCarousel({
 
   return (
     <div
-      className="relative w-full max-w-full overflow-hidden rounded-2xl bg-white"
+      className={`relative w-full max-w-full overflow-hidden bg-white ${className ?? ""}`}
       style={{ border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
     >
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: aspect }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <div
+        className="relative w-full overflow-hidden"
+        style={{ aspectRatio: aspect }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={index}
@@ -87,12 +96,13 @@ export default function GalleryCarousel({
         <ChevronRight className="size-5" />
       </button>
 
-      {/* lightbox */}
+      {/* lightbox (id estable en Content + mismo id en el trigger) */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <button
             type="button"
             aria-label="Ampliar imagen"
+            aria-controls={dialogId}
             className="absolute right-2 top-2 grid place-items-center rounded-full p-2 shadow"
             style={{ backgroundColor: "rgba(255,255,255,0.95)", border: `1px solid ${SOFT_BORDER}` }}
           >
@@ -100,7 +110,10 @@ export default function GalleryCarousel({
           </button>
         </DialogTrigger>
 
-        <DialogContent className="p-0 bg-black/95 border-none w-[min(1100px,100dvw-24px)] rounded-2xl">
+        <DialogContent
+          id={dialogId}
+          className="p-0 bg-black/95 border-none w-[min(1100px,100dvw-24px)] rounded-2xl"
+        >
           <DialogTitle className="sr-only">Imagen {index + 1} de {count}</DialogTitle>
 
           <DialogClose asChild>
@@ -128,7 +141,10 @@ export default function GalleryCarousel({
           <div
             key={i}
             className="h-1.5 w-5 rounded-full"
-            style={{ backgroundColor: i === index ? SOFT_ACCENT : "rgba(255,255,255,0.8)", boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)" }}
+            style={{
+              backgroundColor: i === index ? SOFT_ACCENT : "rgba(255,255,255,0.8)",
+              boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)",
+            }}
           />
         ))}
       </div>

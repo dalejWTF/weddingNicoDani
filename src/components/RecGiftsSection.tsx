@@ -2,16 +2,17 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Gift, Sparkles, Banknote } from "lucide-react";
 import InfoCard from "@/components/InfoCard";
 import { Button } from "@/components/ui/button";
 import BankAccountsDialog, { type BankAccount } from "@/components/BankAccountsDialog";
+import QRImageDialog from "@/components/QRImageDialog";
 
 const SOFT_BTN_BG = "#EAF3FB";
 const SOFT_BTN_BG_HOVER = "#E1EEF8";
 const SOFT_TEXT = "#0F172A";
 
-// Tipo utilitario para permitir CSS variables sin usar `any`
 type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
 export default function RecGiftsSection({
@@ -21,6 +22,8 @@ export default function RecGiftsSection({
   registryUrl,
   accounts = [],
   className,
+  titleClassName,
+  itemClassName,
 }: {
   recommendations?: string;
   gifts?: string;
@@ -28,48 +31,66 @@ export default function RecGiftsSection({
   registryUrl?: string;
   accounts?: BankAccount[];
   className?: string;
+  titleClassName?: string;
+  itemClassName?: string;
 }) {
   const [open, setOpen] = React.useState(false);
-
-  // Declaramos la var de tamaño para la flor
-  const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(90px,22vw,180px)" };
+  const [selectedQR, setSelectedQR] = React.useState<string | null>(null); // 👈 NUEVO
+  const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(320px,32vw,360px)" };
 
   return (
-    <section className={"w-full px-3 " + (className ?? "")}>
-      <div className="mx-auto grid max-w-[880px] gap-6">
+    <section
+      className={[
+        "relative overflow-visible w-full px-3",
+        "[--corner:clamp(120px,22vw,120px)]",
+        "sm:[--corner:clamp(84px,16vw,180px)]",
+        className ?? "",
+      ].join(" ")}
+    >
+      <Image
+        src="/blueleaves.png"
+        alt=""
+        width={400}
+        height={400}
+        aria-hidden
+        className="pointer-events-none select-none absolute z-0 sm:top-[calc(-0.01_*_var(--corner))] right-[calc(-0.30_*_var(--corner))]"
+        style={{ width: "var(--corner)", height: "auto" }}
+        priority={false}
+      />
+
+      <div className="relative z-10 mx-auto grid max-w-[880px] gap-6">
         <InfoCard
-          title="Recomendaciones"
+          title={<span className={titleClassName}>{`Recomendaciones`}</span>}
           icon={<Sparkles className="size-6" style={{ color: "#8FBFD9" }} />}
         >
-          {recommendations}
+          <p className={itemClassName}>{recommendations}</p>
         </InfoCard>
 
-        {/* Imagen centrada entre Recomendaciones y Regalos */}
         <div className="relative flex items-center justify-center" style={lilyVarStyle}>
-          <img
-            src="/bluelilly.png"
+          <Image
+            src="/blueflower_horizontal.png"
             alt=""
+            width={640}
+            height={200}
             aria-hidden
             className="pointer-events-none select-none"
-            style={{
-              width: "var(--lily)",
-              height: "auto",
-            }}
+            style={{ width: "var(--lily)", height: "auto" }}
+            priority={false}
           />
         </div>
 
         <InfoCard
-          title="Regalos"
+          title={<span className={titleClassName}>{`Regalos`}</span>}
           icon={<Gift className="size-6" style={{ color: "#8FBFD9" }} />}
         >
-          <p>{gifts}</p>
+          <p className={itemClassName}>{gifts}</p>
 
-          <div className="mt-4 flex items-center gap-3">
+          <div className={`mt-4 flex items-center justify-center gap-3 flex-wrap text-center ${itemClassName ?? ""}`}>
             {accounts.length > 0 && (
               <Button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="rounded-xl px-4 py-2 text-sm font-semibold"
+                className="rounded-xl px-5 py-2 w-auto text-[19px] sm:text-[25px]"
                 style={{
                   backgroundColor: SOFT_BTN_BG,
                   color: SOFT_TEXT,
@@ -109,6 +130,17 @@ export default function RecGiftsSection({
           accounts={accounts}
           title="Cuentas para regalo"
           description="Puedes copiar los datos que necesites. ¡Gracias!"
+          onShowQR={(acc) => acc.qr && setSelectedQR(acc.qr)} // 👈 abre el QR correspondiente
+        />
+      )}
+
+      {selectedQR && (
+        <QRImageDialog
+          open={!!selectedQR}
+          onOpenChange={(o) => !o && setSelectedQR(null)}
+          src={selectedQR}
+          title="Pagar con QR"
+          description="Escanéalo con tu app bancaria o wallet."
         />
       )}
     </section>

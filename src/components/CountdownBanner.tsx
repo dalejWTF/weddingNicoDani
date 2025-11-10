@@ -1,15 +1,15 @@
 // CountdownBanner.tsx
 "use client";
 import * as React from "react";
+import {
+  Mea_Culpa,
+  Imperial_Script
+} from "next/font/google";
 
+const meaCulpa = Mea_Culpa({ subsets: ["latin"], weight: "400", variable: "--font-meaculpa", display: "swap" });
+const imperialScript = Imperial_Script({ subsets: ["latin"], weight: "400", variable: "--font-imperial", display: "swap" });
 function pad(n: number) { return String(n).padStart(2, "0"); }
 
-const BABY_BLUE_TOP = "#F7FBFE";
-const BABY_BLUE_BOTTOM = "#EFF7FD";
-const BABY_BLUE_BORDER = "#DBEAF5";
-
-// Ruta del PNG (si está en /public/assets/)
-const CORNER = "/leaves.png";
 // Alternativa con import:
 // import corner from "@/assets/blue-corner.png"; const CORNER = corner.src;
 
@@ -31,10 +31,10 @@ export default function CountdownBanner({ date, className }: { date: Date; class
   const seconds = total % 60;
 
   const values = [
-    { value: String(days), label: "DÍAS" },
-    { value: pad(hours), label: "HORAS" },
-    { value: pad(minutes), label: "MINUTOS" },
-    { value: pad(seconds), label: "SEGUNDOS" },
+    { value: String(days), label: "Días" },
+    { value: pad(hours), label: "Horas" },
+    { value: pad(minutes), label: "Minutos" },
+    { value: pad(seconds), label: "Segundos" },
   ];
 
   const renderRow = (vs: Array<{ value: string; label: string }>) => (
@@ -42,10 +42,10 @@ export default function CountdownBanner({ date, className }: { date: Date; class
       {vs.map((u, i) => (
         <React.Fragment key={u.label}>
           <div className="text-center min-w-16">
-            <div className="text-4xl sm:text-5xl leading-none text-slate-800">{u.value}</div>
-            <div className="mt-1 text-[11px] uppercase tracking-[0.18em] text-slate-500">{u.label}</div>
+            <div className={`text-5xl sm:text-6xl leading-none text-slate-800 ${imperialScript.className}`}>{u.value}</div>
+            <div className={`mt-1 text-[20px] tracking-[0.08em] text-slate-500 ${imperialScript.className}`}>{u.label}</div>
           </div>
-          {i < vs.length - 1 && <span className="pb-6 text-2xl text-slate-400/60">:</span>}
+          {i < vs.length - 1 && <span className="pb-10 text-2xl text-slate-400/60">:</span>}
         </React.Fragment>
       ))}
     </div>
@@ -53,42 +53,19 @@ export default function CountdownBanner({ date, className }: { date: Date; class
 
   return (
     <section
-      className={[
-        // móvil: grande
-        "[--corner:clamp(112px,38vw,260px)]",
-        // sm+ (>=640px): tu valor actual
-        "sm:[--corner:clamp(52px,16vw,210px)]",
-        "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
+      className={["relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
         className ?? ""
       ].join(" ")}
     >
-      {/* Overlay esquina superior derecha */}
-      <img
-        src={CORNER}
-        alt=""
-        aria-hidden
-        className="pointer-events-none"
-        style={{
-          position: "absolute",
-          zIndex: 20,
-          width: "var(--corner)",   // responsivo
-          height: "auto",
-          top: "calc(-0.28 * var(--corner))",   // sobresale un poco hacia afuera
-          right: "calc(-0.18 * var(--corner))",
-          // Si tu imagen está “pensada” para la esquina superior izquierda,
-          // espejar para usarla en la derecha:
-
-        }}
-      />
 
       {mounted ? (
         <div className="w-full">
-          <div className="text-center text-xs uppercase tracking-[0.22em] text-slate-600">Faltan…</div>
+          <div className={`text-center text-[32px] sm:text-[36px] text-slate-600 ${meaCulpa.className}`}>Faltan…</div>
           {renderRow(values)}
         </div>
       ) : (
         <div className="w-full" suppressHydrationWarning>
-          <div className="text-center text-xs uppercase tracking-[0.22em] text-slate-600">Faltan…</div>
+          <div className={`text-center text-[32px] sm:text-[36px] text-slate-600 ${meaCulpa.className}`}>Faltan…</div>
           {renderRow([
             { value: "--", label: "DÍAS" },
             { value: "--", label: "HORAS" },

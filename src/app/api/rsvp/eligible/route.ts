@@ -1,13 +1,13 @@
 // app/api/rsvp/eligible/route.ts
 import { NextResponse } from "next/server";
-import { FAMILIAS } from "@/data/familias";
+import { loadGuests } from "@/lib/loadGuests";
 
 export const runtime = "nodejs";
 
 const OWNER  = process.env.GITHUB_OWNER!;
 const REPO   = process.env.GITHUB_REPO!;
 const BRANCH = process.env.GITHUB_BRANCH || "main";
-const PATH   = process.env.GITHUB_DATA_PATH || "data/rsvps.md";
+const PATH   = process.env.GITHUB_DATA_PATH || "data/rsvps.md"; // path de RSVPs (markdown)
 const TOKEN  = process.env.GITHUB_TOKEN!;
 const GH = "https://api.github.com";
 
@@ -41,11 +41,14 @@ export async function GET() {
       ? parseRespondedSet(Buffer.from(existing.content, "base64").toString("utf8"))
       : new Set<string>();
 
-    const eligible = FAMILIAS.filter(f => !responded.has(f.id));
+    const families = await loadGuests();
+    const eligible = families.filter(f => !responded.has(f.id));
+
     return NextResponse.json({ families: eligible });
   } catch (e) {
     console.error(e);
-    // si falla GitHub, devolvemos todas para no romper UI (puedes cambiar a [] si prefieres)
-    return NextResponse.json({ families: FAMILIAS });
+    // Si falla GitHub, devolvemos todas para no romper UI
+    const families = await loadGuests(); // ya maneja fallback local
+    return NextResponse.json({ families });
   }
 }
