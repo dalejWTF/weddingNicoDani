@@ -38,7 +38,7 @@ export default function InfoCard({
       )}
 
       <div className="mt-4 text-center">
-        <div className={`text-xs font-semibold uppercase tracking-wider text-slate-500 ${titleClassName ?? ""}`}>
+        <div className={`text-xs font-semibold tracking-wider text-slate-500 ${titleClassName ?? ""}`}>
           {title}
         </div>
         <div className={`mt-2 text-sm text-slate-700 ${bodyClassName ?? ""}`}>

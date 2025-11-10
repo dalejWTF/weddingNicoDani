@@ -7,6 +7,7 @@ import { Gift, Sparkles, Banknote } from "lucide-react";
 import InfoCard from "@/components/InfoCard";
 import { Button } from "@/components/ui/button";
 import BankAccountsDialog, { type BankAccount } from "@/components/BankAccountsDialog";
+import QRImageDialog from "@/components/QRImageDialog";
 
 const SOFT_BTN_BG = "#EAF3FB";
 const SOFT_BTN_BG_HOVER = "#E1EEF8";
@@ -34,6 +35,7 @@ export default function RecGiftsSection({
   itemClassName?: string;
 }) {
   const [open, setOpen] = React.useState(false);
+  const [selectedQR, setSelectedQR] = React.useState<string | null>(null); // 👈 NUEVO
   const lilyVarStyle: CSSVarProps<"--lily"> = { ["--lily"]: "clamp(320px,32vw,360px)" };
 
   return (
@@ -88,7 +90,7 @@ export default function RecGiftsSection({
               <Button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="rounded-xl px-5 py-2 text-sm w-auto"
+                className="rounded-xl px-5 py-2 w-auto text-[19px] sm:text-[25px]"
                 style={{
                   backgroundColor: SOFT_BTN_BG,
                   color: SOFT_TEXT,
@@ -128,6 +130,17 @@ export default function RecGiftsSection({
           accounts={accounts}
           title="Cuentas para regalo"
           description="Puedes copiar los datos que necesites. ¡Gracias!"
+          onShowQR={(acc) => acc.qr && setSelectedQR(acc.qr)} // 👈 abre el QR correspondiente
+        />
+      )}
+
+      {selectedQR && (
+        <QRImageDialog
+          open={!!selectedQR}
+          onOpenChange={(o) => !o && setSelectedQR(null)}
+          src={selectedQR}
+          title="Pagar con QR"
+          description="Escanéalo con tu app bancaria o wallet."
         />
       )}
     </section>

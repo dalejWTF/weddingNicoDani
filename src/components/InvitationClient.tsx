@@ -27,6 +27,10 @@ import {
   Cormorant_Garamond,
   Lora,
   Mr_De_Haviland,
+  Mea_Culpa,
+  Tangerine,
+  Lavishly_Yours,
+  Rouge_Script
 } from "next/font/google";
 
 type Family = { id: string; nombreFamilia: string; nroPersonas: number };
@@ -40,8 +44,11 @@ const greatVibes = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "-
 const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-cormorant", display: "swap" });
 const lora = Lora({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-lora", display: "swap" });
 const mr_de_haviland = Mr_De_Haviland({ subsets: ["latin"], weight: "400", variable: "--font-mrdehaviland", display: "swap" });
+const mea_culpa = Mea_Culpa({ subsets: ["latin"], weight: "400", variable: "--font-meaculpa", display: "swap" });
+const tangerine = Tangerine({ subsets: ["latin"], weight: "400", variable: "--font-tangerine", display: "swap" });
+const lavishlyYours = Lavishly_Yours({ subsets: ["latin"], weight: "400", variable: "--font-lavishlyyours", display: "swap" });
+const rougeScript = Rouge_Script({ subsets: ["latin"], weight: "400", variable: "--font-rougescript", display: "swap" });
 
-// CSR only
 const CountdownBanner = dynamic(() => import("@/components/CountdownBanner"), { ssr: false });
 
 const WEDDING_DATE = new Date("2025-12-20T17:00:00");
@@ -127,8 +134,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           >
             <div className="mx-auto w-full max-w-[560px] text-center">
               <TextBlock
-                className={`bg-transparent shadow-none p-0 ${lora.className}`}
-                paragraphClassName="text-slate-700 text-center"
+                className={`bg-transparent shadow-none p-0`}
+                paragraphClassName={`text-slate-700 text-center ${tangerine.className}`}
                 paragraphs={[
                   "Dios nos ha concedido el privilegio de conocernos y amarnos con su bendición y la de nuestros padres.",
                   "Queremos unir nuestras vidas para siempre y celebrarlo contigo.",
@@ -150,10 +157,10 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               </div>
 
               <div className="mt-6">
-                <div className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
+                <div className={`${lavishlyYours.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
                   El gran día
                 </div>
-                <div className="flex items-center justify-center gap-2 text-sm pt-1" style={{ color: SOFT_ACCENT }}>
+                <div className="flex items-center justify-center gap-2 text-sm pt-4" style={{ color: SOFT_ACCENT }}>
                   <CalendarIcon className="size-4" />
                   <span className="uppercase tracking-wide">
                     {WEDDING_DATE.toLocaleDateString("es-ES", { month: "long" })}
@@ -173,7 +180,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* 3 — Venues */}
+        {/* 3 — Info Padrinos */}
         <RevealSection>
           <section
             className={[
@@ -184,40 +191,43 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           >
             <div className="text-center pt-6 z-10">
               <div className="mx-auto flex max-w-fit items-center justify-center gap-1 text-sm font-medium">
-                <span className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
-                  Nuestros <br />Padrinos
+                <span className={`${mea_culpa.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
+                  Nuestros Padrinos
                 </span>
               </div>
             </div>
             <InfoCard
-              title={<span className="pt-6">Padrino de Arras</span>}
+              title={<span className="pt-6">Padrinos de Arras</span>}
+              titleClassName={`${mea_culpa.className} text-[34px] sm:text-[40px]`}
               icon={<Coins className="size-6" style={{ color: "#8FBFD9" }} />}
             >
-              <p className={`${lora.className}`}>Manuel Villamagua y Elizabeth Torres</p>
+              <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>Manuel Villamagua & Elizabeth Torres</p>
             </InfoCard>
             <InfoCard
-              title={<span className="pt-6">Padrino de Lazo</span>}
+              title={<span className="pt-6">Padrinos de Lazo</span>}
+              titleClassName={`${mea_culpa.className} text-[34px] sm:text-[40px]`}
               icon={<Infinity className="size-6" style={{ color: "#8FBFD9" }} />}
             >
-              <p className={`${lora.className}`}>Carlos Ulloa y Eliza Marquez</p>
+              <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>Carlos Ulloa & Eliza Márquez</p>
             </InfoCard>
+          </section>
+        </RevealSection>
 
-            {/* header sin imagen dentro */}
-            <div className="text-center pt-6 z-10">
-              <div className="mx-auto flex max-w-fit items-center justify-center gap-1 text-sm font-medium">
-                <Heart className="size-5 text-slate-500" />
-                <span className={`${cormorant.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
-                  Lugar
-                </span>
-              </div>
-            </div>
-
+        {/* 4 Venues */}
+        <RevealSection>
+          <section
+            className={[
+              "[--corner:clamp(112px,38vw,260px)]",
+              "sm:[--corner:clamp(52px,16vw,210px)]",
+              "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
+            ].join(" ")}
+          >
             {/* resto igual */}
             <div className="z-10">
               <VenueBlock
                 title="Ceremonia"
                 name={CHURCH_NAME}
-                address="Av. Acueducto 5451, Puerta de Hierro, 45116"
+                address="Av. Pio Jaramillo Alvarado, Loja 110150"
                 time="05:00 PM"
                 mapUrl={CHURCH_MAPS_URL}
               />
@@ -245,7 +255,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               <VenueBlock
                 title="Recepción"
                 name={RECEPTION_NAME}
-                address="Dirección de la recepción"
+                address="Vía a Cuenca, barrio Carigán, Loja"
                 time="07:00 PM"
                 mapUrl={RECEPTION_MAPS_URL}
               />
@@ -253,7 +263,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* 4 — Timeline + Imagen */}
+        {/* 5 — Timeline + Imagen */}
         <RevealSection>
           <section
             className={[
@@ -288,7 +298,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               ]}
               className="px-3 pt-2"
               title="Itinerario"
-              titleClassName={`${cormorant.className} text-3xl`}
+              titleClassName={`${greatVibes.className} text-3xl`}
               itemClassName={`${lora.className}`}
             />
           </section>
@@ -310,8 +320,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <DressCode
             className="pt-6"
-            titleClassName={`${cormorant.className} text-3xl`}
-            captionClassName={`${lora.className}`}
+            titleClassName={`${mea_culpa.className} text-3xl`}
+            captionClassName={`${rougeScript.className} text-[25px] sm:text-[29px]`}
             womenColors={[{ color: "#D9EDF9" }, { color: "#E6F3FB" }, { color: "#F0F8FD" }, { color: "#F6FAFE" }]}
             menColors={[{ color: "#191919" }, { color: "#393939" }, { color: "#4B4B4B" }, { color: "#535353" }]}
           />
@@ -321,11 +331,12 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         <RevealSection>
           <RecGiftsSection
             className="pt-6"
-            titleClassName={`${cormorant.className} text-3xl`}
-            itemClassName={`${lora.className}`}
+            titleClassName={`${mea_culpa.className} text-5xl`}
+            itemClassName={`${rougeScript.className} text-[19px] sm:text-[25px]`}
             accounts={[
-              { bank: "Banco Pichincha", holder: "Daniel Ulloa", account: "1234567890", dni: "0102030405" },
-              { bank: "Banco Guayaquil", holder: "Nicole Torres", account: "0987654321", dni: "1122334455" },
+              { bank: "Cooperativa Coopmego", holder: "Daniel Ulloa", account: "401010838242", dni: "1105002867" },
+              { bank: "Banco de Loja", holder: "Daniel Ulloa", account: "2903926236", dni: "1105002867" },
+              { bank: "Banco Pichincha", holder: "Daniel Ulloa", account: "2206132871", dni: "1105002867" },
             ]}
           />
         </RevealSection>
@@ -365,8 +376,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               />
               <div className="relative z-10">
                 <QuoteBlock
-                  classNameAuthor={`${cormorant.className}`}
-                  classNameQuote={`${lora.className}`}
+                  classNameAuthor={`${cormorant.className} text-[14px] sm:text-[20px]`}
+                  classNameQuote={`${rougeScript.className} text-[29px] sm:text-[35px]`}
                   quote="El amor nunca se da por vencido, jamás pierde la fe, siempre tiene esperanzas y se mantiene firme en toda circunstancia."
                   author="1 Corintios 13:7"
                 />

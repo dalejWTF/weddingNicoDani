@@ -1,8 +1,9 @@
+// components/BankAccountsDialog.tsx
 "use client";
 
 import * as React from "react";
 import Image from "next/image";
-import { Copy, Check, Banknote } from "lucide-react";
+import { Copy, Check, Banknote, QrCode } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,7 @@ export type BankAccount = {
   holder: string;
   account: string;
   dni: string;
+  qr?: string; // 👈 NUEVO: ruta/URL de imagen QR propia de la cuenta
 };
 
 export default function BankAccountsDialog({
@@ -36,6 +38,7 @@ export default function BankAccountsDialog({
   description = "Gracias por tu cariño. Puedes usar cualquiera de estas cuentas:",
   titleClassName,
   textClassName,
+  onShowQR, // 👈 NUEVO: callback para mostrar el QR
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -45,6 +48,7 @@ export default function BankAccountsDialog({
   /** opcional, para combinar tipografías como en RsvpButton */
   titleClassName?: string;
   textClassName?: string;
+  onShowQR?: (account: BankAccount) => void; // 👈 NUEVO
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -80,9 +84,9 @@ export default function BankAccountsDialog({
         {/* header */}
         <DialogHeader className="pt-6 pb-2 text-center">
           <div
-              className="mx-auto grid place-items-center size-11 rounded-2xl border bg-white"
-              style={{ borderColor: SOFT_BORDER }}
-            >
+            className="mx-auto grid place-items-center size-11 rounded-2xl border bg-white"
+            style={{ borderColor: SOFT_BORDER }}
+          >
             <Banknote className="size-5" style={{ color: SOFT_ACCENT }} />
           </div>
           <DialogTitle
@@ -114,6 +118,22 @@ export default function BankAccountsDialog({
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   <CopyAllButton acc={acc} />
+                  {acc.qr && (
+                    <Button
+                      type="button"
+                      className="rounded-xl"
+                      onClick={() => onShowQR?.(acc)}
+                      style={{
+                        background: `linear-gradient(180deg, ${BABY_BLUE_TOP}, ${BABY_BLUE_BOTTOM})`,
+                        border: `1px solid ${SOFT_BORDER}`,
+                        color: SOFT_TEXT,
+                        boxShadow: "0 6px 18px rgba(15,23,42,0.06)",
+                      }}
+                    >
+                      <QrCode className="mr-2 size-4" />
+                      Ver QR
+                    </Button>
+                  )}
                 </div>
               </li>
             ))}

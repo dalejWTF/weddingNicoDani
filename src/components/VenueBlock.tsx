@@ -74,8 +74,8 @@ export default function VenueBlock({
           )}
 
           <h3
-            className={`${cormorant.className} mt-3 text-slate-800 uppercase tracking-[0.22em] text-[15px] sm:text-[18px]`}
-            style={{ letterSpacing: "0.22em" }}
+            className={`${cormorant.className} mt-3 text-slate-800 uppercase text-[15px] sm:text-[18px]`}
+            style={{ letterSpacing: "0.12em" }}
           >
             {name}
           </h3>

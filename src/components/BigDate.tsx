@@ -38,7 +38,7 @@ export default function BigDate({
     <section className={`w-full text-center ${className ?? ""}`} style={{ color: textColor }}>
       {/* Mes */}
       <div
-        className="uppercase tracking-[0.35em] text-[11px] sm:text-xs"
+        className={`uppercase tracking-[0.35em] text-[11px] sm:text-xs ${labelsClassName ?? ""}`}
         style={{ color: mutedColor }}
       >
         {month}

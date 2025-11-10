@@ -197,7 +197,7 @@ function ItemBox({
             {time}
           </div>
           <div
-            className="uppercase tracking-wide"
+            className="tracking-wide"
             style={{ color: TEXTTIMELINE, fontSize: labelSize }}
           >
             {label}

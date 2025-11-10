@@ -3,15 +3,24 @@
 
 import Image from "next/image";
 import { Mars, Venus } from "lucide-react";
+import {
+  Great_Vibes,
+} from "next/font/google";
 
 type Swatch = { color: string; name?: string };
 
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 const COUPLE = "/couple2.png";
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-greatvibes",
+  display: "swap",
+});
 
 export default function DressCode({
-  title = "CÓDIGO DE VESTIMENTA",
+  title = "Código de Vestimenta",
   message1 = "Se recomienda no usar blanco ni tonalidades similares ya que es el color de la novia.",
   message2 = "Invitados en general pueden usar tonos pasteles, colores claros o vibrantes.",
   colors = DEFAULT_COLORS,
@@ -38,7 +47,7 @@ export default function DressCode({
     <section className={`w-full ${className ?? ""}`}>
       <div className="mx-auto max-w-[640px] rounded-3xl px-6 py-7">
         <div className="text-center">
-          <h3 className={`text-3xl sm:text-4xl tracking-[0.18em] font-medium uppercase text-slate-800 ${titleClassName ?? ""}`}>
+          <h3 className={`text-3xl text-[44px] sm:text-[50px] font-medium text-slate-800 ${titleClassName ?? ""}`}>
             {title}
           </h3>
 
@@ -63,7 +72,7 @@ export default function DressCode({
           />
           <PaletteGroup
             label="Caballeros"
-            icon={<Mars className="size-4" style={{ color: SOFT_ACCENT }} />}
+            icon={<Mars className="size-4 ${greatVibes}" style={{ color: SOFT_ACCENT }} />}
             colors={m}
           />
         </div>
@@ -86,7 +95,7 @@ function PaletteGroup({
 }) {
   return (
     <div className="mx-auto w-full max-w-[520px]">
-      <div className="mb-2 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <div className={`mb-2 flex items-center justify-center gap-2 text-[24px] sm:text-[30px] font-semibold tracking-wider text-slate-500 ${greatVibes.className}`}>
         {icon}
         <span>{label}</span>
       </div>

@@ -1,7 +1,13 @@
 // CountdownBanner.tsx
 "use client";
 import * as React from "react";
+import {
+  Mea_Culpa,
+  Imperial_Script
+} from "next/font/google";
 
+const meaCulpa = Mea_Culpa({ subsets: ["latin"], weight: "400", variable: "--font-meaculpa", display: "swap" });
+const imperialScript = Imperial_Script({ subsets: ["latin"], weight: "400", variable: "--font-imperial", display: "swap" });
 function pad(n: number) { return String(n).padStart(2, "0"); }
 
 // Alternativa con import:
@@ -25,10 +31,10 @@ export default function CountdownBanner({ date, className }: { date: Date; class
   const seconds = total % 60;
 
   const values = [
-    { value: String(days), label: "DÍAS" },
-    { value: pad(hours), label: "HORAS" },
-    { value: pad(minutes), label: "MINUTOS" },
-    { value: pad(seconds), label: "SEGUNDOS" },
+    { value: String(days), label: "Días" },
+    { value: pad(hours), label: "Horas" },
+    { value: pad(minutes), label: "Minutos" },
+    { value: pad(seconds), label: "Segundos" },
   ];
 
   const renderRow = (vs: Array<{ value: string; label: string }>) => (
@@ -36,10 +42,10 @@ export default function CountdownBanner({ date, className }: { date: Date; class
       {vs.map((u, i) => (
         <React.Fragment key={u.label}>
           <div className="text-center min-w-16">
-            <div className="text-4xl sm:text-5xl leading-none text-slate-800">{u.value}</div>
-            <div className="mt-1 text-[11px] uppercase tracking-[0.08em] text-slate-500">{u.label}</div>
+            <div className={`text-5xl sm:text-6xl leading-none text-slate-800 ${imperialScript.className}`}>{u.value}</div>
+            <div className={`mt-1 text-[20px] tracking-[0.08em] text-slate-500 ${imperialScript.className}`}>{u.label}</div>
           </div>
-          {i < vs.length - 1 && <span className="pb-6 text-2xl text-slate-400/60">:</span>}
+          {i < vs.length - 1 && <span className="pb-10 text-2xl text-slate-400/60">:</span>}
         </React.Fragment>
       ))}
     </div>
@@ -54,12 +60,12 @@ export default function CountdownBanner({ date, className }: { date: Date; class
 
       {mounted ? (
         <div className="w-full">
-          <div className="text-center text-xs uppercase tracking-[0.22em] text-slate-600">Faltan…</div>
+          <div className={`text-center text-[32px] sm:text-[36px] text-slate-600 ${meaCulpa.className}`}>Faltan…</div>
           {renderRow(values)}
         </div>
       ) : (
         <div className="w-full" suppressHydrationWarning>
-          <div className="text-center text-xs uppercase tracking-[0.22em] text-slate-600">Faltan…</div>
+          <div className={`text-center text-[32px] sm:text-[36px] text-slate-600 ${meaCulpa.className}`}>Faltan…</div>
           {renderRow([
             { value: "--", label: "DÍAS" },
             { value: "--", label: "HORAS" },

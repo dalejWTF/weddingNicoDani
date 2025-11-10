@@ -20,12 +20,12 @@ export default function TextBlock({
     >
       {title && (
         <h2
-          className={`text-lg font-medium text-center mb-2 text-slate-800 ${titleClassName ?? ""}`}
+          className={`text-center mb-2 text-slate-800 ${titleClassName ?? ""}`}
         >
           {title}
         </h2>
       )}
-      <div className="space-y-2 text-sm text-slate-700">
+      <div className="space-y-2 text-sm text-slate-700 text-[22px] sm:text-[26px]">
         {paragraphs.map((p, i) => (
           <p key={i} className={paragraphClassName}>{p}</p>
         ))}
