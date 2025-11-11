@@ -48,11 +48,14 @@ export default function RsvpButton({
   prefillFamily,
   confirmed,
   onConfirmed,
+  onDeclined, // 👈 NUEVO
   greetingTemplate = "Estimad@ {{nombre}}",
   note,
   titleClassName,
   textClassName,
   requirePrefill = true,
+  successYesMessage = "¡Qué emoción, nos vemos en la boda! 💙",
+  successNoMessage = "No hay problema, nos encontraremos en una siguiente ocasión",
 }: {
   triggerClassName?: string;
   triggerLabel?: string;
@@ -60,11 +63,14 @@ export default function RsvpButton({
   prefillFamily?: Family;
   confirmed?: boolean;
   onConfirmed?: () => void;
+  onDeclined?: () => void; // 👈 NUEVO
   greetingTemplate?: string;
   note?: string;
   titleClassName?: string;
   textClassName?: string;
   requirePrefill?: boolean;
+  successYesMessage?: string;
+  successNoMessage?: string;
 }) {
   const [open, setOpen] = React.useState(false);
   const [families, setFamilies] = React.useState<Family[]>([]);
@@ -86,9 +92,10 @@ export default function RsvpButton({
   const selected: Family | null =
     families.find((f) => f.id === familyId) || prefillFamily || null;
 
+  // tratado como "ya respondió" (para ocultar trigger)
   const isConfirmed = (confirmed ?? alreadyResponded) === true;
 
-  // SIEMPRE declarado: autochequeo de “eligible”
+  // Autochequeo de elegibilidad
   React.useEffect(() => {
     if (!hasPrefill) return;
     if (confirmed !== undefined) return;
@@ -108,12 +115,10 @@ export default function RsvpButton({
       }
     })();
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [hasPrefill, confirmed, prefillFamily, prefillFamilyId]);
 
-  // SIEMPRE declarado: carga de familias (cuando no exigimos prefill)
+  // Carga de familias (sin prefill)
   React.useEffect(() => {
     if (!open || loadedOnce || hasPrefill || requirePrefill) return;
     (async () => {
@@ -148,15 +153,16 @@ export default function RsvpButton({
       });
 
       if (res.status === 409) {
+        // Ya habían respondido (desconocemos si fue sí/no) → no llamar callbacks
         setFamilies((prev) => prev.filter((f) => f.id !== selected.id));
         setFamilyId("");
         setAlreadyResponded(true);
-        onConfirmed?.();
         setOpen(false);
         return;
       }
       if (!res.ok) throw new Error(await res.text());
 
+      // Éxito
       setFamilies((prev) => prev.filter((f) => f.id !== selected.id));
       setFamilyId("");
       setOpen(false);
@@ -167,7 +173,11 @@ export default function RsvpButton({
       });
 
       setAlreadyResponded(true);
-      onConfirmed?.();
+
+      // 👇 callback correcto según la elección
+      if (asistenciaBool) onConfirmed?.();
+      else onDeclined?.();
+
       setTimeout(() => setSuccessOpen(true), 0);
     } catch (err) {
       console.error(err);
@@ -176,12 +186,10 @@ export default function RsvpButton({
     }
   }
 
-  // decidir ocultar después de declarar hooks
   const noneLeft = loadedOnce && !loadingFamilies && families.length === 0;
   const shouldHide =
     (requirePrefill && !hasPrefill) ||
     (hasPrefill && (isConfirmed || checkingStatus));
-
   if (shouldHide) return null;
 
   const displayName = selected?.nombreFamilia ?? "__________";
@@ -374,11 +382,17 @@ export default function RsvpButton({
             <DialogHeader className="items-center">
               <div
                 className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-full"
-                style={{ backgroundColor: "#E8F6EE" }}
+                style={{ backgroundColor: successData?.asistencia ? "#E8F6EE" : "#FDECEC" }}
               >
-                <CheckCircle2 className="h-7 w-7" style={{ color: "#22C55E" }} />
+                {successData?.asistencia ? (
+                  <CheckCircle2 className="h-7 w-7" style={{ color: "#22C55E" }} />
+                ) : (
+                  <XCircle className="h-7 w-7" style={{ color: "#ef4444" }} />
+                )}
               </div>
-              <DialogTitle className="text-center">¡Confirmación enviada!</DialogTitle>
+              <DialogTitle className="text-center">
+                {successData?.asistencia ? "¡Confirmación enviada!" : "¡Respuesta registrada!"}
+              </DialogTitle>
             </DialogHeader>
 
             <div className="space-y-1 text-sm text-center text-slate-700">
@@ -386,7 +400,11 @@ export default function RsvpButton({
                 Registramos la respuesta de <b>{successData?.nombreFamilia}</b> para{" "}
                 <b>{personasLabel(successData?.nroPersonas)}</b>.
               </p>
-              {successData?.asistencia && <p>¡Qué emoción, nos vemos en la boda! 💙</p>}
+              {successData?.asistencia ? (
+                <p>{successYesMessage}</p>
+              ) : (
+                <p>{successNoMessage}</p>
+              )}
             </div>
 
             <DialogFooter className="mt-4 justify-center">

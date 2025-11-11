@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { CheckCircle2, CalendarCheck2 } from "lucide-react";
+import { CheckCircle2, CalendarCheck2, XCircle } from "lucide-react";
 import RsvpButton from "@/components/RsvpButton";
 
 const SOFT_BORDER = "#DBEAF5";
@@ -11,33 +11,45 @@ type Family = { id: string; nombreFamilia: string; nroPersonas: number };
 
 export default function ConfirmCard({
   confirmed,
+  declined = false,
   checking,
   prefillFamilyId,
   prefillFamily,
   onConfirmed,
+  onDeclined,
   className,
   titleClassName,   // p.ej. greatVibes.className
   textClassName,    // p.ej. lora.className
   deadlineText = "Por favor confirma tu asistencia antes del 10 de diciembre de 2025",
   titleWhenOpen = "Confirmar asistencia",
   titleWhenDone = "¡Gracias por confirmar!",
-  hideIfNoPrefill = true, // ⬅️ oculta toda la tarjeta si no hay id
+  titleWhenDeclined = "¡Respuesta registrada!", // 👈 nuevo título para NO
+  hideIfNoPrefill = true,
+  messageWhenConfirmed = "¡Nos hace mucha ilusión compartir este día contigo! 💙",
+  messageWhenDeclined = "No hay problema, nos encontraremos en una siguiente ocasión",
 }: {
   confirmed: boolean;
+  declined?: boolean;
   checking?: boolean;
   prefillFamilyId?: string;
   prefillFamily?: Family;
   onConfirmed?: () => void;
+  onDeclined?: () => void;
   className?: string;
   titleClassName?: string;
   textClassName?: string;
   deadlineText?: string;
   titleWhenOpen?: string;
   titleWhenDone?: string;
+  titleWhenDeclined?: string;
   hideIfNoPrefill?: boolean;
+  messageWhenConfirmed?: string;
+  messageWhenDeclined?: string;
 }) {
   const hasPrefill = Boolean(prefillFamilyId || prefillFamily);
   if (hideIfNoPrefill && !hasPrefill) return null;
+
+  const showForm = !confirmed && !declined;
 
   return (
     <section className={`w-full ${className ?? ""}`}>
@@ -58,6 +70,8 @@ export default function ConfirmCard({
           >
             {confirmed ? (
               <CheckCircle2 className="size-6" style={{ color: "#22C55E" }} />
+            ) : declined ? (
+              <XCircle className="size-6" style={{ color: "#ef4444" }} />
             ) : (
               <CalendarCheck2 className="size-6" style={{ color: "#8FBFD9" }} />
             )}
@@ -65,14 +79,13 @@ export default function ConfirmCard({
         </div>
 
         <h3 className={`mt-4 text-4xl sm:text-5xl ${titleClassName ?? ""}`} style={{ color: "#0B1B2B" }}>
-          {confirmed ? titleWhenDone : titleWhenOpen}
+          {confirmed ? titleWhenDone : (declined ? titleWhenDeclined : titleWhenOpen)}
         </h3>
 
-        {!confirmed ? (
+        {showForm ? (
           <>
             <p className={`mt-2 text-sm text-slate-600 ${textClassName ?? ""}`}>{deadlineText}</p>
 
-            {/* Botón (oculto si está confirmado o mientras chequea) */}
             {hasPrefill && !checking && (
               <div className="mt-5">
                 <RsvpButton
@@ -80,11 +93,12 @@ export default function ConfirmCard({
                   prefillFamilyId={prefillFamilyId}
                   prefillFamily={prefillFamily}
                   greetingTemplate="{{nombre}}"
-                  titleClassName ={titleClassName}
+                  titleClassName={titleClassName}
                   textClassName={textClassName}
                   note="Nos encantará contar con tu presencia. Con su confirmación, nos ayudará a planificar mejor este día tan especial."
-                  requirePrefill // ⬅️ exige id
-                  onConfirmed={onConfirmed}  
+                  requirePrefill
+                  onConfirmed={onConfirmed}
+                  onDeclined={onDeclined}   // 👈 importante para NO
                 />
               </div>
             )}
@@ -93,9 +107,13 @@ export default function ConfirmCard({
               Si necesitas actualizar tu respuesta más adelante, contáctanos.
             </p>
           </>
+        ) : confirmed ? (
+          <p className={`mt-2 text-sm text-slate-600 ${textClassName ?? ""}`}>
+            {messageWhenConfirmed}
+          </p>
         ) : (
           <p className={`mt-2 text-sm text-slate-600 ${textClassName ?? ""}`}>
-            ¡Nos hace mucha ilusión compartir este día contigo! 💙
+            {messageWhenDeclined}
           </p>
         )}
       </div>

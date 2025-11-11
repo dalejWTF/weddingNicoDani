@@ -3,15 +3,21 @@
 
 import Image from "next/image";
 import { Mars, Venus } from "lucide-react";
-import {
-  Great_Vibes,
-} from "next/font/google";
+import { Great_Vibes } from "next/font/google";
 
 type Swatch = { color: string; name?: string };
 
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 const COUPLE = "/couple2.png";
+
+// igual que tu ejemplo de “El gran día”
+const PANEL_STYLE: React.CSSProperties = {
+  background: "linear-gradient(0deg, #F7FBFE 0%, #EFF7FD 100%)",
+  border: "1px solid #DBEAF5",
+  boxShadow: "0 4px 14px rgba(0,0,0,0.04)",
+};
+
 const greatVibes = Great_Vibes({
   subsets: ["latin"],
   weight: "400",
@@ -40,31 +46,39 @@ export default function DressCode({
   titleClassName?: string;
   captionClassName?: string;
 }) {
-  const w = (womenColors && womenColors.length ? womenColors.slice(0, 4) : colors.slice(0, 4));
-  const m = (menColors && menColors.length ? menColors.slice(0, 4) : colors.slice(4, 8));
+  const w = womenColors && womenColors.length ? womenColors.slice(0, 4) : colors.slice(0, 4);
+  const m = menColors && menColors.length ? menColors.slice(0, 4) : colors.slice(4, 8);
 
   return (
-    <section className={`w-full ${className ?? ""}`}>
-      <div className="mx-auto max-w-[640px] rounded-3xl px-6 py-7">
-        <div className="text-center">
-          <h3 className={`text-3xl text-[44px] sm:text-[50px] font-medium text-slate-800 ${titleClassName ?? ""}`}>
-            {title}
-          </h3>
+    <section
+      className={[
+        "relative w-full px-4 sm:px-6 py-6 sm:py-8",
+        className ?? "",
+      ].join(" ")}
+      style={PANEL_STYLE}
+    >
+      <div className="mx-auto w-full max-w-[560px] text-center">
+        <h3
+          className={`text-[34px] sm:text-[40px] font-medium text-slate-800 ${titleClassName ?? ""}`}
+        >
+          {title}
+        </h3>
 
-          <Image
-            src={COUPLE}
-            alt=""
-            width={100}
-            height={100}
-            className="pointer-events-none mx-auto mt-4"
-            style={{ height: "auto" }}
-            priority={false}
-          />
+        <Image
+          src={COUPLE}
+          alt=""
+          width={120}
+          height={120}
+          className="pointer-events-none mx-auto mt-4"
+          style={{ height: "auto" }}
+          priority={false}
+        />
 
-          <p className={`mt-3 text-sm text-slate-600 ${captionClassName ?? ""}`}>{message1}</p>
-        </div>
+        <p className={`mt-3 text-sm text-slate-600 ${captionClassName ?? ""}`}>
+          {message1}
+        </p>
 
-        <div className="mt-6 grid gap-5">
+        <div className="mt-6 grid gap-6">
           <PaletteGroup
             label="Damas"
             icon={<Venus className="size-4" style={{ color: SOFT_ACCENT }} />}
@@ -72,13 +86,14 @@ export default function DressCode({
           />
           <PaletteGroup
             label="Caballeros"
-            icon={<Mars className="size-4 ${greatVibes}" style={{ color: SOFT_ACCENT }} />}
+            icon={<Mars className="size-4" style={{ color: SOFT_ACCENT }} />}
             colors={m}
           />
         </div>
-        <div className="text-center pt-4">
-          <p className={`mt-3 text-sm text-slate-600 ${captionClassName ?? ""}`}>{message2}</p>
-        </div>
+
+        <p className={`mt-6 text-sm text-slate-600 ${captionClassName ?? ""}`}>
+          {message2}
+        </p>
       </div>
     </section>
   );
@@ -95,16 +110,23 @@ function PaletteGroup({
 }) {
   return (
     <div className="mx-auto w-full max-w-[520px]">
-      <div className={`mb-2 flex items-center justify-center gap-2 text-[24px] sm:text-[30px] font-semibold tracking-wider text-slate-500 ${greatVibes.className}`}>
+      <div
+        className={`mb-2 flex items-center justify-center gap-2 text-[24px] sm:text-[30px] font-semibold tracking-wider text-slate-500 ${greatVibes.className}`}
+      >
         {icon}
         <span>{label}</span>
       </div>
+
       <div className="grid grid-cols-4 gap-3 sm:gap-4">
         {colors.slice(0, 4).map((s, i) => (
           <div key={i} className="flex flex-col items-center">
             <span
               className="size-12 sm:size-14 rounded-full ring-1 shadow-inner"
-              style={{ backgroundColor: s.color, boxShadow: "inset 0 1px 2px rgba(0,0,0,0.06)", borderColor: SOFT_BORDER }}
+              style={{
+                backgroundColor: s.color,
+                boxShadow: "inset 0 1px 2px rgba(0,0,0,0.06)",
+                borderColor: SOFT_BORDER,
+              }}
               aria-label={s.name ?? s.color}
               title={s.name ?? s.color}
             />

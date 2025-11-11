@@ -4,12 +4,10 @@ import * as React from "react";
 import {
   Mea_Culpa,
   Great_Vibes,
-  Funnel_Sans,
 } from "next/font/google";
 
 const meaCulpa = Mea_Culpa({ subsets: ["latin"], weight: "400", variable: "--font-meaculpa", display: "swap" });
 const greatVibes = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "--font-greatvibes", display: "swap" });
-const funnelSans = Funnel_Sans({ subsets: ["latin"], weight: "400", variable: "--font-funnelsans", display: "swap" });
 function pad(n: number) { return String(n).padStart(2, "0"); }
 
 // Alternativa con import:
