@@ -107,7 +107,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
       style={{ overscrollBehaviorY: "contain" }}
     >
       <BackgroundAudio
-        src="/audio/theme.mp3"
+        src="audio/theme.mp3"
         title="Nuestra canción"
         artist="Daniel & Nicole"
         cover="/assets/1.jpg"
@@ -116,10 +116,10 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
       <div className="mx-auto max-w-[640px]">
         {/* 1 — Hero */}
         <HeroCover src="/assets/1.jpg" alt="Daniel y Nicole">
-          <h1 className={`text-center text-5xl sm:text-8xl ${mr_de_haviland.className} text-white drop-shadow`}>
-            Daniel &amp; Nicole
+          <h1 className={`text-center text-[64px] sm:text-[100px] ${mr_de_haviland.className} text-white drop-shadow`}>
+            Daniel & Nicole
           </h1>
-          <p className={`mt-2 text-center text-white/90 ${lora.className}`}>Nuestra Boda</p>
+          <p className={`mt-2 text-center text-white/90 text-[44px] sm:text-[50px] ${mea_culpa.className}`}>¡Nuestra Boda!</p>
         </HeroCover>
 
         {/* 2 — Texto + BigDate + Countdown + CalendarMonth (baby blue panel) */}
@@ -322,7 +322,13 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             className="pt-6"
             titleClassName={`${mea_culpa.className} text-3xl`}
             captionClassName={`${rougeScript.className} text-[25px] sm:text-[29px]`}
-            womenColors={[{ color: "#D9EDF9" }, { color: "#E6F3FB" }, { color: "#F0F8FD" }, { color: "#F6FAFE" }]}
+            womenColors = {[
+              { color: "#A9D6F5" }, // un azul bebé más fuerte
+              { color: "#BDE1F8" }, // conserva el tono pastel pero más notorio
+              { color: "#CAE7FA" }, // un punto más saturado que el original
+              { color: "#D6EFFC" }  // aún suave, pero con más presencia
+            ]}
+            
             menColors={[{ color: "#191919" }, { color: "#393939" }, { color: "#4B4B4B" }, { color: "#535353" }]}
           />
         </RevealSection>
