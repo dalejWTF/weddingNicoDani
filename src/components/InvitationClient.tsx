@@ -15,7 +15,6 @@ import BigDate from "@/components/BigDate";
 import ConfirmCard from "@/components/ConfirmCard";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
 import RevealSection from "@/components/RevealSection";
 import DressCode from "@/components/DressCode";
 import RecGiftsSection from "@/components/RecGiftsSection";
@@ -34,6 +33,7 @@ import {
 } from "next/font/google";
 
 type Family = { id: string; nombreFamilia: string; nroPersonas: number };
+type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
 const SOFT_BG_CARD = "#FFFFFF";
 const SOFT_BORDER = "#DBEAF5";
@@ -62,6 +62,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
   const [confirmed, setConfirmed] = React.useState(false);
   const [declined, setDeclined] = React.useState(false);
   const [checking, setChecking] = React.useState(true);
+  const garlandVar: CSSVarProps<"--garland"> = { ["--garland"]: "clamp(110px,26vw,200px)" };
 
   // Lee estado desde el backend por familyId
   React.useEffect(() => {
@@ -79,7 +80,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         const noLike = ["no", "false"];
 
         const isYes = yesLike.includes(rawStr) || data.confirmed === true || data.attending === true;
-        const isNo  = noLike.includes(rawStr)  || data.declined === true || data.attending === false;
+        const isNo = noLike.includes(rawStr) || data.declined === true || data.attending === false;
 
         if (!cancelled) {
           setConfirmed(Boolean(isYes));
@@ -395,7 +396,10 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             <div
               className="relative mx-auto max-w-[880px] overflow-hidden p-6 sm:p-8 shadow-[0_4px_14px_rgba(0,0,0,0.04)]"
               style={{
-                ["--garland" as any]: "clamp(110px,26vw,200px)",
+                ...garlandVar,
+                background: "#FFFFFF",
+                border: `1px solid ${SOFT_BORDER}`,
+                borderRadius: 28,
               }}
             >
               <Image

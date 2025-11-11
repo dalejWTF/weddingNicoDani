@@ -39,8 +39,6 @@ type RsvpRecord = {
   nombreFamilia?: string;
   nroPersonas?: number;
   at?: string;
-  /** interno para ordenar por aparición cuando no hay fecha parseable */
-  __order?: number;
 };
 
 function toBool(v: unknown): boolean | undefined {
@@ -75,25 +73,24 @@ function normStatus(v: unknown): RsvpStatus {
 /**
  * Parsea una tabla markdown tipo:
  * | time | family_id | nombre | nro_personas | response |
- * y sinónimos:
- * - id: family_id, familyid, id
- * - response: response, status, asistencia, attending, attendance, answer, rsvp
- * - time: time, timestamp, fecha, at
- * - nombre: nombrefamilia, nombre, name
- * - nro: nropersonas, personas, nro, pase
+ * Sinónimos:
+ *  - id: family_id, familyid, id
+ *  - response: response, status, asistencia, attending, attendance, answer, rsvp
+ *  - time: time, timestamp, fecha, at
+ *  - nombre: nombrefamilia, nombre, name
+ *  - nro: nropersonas, personas, nro, pase
  *
- * Devuelve el ÚLTIMO registro por familia (por fecha si existe; si no, por orden).
+ * Devuelve un Map con la ÚLTIMA respuesta por familyId.
  */
 function parseRsvpMarkdown(md: string): Map<string, RsvpRecord> {
-  const map = new Map<string, RsvpRecord>();
+  const dataLines = md
+    .split(/\r?\n/)
+    .filter((l) => l.trim().startsWith("|") && !l.includes("|---|"));
 
-  const lines = md.split(/\r?\n/).filter((l) => l.trim().startsWith("|"));
-  if (lines.length === 0) return map;
+  if (dataLines.length === 0) return new Map();
 
-  const headerLine = lines.find((l) => l.trim().startsWith("|") && !l.includes("|---|"));
-  if (!headerLine) return map;
-
-  const headerCells = headerLine
+  // primera línea: headers
+  const headerCells = dataLines[0]
     .split("|")
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean);
@@ -112,15 +109,17 @@ function parseRsvpMarkdown(md: string): Map<string, RsvpRecord> {
   const iNro      = idx(["nropersonas", "personas", "nro", "pase"]);
   const iResp     = idx(["response", "status", "asistencia", "attending", "attendance", "answer", "rsvp"]);
 
-  const dataLines = lines.filter((l) => l.trim().startsWith("|") && !l.includes("|---|")).slice(1);
+  type RowAux = { rec: RsvpRecord; order: number; t: number | null };
 
-  const records: RsvpRecord[] = [];
+  const rows: RowAux[] = [];
 
-  dataLines.forEach((line, order) => {
-    const cellsRaw = line.split("|").map((s) => s.trim());
-    const cells = cellsRaw.filter(Boolean); // quita el vacío por el pipe inicial
+  // resto: cuerpo
+  const body = dataLines.slice(1);
+  body.forEach((line, order) => {
+    const raw = line.split("|").map((s) => s.trim());
+    const cells = raw.filter(Boolean); // quita celda vacía por el pipe inicial
 
-    const familyId = iFamilyId >= 0 ? (cells[iFamilyId] || "").toString().trim() : "";
+    const familyId = iFamilyId >= 0 ? (cells[iFamilyId] ?? "").toString().trim() : "";
     if (!familyId) return;
 
     const nombreFamilia = iNombre >= 0 ? cells[iNombre] : undefined;
@@ -141,34 +140,31 @@ function parseRsvpMarkdown(md: string): Map<string, RsvpRecord> {
       nombreFamilia,
       nroPersonas,
       at,
-      __order: order,
     };
-    records.push(rec);
+
+    const t = at ? (Number.isFinite(Date.parse(at)) ? Date.parse(at) : null) : null;
+
+    rows.push({ rec, order, t });
   });
 
-  // Mantener el último por familyId
-  const latest = new Map<string, RsvpRecord>();
-  for (const r of records) {
-    const prev = latest.get(r.familyId);
+  // Mantener el "último" por familyId (por fecha si existe; si no, por orden de aparición)
+  const latest = new Map<string, RowAux>();
+  for (const row of rows) {
+    const prev = latest.get(row.rec.familyId);
     if (!prev) {
-      latest.set(r.familyId, r);
+      latest.set(row.rec.familyId, row);
       continue;
     }
-    const tPrev = Date.parse(prev.at ?? "");
-    const tCurr = Date.parse(r.at ?? "");
-    if (Number.isFinite(tPrev) && Number.isFinite(tCurr)) {
-      if (tCurr >= tPrev) latest.set(r.familyId, r);
+    if (prev.t !== null && row.t !== null) {
+      if (row.t >= prev.t) latest.set(row.rec.familyId, row);
     } else {
-      const oPrev = prev.__order ?? 0;
-      const oCurr = r.__order ?? 0;
-      if (oCurr >= oPrev) latest.set(r.familyId, r);
+      if (row.order >= prev.order) latest.set(row.rec.familyId, row);
     }
   }
 
-  // Quitar campo interno
-  for (const v of latest.values()) delete (v as any).__order;
-
-  return latest;
+  const out = new Map<string, RsvpRecord>();
+  latest.forEach((row, key) => out.set(key, row.rec));
+  return out;
 }
 
 /* ------------------------------ Handler GET ------------------------------ */
@@ -204,19 +200,17 @@ export async function GET(req: Request) {
       const declined = rsvp?.declined === true;
       const responded = rsvp?.responded === true;
 
-      // Compat: confirmed = true SOLO si es SÍ (evita marcar sí cuando fue "No")
+      // Compat: confirmed = true SOLO si es SÍ
       const confirmed = attending === true;
 
       return NextResponse.json({
         family: fam,
-        // estado normalizado
         status,           // "si" | "no" | null
         attending,        // boolean
         declined,         // boolean
         responded,        // boolean
-        confirmed,        // compat con front legado
+        confirmed,        // compat histórico (solo 'true' si SÍ)
         at: rsvp?.at ?? null,
-        // extras útiles
         nombreFamilia: fam?.nombreFamilia ?? rsvp?.nombreFamilia ?? null,
         nroPersonas: fam?.nroPersonas ?? rsvp?.nroPersonas ?? null,
       });
