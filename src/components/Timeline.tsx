@@ -56,7 +56,7 @@ export default function Timeline({
           zIndex: 0,
           width: "var(--corner)",
           height: "auto",
-          top: "calc(-0.10 * var(--corner))",
+          top: "calc(-0.27 * var(--corner))",
           right: "calc(-0.18 * var(--corner))",
         }}
         priority={false}
@@ -74,7 +74,7 @@ export default function Timeline({
           width: "var(--corner)",
           height: "auto",
           left: "calc(-0.22 * var(--corner))",
-          bottom: "calc(-0.28 * var(--corner))",
+          bottom: "calc(-0.32 * var(--corner))",
           transform: "rotate(180deg)",
         }}
         priority={false}

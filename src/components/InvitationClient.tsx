@@ -210,6 +210,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             >
               <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>Carlos Ulloa & Eliza Márquez</p>
             </InfoCard>
+            <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
           </section>
         </RevealSection>
 
@@ -232,8 +233,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 mapUrl={CHURCH_MAPS_URL}
               />
 
-              <div className="relative px-6 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
-                <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
+              <div className="relative pt-5 pb-5 px-6 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
                 <Image
                   src="/blueroses.png"
                   alt=""
@@ -262,7 +262,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             </div>
           </section>
         </RevealSection>
-
+        <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} /> 
         {/* 5 — Timeline + Imagen */}
         <RevealSection>
           <section
@@ -282,7 +282,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               style={{
                 width: "var(--corner)",
                 height: "auto",
-                top: "calc(-0.5 * var(--corner))",
+                top: "calc(-0.27 * var(--corner))",
                 left: "calc(-0.18 * var(--corner))",
                 transform: "rotate(-10deg)",
               }}
@@ -306,7 +306,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
         {/* Imagen */}
         <RevealSection>
-          <section className="grid gap-4 pt-3">
+          <section className="grid gap-4">
             <div
               className="relative mt-3 w-full aspect-[16/10] overflow-hidden"
               style={{ backgroundColor: SOFT_BG_CARD, border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
@@ -384,8 +384,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 <QuoteBlock
                   classNameAuthor={`${cormorant.className} text-[14px] sm:text-[20px]`}
                   classNameQuote={`${rougeScript.className} text-[29px] sm:text-[35px]`}
-                  quote="El amor nunca se da por vencido, jamás pierde la fe, siempre tiene esperanzas y se mantiene firme en toda circunstancia."
-                  author="1 Corintios 13:7"
+                  quote="El amor es paciente, es bondadoso. El amor no es envidioso, jactancioso ni orgulloso. No se comporta en rudeza, no es egoista, no se enoja fácilmente, no guarda rencor."
+                  author="1 Corintios 13:4-5"
                 />
               </div>
             </div>
