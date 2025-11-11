@@ -191,6 +191,7 @@ export default function BackgroundAudio({
           title={isPlaying ? "Pausar" : "Reproducir"}
         >
           {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
+          <span>{isPlaying ? "Pausar" : blocked ? "Reproducir" : "Reproducir"}</span>
         </button>
 
         <button

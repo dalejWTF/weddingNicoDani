@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { Calendar as CalendarIcon, Heart } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import CalendarMonth from "@/components/CalendarMonth";
 import GalleryCarousel from "@/components/GalleryCarousel";
 import QuoteBlock from "@/components/QuoteBlock";
@@ -39,7 +39,6 @@ const SOFT_BG_CARD = "#FFFFFF";
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 
-// Tipografías
 const greatVibes = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "--font-greatvibes", display: "swap" });
 const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-cormorant", display: "swap" });
 const lora = Lora({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-lora", display: "swap" });
@@ -61,9 +60,10 @@ const RECEPTION_MAPS_URL = "https://maps.app.goo.gl/kdwiUihm8pJUfiQv8";
 export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?: string }) {
   const [prefillFamily, setPrefillFamily] = React.useState<Family | undefined>(undefined);
   const [confirmed, setConfirmed] = React.useState(false);
+  const [declined, setDeclined] = React.useState(false);
   const [checking, setChecking] = React.useState(true);
 
-  // Chequeo de confirmación por id
+  // Lee estado desde el backend por familyId
   React.useEffect(() => {
     if (!familyIdFromUrl) { setChecking(false); return; }
     let cancelled = false;
@@ -72,7 +72,19 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         const res = await fetch(`/api/guests?familyId=${encodeURIComponent(familyIdFromUrl)}`, { cache: "no-store" });
         if (!res.ok) throw new Error(`GET /api/guests?familyId failed: ${res.status}`);
         const data = await res.json();
-        if (!cancelled) setConfirmed(Boolean(data.confirmed));
+
+        // Normalización (acepta varios esquemas del backend):
+        const rawStr = (data.status ?? data.rsvp ?? data.response ?? data.answer ?? data.attending ?? "").toString().trim().toLowerCase();
+        const yesLike = ["si", "sí", "yes", "true"];
+        const noLike = ["no", "false"];
+
+        const isYes = yesLike.includes(rawStr) || data.confirmed === true || data.attending === true;
+        const isNo  = noLike.includes(rawStr)  || data.declined === true || data.attending === false;
+
+        if (!cancelled) {
+          setConfirmed(Boolean(isYes));
+          setDeclined(Boolean(isNo) && !isYes);
+        }
       } catch (e) {
         console.error(e);
       } finally {
@@ -82,7 +94,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
     return () => { cancelled = true; };
   }, [familyIdFromUrl]);
 
-  // Prefill de familia (sin any)
+  // Prefill de familia
   React.useEffect(() => {
     if (!familyIdFromUrl) return;
     let cancelled = false;
@@ -122,7 +134,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           <p className={`mt-2 text-center text-white/90 text-[44px] sm:text-[50px] ${mea_culpa.className}`}>¡Nuestra Boda!</p>
         </HeroCover>
 
-        {/* 2 — Texto + BigDate + Countdown + CalendarMonth (baby blue panel) */}
+        {/* 2 — Texto + BigDate + Countdown + CalendarMonth (panel baby blue) */}
         <RevealSection>
           <section
             className="relative px-4 sm:px-6 py-6 sm:py-8"
@@ -180,51 +192,81 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* 3 — Info Padrinos */}
+        {/* 3 — Info Padrinos (hoja blanca) */}
         <RevealSection>
           <section
             className={[
               "[--corner:clamp(112px,38vw,260px)]",
               "sm:[--corner:clamp(52px,16vw,210px)]",
-              "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
             ].join(" ")}
           >
-            <div className="text-center pt-6 z-10">
-              <div className="mx-auto flex max-w-fit items-center justify-center gap-1 text-sm font-medium">
-                <span className={`${mea_culpa.className} text-4xl sm:text-5xl font-semibold text-slate-600`}>
-                  Nuestros Padrinos
-                </span>
+            <div
+              className="
+                relative z-10 py-6 pb-3
+                bg-white/85 ring-1 ring-white/60
+                shadow-[0_12px_36px_rgba(15,23,42,0.06)]
+                backdrop-saturate-150
+              "
+            >
+              <Image
+                src="/blue_leaves.png"
+                alt=""
+                aria-hidden
+                width={360}
+                height={360}
+                className="pointer-events-none select-none absolute z-0"
+                style={{
+                  width: "var(--corner)",
+                  height: "auto",
+                  top: "calc(0.10 * var(--corner))",
+                  left: "calc(-0.10 * var(--corner))",
+                  transform: "rotate(15deg)",
+                }}
+                priority={false}
+              />
+              <div className="text-center">
+                <div className="mx-auto flex max-w-fit items-center justify-center gap-1 text-sm font-medium">
+                  <span className={`${mea_culpa.className} text-4xl sm:text-5xl font-semibold text-slate-600 pt-6`}>
+                    Nuestros Padrinos
+                  </span>
+                </div>
               </div>
+
+              <InfoCard
+                title={<span className="pt-6">Padrinos de Arras</span>}
+                titleClassName={`${mea_culpa.className} text-[34px] sm:text-[40px]`}
+                icon={<Coins className="size-6" style={{ color: "#8FBFD9" }} />}
+              >
+                <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>
+                  Manuel Villamagua & Elizabeth Torres
+                </p>
+              </InfoCard>
+
+              <InfoCard
+                title={<span className="pt-6">Padrinos de Lazo</span>}
+                titleClassName={`${mea_culpa.className} text-[34px] sm:text-[40px]`}
+                icon={<Infinity className="size-6" style={{ color: "#8FBFD9" }} />}
+              >
+                <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>
+                  Carlos Ulloa & Eliza Márquez
+                </p>
+              </InfoCard>
             </div>
-            <InfoCard
-              title={<span className="pt-6">Padrinos de Arras</span>}
-              titleClassName={`${mea_culpa.className} text-[34px] sm:text-[40px]`}
-              icon={<Coins className="size-6" style={{ color: "#8FBFD9" }} />}
-            >
-              <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>Manuel Villamagua & Elizabeth Torres</p>
-            </InfoCard>
-            <InfoCard
-              title={<span className="pt-6">Padrinos de Lazo</span>}
-              titleClassName={`${mea_culpa.className} text-[34px] sm:text-[40px]`}
-              icon={<Infinity className="size-6" style={{ color: "#8FBFD9" }} />}
-            >
-              <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>Carlos Ulloa & Eliza Márquez</p>
-            </InfoCard>
-            <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} />
           </section>
         </RevealSection>
 
-        {/* 4 Venues */}
+        {/* 4 — Venue */}
         <RevealSection>
           <section
             className={[
               "[--corner:clamp(112px,38vw,260px)]",
               "sm:[--corner:clamp(52px,16vw,210px)]",
-              "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
+              "relative rounded-2xl w-full px-4 sm:px-6",
+              "pt-0 pb-0 sm:pt-0 sm:pb-0",
+              "mb-0 ",
             ].join(" ")}
           >
-            {/* resto igual */}
-            <div className="z-10">
+            <div className="z-10 pb-9 py-9">
               <VenueBlock
                 title="Ceremonia"
                 name={CHURCH_NAME}
@@ -233,11 +275,10 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 mapUrl={CHURCH_MAPS_URL}
               />
 
-              <div className="relative pt-5 pb-5 px-6 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
+              <div className="relative px-6 py-2 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)] ">
                 <Image
                   src="/blueroses.png"
                   alt=""
-                  aria-hidden
                   width={240}
                   height={240}
                   className="pointer-events-none select-none absolute z-20"
@@ -262,32 +303,19 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             </div>
           </section>
         </RevealSection>
-        <Separator className="my-6" style={{ opacity: 0.6, backgroundColor: SOFT_BORDER }} /> 
-        {/* 5 — Timeline + Imagen */}
+
+        {/* 5 — Timeline */}
         <RevealSection>
           <section
             className={[
-              "grid gap-4 pt-6 pb-6 [--corner:clamp(112px,38vw,260px)]",
-              "grid gap-4 pt-6 pb-6 sm:[--corner:clamp(52px,16vw,210px)]",
-              "relative overflow-visible rounded-2xl my-9 w-full px-4 py-4 sm:px-6 sm:py-5",
+              "[--corner:clamp(112px,38vw,260px)]",
+              "sm:[--corner:clamp(52px,16vw,210px)]",
+              "relative w-full",
+              "px-4 sm:px-6",
+              "mt-0 mb-0 pt-0 pb-15 sm:pb-15 backdrop-saturate-150 pt-4",
+              "overflow-x-hidden sm:overflow-visible bg-white/85 ring-1 ring-white/60",
             ].join(" ")}
           >
-            <Image
-              src="/blue_leaves.png"
-              alt=""
-              aria-hidden
-              width={360}
-              height={360}
-              className="pointer-events-none select-none absolute z-0"
-              style={{
-                width: "var(--corner)",
-                height: "auto",
-                top: "calc(-0.27 * var(--corner))",
-                left: "calc(-0.18 * var(--corner))",
-                transform: "rotate(-10deg)",
-              }}
-              priority={false}
-            />
             <Timeline
               items={[
                 { time: "5:00 PM", label: "Ceremonia", icon: "/assets/TimelineSVG/church.svg" },
@@ -296,7 +324,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 { time: "9:00 PM", label: "Brindis & cena", icon: "/assets/TimelineSVG/lunch.svg" },
                 { time: "10:00 PM", label: "Baile", icon: "/assets/TimelineSVG/disco.svg" },
               ]}
-              className="px-3 pt-2"
+              className="px-3"
               title="Itinerario"
               titleClassName={`${greatVibes.className} text-3xl`}
               itemClassName={`${lora.className}`}
@@ -304,11 +332,11 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* Imagen */}
+        {/* 6 — Imagen */}
         <RevealSection>
           <section className="grid gap-4">
             <div
-              className="relative mt-3 w-full aspect-[16/10] overflow-hidden"
+              className="relative mt-0 w-full aspect-[16/10] overflow-hidden"
               style={{ backgroundColor: SOFT_BG_CARD, border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
             >
               <Image src="/assets/3.jpg" alt="Momentos" fill sizes="100vw" className="object-cover" loading="lazy" />
@@ -316,24 +344,23 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* DressCode */}
+        {/* 7 — DressCode */}
         <RevealSection>
           <DressCode
             className="pt-6"
             titleClassName={`${mea_culpa.className} text-3xl`}
             captionClassName={`${rougeScript.className} text-[25px] sm:text-[29px]`}
-            womenColors = {[
-              { color: "#A9D6F5" }, // un azul bebé más fuerte
-              { color: "#BDE1F8" }, // conserva el tono pastel pero más notorio
-              { color: "#CAE7FA" }, // un punto más saturado que el original
-              { color: "#D6EFFC" }  // aún suave, pero con más presencia
+            womenColors={[
+              { color: "#A9D6F5" },
+              { color: "#BDE1F8" },
+              { color: "#CAE7FA" },
+              { color: "#D6EFFC" }
             ]}
-            
             menColors={[{ color: "#191919" }, { color: "#393939" }, { color: "#4B4B4B" }, { color: "#535353" }]}
           />
         </RevealSection>
 
-        {/* Recomendaciones + Regalos */}
+        {/* 8 — Recomendaciones + Regalos */}
         <RevealSection>
           <RecGiftsSection
             className="pt-6"
@@ -347,9 +374,9 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           />
         </RevealSection>
 
-        {/* Carrusel + Cita */}
+        {/* 9 — Carrusel */}
         <RevealSection>
-          <section className="grid gap-3 py-6 [--garland:clamp(110px,26vw,200px)]">
+          <section className="grid gap-3 pt-6 [--garland:clamp(110px,26vw,200px)]">
             <GalleryCarousel
               aspect={4 / 3}
               images={[
@@ -359,7 +386,18 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               ]}
               className={`${cormorant.className} text-3xl`}
             />
-            <div className="relative mx-auto max-w-[880px] py-[calc(var(--garland)*0.40)]">
+          </section>
+        </RevealSection>
+
+        {/* 10 — Cita (hoja blanca) */}
+        <RevealSection>
+          <section className="relative">
+            <div
+              className="relative mx-auto max-w-[880px] overflow-hidden p-6 sm:p-8 shadow-[0_4px_14px_rgba(0,0,0,0.04)]"
+              style={{
+                ["--garland" as any]: "clamp(110px,26vw,200px)",
+              }}
+            >
               <Image
                 src="/blue_horizontal.png"
                 alt=""
@@ -367,7 +405,14 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 width={320}
                 height={120}
                 className="pointer-events-none select-none absolute z-0"
-                style={{ top: "15%", left: "50%", transform: "translate(-50%, -30%)", width: "var(--garland)", height: "auto" }}
+                style={{
+                  top: "10%",
+                  left: "50%",
+                  transform: "translate(-50%, -30%)",
+                  width: "var(--garland)",
+                  height: "auto",
+                  opacity: 0.95,
+                }}
                 priority={false}
               />
               <Image
@@ -377,13 +422,20 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 width={320}
                 height={120}
                 className="pointer-events-none select-none absolute z-0"
-                style={{ bottom: "10%", left: "50%", transform: "translate(-50%, 30%)", width: "var(--garland)", height: "auto" }}
+                style={{
+                  bottom: "5%",
+                  left: "50%",
+                  transform: "translate(-50%, 30%)",
+                  width: "var(--garland)",
+                  height: "auto",
+                  opacity: 0.95,
+                }}
                 priority={false}
               />
-              <div className="relative z-10">
+              <div className="relative z-10 py-6 text-center">
                 <QuoteBlock
-                  classNameAuthor={`${cormorant.className} text-[14px] sm:text-[20px]`}
-                  classNameQuote={`${rougeScript.className} text-[29px] sm:text-[35px]`}
+                  classNameAuthor={`${cormorant.className} text-[14px] sm:text-[20px] py-3`}
+                  classNameQuote={`${rougeScript.className} text-[29px] sm:text-[35px] pt-3`}
                   quote="El amor es paciente, es bondadoso. El amor no es envidioso, jactancioso ni orgulloso. No se comporta en rudeza, no es egoista, no se enoja fácilmente, no guarda rencor."
                   author="1 Corintios 13:4-5"
                 />
@@ -392,25 +444,29 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* Confirmación — SOLO si hay id */}
+        {/* 11 — Confirmación — SOLO si hay id */}
         {familyIdFromUrl && (
           <RevealSection>
-            <section className="pb-9">
+            <section className="pb-9 pt-6">
               <ConfirmCard
                 confirmed={confirmed}
+                declined={declined}
                 checking={checking}
                 prefillFamilyId={familyIdFromUrl}
                 prefillFamily={prefillFamily}
-                onConfirmed={() => setConfirmed(true)}
+                onConfirmed={() => { setConfirmed(true); setDeclined(false); }}
+                onDeclined={() => { setConfirmed(false); setDeclined(true); }}
                 titleClassName={greatVibes.className}
                 textClassName={lora.className}
                 hideIfNoPrefill
+                messageWhenConfirmed="¡Nos hace mucha ilusión compartir este día contigo! 💙"
+                messageWhenDeclined="No hay problema, nos encontraremos en una siguiente ocasión"
               />
             </section>
           </RevealSection>
         )}
 
-        {/* Cierre */}
+        {/* 12 — Cierre */}
         <RevealSection>
           <HeroCover src="/assets/2.jpg" alt="Nos vemos pronto">
             <h1 className={`text-center text-5xl sm:text-8xl ${greatVibes.className} text-white drop-shadow`}>
