@@ -3,11 +3,13 @@
 import * as React from "react";
 import {
   Mea_Culpa,
-  Imperial_Script
+  Great_Vibes,
+  Funnel_Sans,
 } from "next/font/google";
 
 const meaCulpa = Mea_Culpa({ subsets: ["latin"], weight: "400", variable: "--font-meaculpa", display: "swap" });
-const imperialScript = Imperial_Script({ subsets: ["latin"], weight: "400", variable: "--font-imperial", display: "swap" });
+const greatVibes = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "--font-greatvibes", display: "swap" });
+const funnelSans = Funnel_Sans({ subsets: ["latin"], weight: "400", variable: "--font-funnelsans", display: "swap" });
 function pad(n: number) { return String(n).padStart(2, "0"); }
 
 // Alternativa con import:
@@ -42,8 +44,8 @@ export default function CountdownBanner({ date, className }: { date: Date; class
       {vs.map((u, i) => (
         <React.Fragment key={u.label}>
           <div className="text-center min-w-16">
-            <div className={`text-5xl sm:text-6xl leading-none text-slate-800 ${imperialScript.className}`}>{u.value}</div>
-            <div className={`mt-1 text-[20px] tracking-[0.08em] text-slate-500 ${imperialScript.className}`}>{u.label}</div>
+          <div className="text-4xl sm:text-5xl leading-none text-slate-800">{u.value}</div>
+            <div className={`mt-1 text-[20px] tracking-[0.08em] text-slate-500 ${greatVibes.className}`}>{u.label}</div>
           </div>
           {i < vs.length - 1 && <span className="pb-10 text-2xl text-slate-400/60">:</span>}
         </React.Fragment>
@@ -60,7 +62,7 @@ export default function CountdownBanner({ date, className }: { date: Date; class
 
       {mounted ? (
         <div className="w-full">
-          <div className={`text-center text-[32px] sm:text-[36px] text-slate-600 ${meaCulpa.className}`}>Faltan…</div>
+          <div className={`text-center text-[32px] sm:text-[36px] text-slate-600 ${greatVibes.className}`}>Faltan…</div>
           {renderRow(values)}
         </div>
       ) : (
