@@ -1,4 +1,4 @@
-//api/rsvp/route.ts
+// api/rsvp/route.ts
 
 import { NextResponse } from "next/server";
 
@@ -22,6 +22,28 @@ const GH = "https://api.github.com";
 
 type GhFile = { content: string; sha: string };
 
+// === Zona horaria local para timestamps y mensajes ===
+const TZ = "America/Guayaquil";
+
+/**
+ * Devuelve la fecha/hora actual como "YYYY-MM-DD HH:mm:ss" en la zona horaria indicada.
+ * Usa el locale "sv-SE" para obtener un formato ISO-like y evita hour12.
+ */
+function nowString(tz = TZ) {
+  const parts = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: tz,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date());
+  const m = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  return `${m.year}-${m.month}-${m.day} ${m.hour}:${m.minute}:${m.second}`;
+}
+
 async function getFile(): Promise<GhFile | null> {
   const res = await fetch(
     `${GH}/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(PATH)}?ref=${BRANCH}`,
@@ -35,9 +57,12 @@ async function getFile(): Promise<GhFile | null> {
   return (await res.json()) as GhFile;
 }
 
-async function putFile(content: string, sha?: string) {
+/**
+ * Sube/actualiza el archivo en GitHub. Permite pasar un mensaje de commit.
+ */
+async function putFile(content: string, sha?: string, message?: string) {
   const body = {
-    message: `RSVP ${new Date().toISOString()}`,
+    message: message ?? `RSVP ${nowString()}`, // por defecto hora local
     content: Buffer.from(content, "utf8").toString("base64"),
     branch: BRANCH,
     ...(sha ? { sha } : {}),
@@ -59,7 +84,7 @@ async function putFile(content: string, sha?: string) {
 }
 
 // Parser para detectar qué familias ya respondieron, con el NUEVO orden:
-// | family_id | creation_date | nombre_familia | nro_personas | asistencia |
+// | family_id | creation_date | nombre_familia | adultos | niños | total | asistencia |
 function parseRespondedSet(md: string) {
   const set = new Set<string>();
   for (const line of md.split("\n")) {
@@ -95,22 +120,26 @@ export async function POST(req: Request) {
 
     const existing = await getFile();
 
-    // ⬇️ NUEVO: header con columnas adultos y ninos
+    // Header con columnas adultos y niños
     const header =
       `| family_id | creation_date | nombre_familia | adultos | niños | total | asistencia |\n` +
       `|---|---|---|---|---|---|---|\n`;
 
-    const ts = new Date().toISOString().split(".")[0].replace("T", " ");
+    // Timestamp en hora local (no uses toISOString, que es UTC)
+    const ts = nowString();
 
     // Normaliza a string (evita "undefined")
     const adultosCell = Number.isFinite(adultos as number) ? String(adultos) : "";
-    const ninosCell   = Number.isFinite(ninos as number)   ? String(ninos)   : "";
+    const ninosCell = Number.isFinite(ninos as number) ? String(ninos) : "";
 
     const newRow =
       `| ${familyId} | ${ts} | ${nombreFamilia} | ${adultosCell} | ${ninosCell} | ${nroPersonas} | ${asistencia ? "Sí" : "No"} |\n`;
 
+    // Mensaje de commit solicitado
+    const commitMessage = `Invitado ${nombreFamilia} - Respuesta enviada: ${nowString()}`;
+
     if (!existing) {
-      await putFile(header + newRow);
+      await putFile(header + newRow, undefined, commitMessage);
       return NextResponse.json({ ok: true });
     }
 
@@ -125,7 +154,7 @@ export async function POST(req: Request) {
     }
 
     const next = decoded.endsWith("\n") ? decoded + newRow : decoded + "\n" + newRow;
-    await putFile(next, existing.sha);
+    await putFile(next, existing.sha, commitMessage);
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error(e);
