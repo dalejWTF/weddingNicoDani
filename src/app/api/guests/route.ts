@@ -106,7 +106,7 @@ function parseRsvpMarkdown(md: string): Map<string, RsvpRecord> {
   const iTime     = idx(["time", "timestamp", "fecha", "at"]);
   const iFamilyId = idx(["family_id", "familyid", "id"]);
   const iNombre   = idx(["nombrefamilia", "nombre", "name"]);
-  const iNro      = idx(["nropersonas", "personas", "nro", "pase"]);
+  const iNro      = idx(["nropersonas", "nro_personas", "personas", "nro", "pase"]);
   const iResp     = idx(["response", "status", "asistencia", "attending", "attendance", "answer", "rsvp"]);
 
   type RowAux = { rec: RsvpRecord; order: number; t: number | null };

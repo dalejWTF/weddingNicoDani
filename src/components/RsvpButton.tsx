@@ -34,7 +34,7 @@ const BABY_BLUE_BOTTOM = "#EFF7FD";
 const CORNER_TOP = "/blueleaves.png";
 const CORNER_BOTTOM = "/blueroses.png";
 
-type Family = { id: string; nombreFamilia: string; nroPersonas: number };
+type Family = { id: string; nombreFamilia: string; nroPersonas: number; invitados?: { adult?: number; kids?: number; total?: number }; };
 
 function personasLabel(n?: number) {
   if (typeof n !== "number") return "";
@@ -149,6 +149,12 @@ export default function RsvpButton({
           nombreFamilia: selected.nombreFamilia,
           nroPersonas: selected.nroPersonas,
           asistencia: asistenciaBool,
+          adultos: Number.isFinite(selected?.invitados?.adult as number)
+            ? selected!.invitados!.adult
+            : undefined,
+          ninos: Number.isFinite(selected?.invitados?.kids as number)
+            ? selected!.invitados!.kids
+            : undefined,
         }),
       });
 
@@ -258,9 +264,9 @@ export default function RsvpButton({
                 {greeting}
               </div>
 
-              {typeof selected?.nroPersonas === "number" && (
+              {typeof selected?.invitados?.total === "number" && (
                 <div className={`mt-1 text-xl ${titleClassName ?? ""}`} style={{ color: SOFT_TEXT }}>
-                  Pase válido para {personasLabel(selected.nroPersonas)}
+                  Pase válido para {personasLabel(selected.invitados?.total)}
                 </div>
               )}
             </DialogTitle>

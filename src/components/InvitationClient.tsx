@@ -75,12 +75,24 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         const data = await res.json();
 
         // Normalización (acepta varios esquemas del backend):
-        const rawStr = (data.status ?? data.rsvp ?? data.response ?? data.answer ?? data.attending ?? "").toString().trim().toLowerCase();
+        const rawStr = (data.status ?? data.rsvp ?? data.response ?? data.answer ?? "")
+          .toString()
+          .trim()
+          .toLowerCase();
         const yesLike = ["si", "sí", "yes", "true"];
         const noLike = ["no", "false"];
+        const responded = data.responded === true;
+        const isYes =
+          yesLike.includes(rawStr) ||
+          data.status === "si" ||
+          data.confirmed === true ||
+          (responded && data.attending === true);
 
-        const isYes = yesLike.includes(rawStr) || data.confirmed === true || data.attending === true;
-        const isNo = noLike.includes(rawStr) || data.declined === true || data.attending === false;
+        const isNo =
+          noLike.includes(rawStr) ||
+          data.status === "no" ||
+          data.declined === true ||
+          (responded && data.attending === false);
 
         if (!cancelled) {
           setConfirmed(Boolean(isYes));

@@ -9,6 +9,8 @@ type Body = {
   nombreFamilia: string;
   nroPersonas: number;
   asistencia: boolean;
+  adultos?: number; 
+  ninos?: number;
 };
 
 const OWNER = process.env.GITHUB_OWNER!;
@@ -64,9 +66,8 @@ function parseRespondedSet(md: string) {
     if (!line.startsWith("|")) continue; // solo filas de tabla
     if (line.includes("|---|")) continue; // separador
     const cells = line.split("|").map((s) => s.trim());
-    // ['', family_id, creation_date, nombre_familia, nro_personas, asistencia, '']
     const familyId = cells[1];
-    if (!familyId || familyId === "family_id") continue; // salta encabezado
+    if (!familyId || familyId === "family_id") continue;
     set.add(familyId);
   }
   return set;
@@ -74,8 +75,14 @@ function parseRespondedSet(md: string) {
 
 export async function POST(req: Request) {
   try {
-    const { familyId, nombreFamilia, nroPersonas, asistencia } =
-      (await req.json()) as Body;
+    const {
+      familyId,
+      nombreFamilia,
+      nroPersonas,
+      asistencia,
+      adultos,
+      ninos,
+    } = (await req.json()) as Body;
 
     if (
       !familyId ||
@@ -88,14 +95,19 @@ export async function POST(req: Request) {
 
     const existing = await getFile();
 
+    // ⬇️ NUEVO: header con columnas adultos y ninos
     const header =
-      `| family_id | creation_date | nombre_familia | nro_personas | asistencia |\n` +
-      `|---|---|---|---|---|\n`;
+      `| family_id | creation_date | nombre_familia | adultos | niños | total | asistencia |\n` +
+      `|---|---|---|---|---|---|---|\n`;
 
     const ts = new Date().toISOString().split(".")[0].replace("T", " ");
-    const newRow = `| ${familyId} | ${ts} | ${nombreFamilia} | ${nroPersonas} | ${
-      asistencia ? "Sí" : "No"
-    } |\n`;
+
+    // Normaliza a string (evita "undefined")
+    const adultosCell = Number.isFinite(adultos as number) ? String(adultos) : "";
+    const ninosCell   = Number.isFinite(ninos as number)   ? String(ninos)   : "";
+
+    const newRow =
+      `| ${familyId} | ${ts} | ${nombreFamilia} | ${adultosCell} | ${ninosCell} | ${nroPersonas} | ${asistencia ? "Sí" : "No"} |\n`;
 
     if (!existing) {
       await putFile(header + newRow);
