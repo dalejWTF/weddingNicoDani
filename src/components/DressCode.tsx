@@ -12,11 +12,7 @@ const SOFT_ACCENT = "#8FBFD9";
 const COUPLE = "/couple2.png";
 
 // igual que tu ejemplo de “El gran día”
-const PANEL_STYLE: React.CSSProperties = {
-  background: "linear-gradient(0deg, #F7FBFE 0%, #EFF7FD 100%)",
-  border: "1px solid #DBEAF5",
-  boxShadow: "0 4px 14px rgba(0,0,0,0.04)",
-};
+
 
 const greatVibes = Great_Vibes({
   subsets: ["latin"],
@@ -55,7 +51,6 @@ export default function DressCode({
         "relative w-full px-4 sm:px-6 py-6 sm:py-8",
         className ?? "",
       ].join(" ")}
-      style={PANEL_STYLE}
     >
       <div className="mx-auto w-full max-w-[560px] text-center">
         <h3

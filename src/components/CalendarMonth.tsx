@@ -8,7 +8,7 @@ function startOfMonth(d: Date) { return new Date(d.getFullYear(), d.getMonth(), 
 function daysInMonth(d: Date) { return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); }
 
 const SOFT_BORDER = "#DBEAF5";
-const SOFT_ACCENT = "#8FBFD9";
+const SOFT_ACCENT = "#c0dff1ff";
 
 export default function CalendarMonth({
   date,

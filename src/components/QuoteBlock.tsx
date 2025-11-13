@@ -15,12 +15,21 @@ export default function QuoteBlock({
   classNameAuthor?: string;
 }) {
   return (
-    <figure className={`rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.03)] ${className ?? ""}`}>
-      <blockquote className={`text-center italic text-slate-700 ${classNameQuote ?? ""}`}>
+    <figure
+      className={`rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.03)] ${className ?? ""
+        }`}
+    >
+      <blockquote
+        className={`text-center italic text-slate-700 leading-[1.2] ${classNameQuote ?? ""
+          }`}
+      >
         “{quote}”
       </blockquote>
       {author && (
-        <figcaption className={`mt-2 text-center text-xs text-slate-500 ${classNameAuthor ?? ""}`}>
+        <figcaption
+          className={`mt-2 text-center text-xs text-slate-500 ${classNameAuthor ?? ""
+            }`}
+        >
           — {author}
         </figcaption>
       )}

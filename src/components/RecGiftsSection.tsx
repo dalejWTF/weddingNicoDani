@@ -16,8 +16,8 @@ const SOFT_TEXT = "#0F172A";
 type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
 export default function RecGiftsSection({
-  recommendations = "Llega con anticipación, sigue las indicaciones del personal y considera llevar un abrigo ligero (locación al aire libre).",
-  gifts = "Tu presencia es lo más valioso; si deseas obsequiarnos algo, agradecemos el detalle en sobre o transferencia.",
+  recommendations = "Llega con anticipación y sigue las indicaciones del personal del lugar para asegurar una experiencia agradable para todos.",
+  gifts = "Tu presencia es lo más valioso para nosotros. Si deseas hacernos un regalo, hemos preparado algunas opciones para facilitarte el proceso.",
   registryLabel,
   registryUrl,
   accounts = [],

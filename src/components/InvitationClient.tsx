@@ -144,7 +144,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           <h1 className={`text-center text-[64px] sm:text-[100px] ${mr_de_haviland.className} text-white drop-shadow`}>
             Daniel & Nicole
           </h1>
-          <p className={`mt-2 text-center text-white/90 text-[44px] sm:text-[50px] ${mea_culpa.className}`}>¡Nuestra Boda!</p>
+          <p className={`mt-2 text-center text-white/90 text-[44px] sm:text-[50px] ${mr_de_haviland.className}`}>¡Nuestra Boda!</p>
         </HeroCover>
 
         {/* 2 — Texto + BigDate + Countdown + CalendarMonth (panel baby blue) */}
@@ -276,7 +276,9 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               "sm:[--corner:clamp(52px,16vw,210px)]",
               "relative rounded-2xl w-full px-4 sm:px-6",
               "pt-0 pb-0 sm:pt-0 sm:pb-0",
-              "mb-0 ",
+              "mb-0",
+              "shadow-[0_4px_14px_rgba(0,0,0,0.04)]",
+              "border border-[#DBEAF5]",
             ].join(" ")}
           >
             <div className="z-10 pb-9 py-9">
@@ -288,7 +290,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 mapUrl={CHURCH_MAPS_URL}
               />
 
-              <div className="relative px-6 py-2 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)] ">
+              <div className="relative px-6 py-2 [--rose:clamp(90px,34vw,200px)] sm:[--rose:clamp(72px,22vw,180px)]">
                 <Image
                   src="/blueroses.png"
                   alt=""
@@ -324,10 +326,15 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               "[--corner:clamp(112px,38vw,260px)]",
               "sm:[--corner:clamp(52px,16vw,210px)]",
               "relative w-full",
-              "px-4 sm:px-6",
-              "mt-0 mb-0 pt-0 pb-15 sm:pb-15 backdrop-saturate-150 pt-4",
-              "overflow-x-hidden sm:overflow-visible bg-white/85 ring-1 ring-white/60",
+              "px-4 sm:px-6 py-6 sm:py-8",        // padding más limpio
+              "mt-0 mb-0",
+              "overflow-x-hidden sm:overflow-visible",
             ].join(" ")}
+            style={{
+              background: "linear-gradient(0deg, #F7FBFE 0%, #EFF7FD 100%)",
+              border: "1px solid #DBEAF5",
+              boxShadow: "0 4px 14px rgba(0,0,0,0.04)",
+            }}
           >
             <Timeline
               items={[
@@ -378,7 +385,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           <RecGiftsSection
             className="pt-6"
             titleClassName={`${mea_culpa.className} text-5xl`}
-            itemClassName={`${rougeScript.className} text-[19px] sm:text-[25px]`}
+            itemClassName={`${rougeScript.className} text-[29px] sm:text-[35px]`}
             accounts={[
               { bank: "Cooperativa Coopmego", holder: "Daniel Ulloa", account: "401010838242", dni: "1105002867" },
               { bank: "Banco de Loja", holder: "Daniel Ulloa", account: "2903926236", dni: "1105002867" },
@@ -448,7 +455,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 }}
                 priority={false}
               />
-              <div className="relative z-10 py-6 text-center">
+              <div className="relative z-10 py-6 text-center bg-white shadow-[0_4px_14px_rgba(0,0,0,0.04)]">
                 <QuoteBlock
                   classNameAuthor={`${cormorant.className} text-[14px] sm:text-[20px] py-3`}
                   classNameQuote={`${rougeScript.className} text-[29px] sm:text-[35px] pt-3`}

@@ -41,7 +41,7 @@ export default function VenueBlock({
         {/* Hoja trasera (ligeramente girada) */}
         <div
           aria-hidden
-          className="absolute inset-x-3 top-3 bottom-3 rounded-2xl"
+          className="absolute inset-x-3 top-3 bottom-3 rounded-2xl bg-white/85"
           style={{
             backgroundColor: "#FFFFFF",
             border: `1px solid ${SOFT_BORDER}`,
