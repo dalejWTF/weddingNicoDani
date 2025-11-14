@@ -32,7 +32,8 @@ export default function Timeline({
 }) {
   const safeItems = Array.isArray(items) ? items : [];
   const cornerVarStyle: CSSVarProps<"--corner"> = {
-    ["--corner"]: "clamp(120px,28vw,220px)",
+    // un poco más pequeñas que antes
+    ["--corner"]: "clamp(110px,28vw,210px)",
   };
 
   return (
@@ -52,26 +53,64 @@ export default function Timeline({
         </div>
       )}
 
-      {/* Hojas decorativas (si te dan scroll, puedes quitarlas o reducir var(--corner)) */}
+      {/* FLORES DECORATIVAS */}
+      {/* Superior izquierda (ramo grande) */}
       <Image
-        src="/blueFlowers.png"
+        src="/timelineflower1.png"
         alt=""
         width={400}
         height={400}
         aria-hidden
         className="
-    pointer-events-none select-none absolute z-0
-    top-[-25px] left-[-30px]          /* móvil: esquina sup. izq. */
-    sm:top-[-45px] sm:left-[-40px]    /* desktop: un pelín más afuera */
-  "
+          pointer-events-none select-none absolute z-0
+          top-[-40px] left-[-40px]
+          sm:top-[-50px] sm:left-[-37px]
+        "
         style={{
-          width: "var(--corner)",
+          width: "calc(0.85 * var(--corner))",
           height: "auto",
-          transform: "rotate(-140deg)",     // si quieres menos inclinado, cambia el ángulo
+          rotate: "180deg",
         }}
         priority={false}
       />
 
+      {/* Inferior derecha (ramo grande) */}
+      <Image
+        src="/timelineflower1.png"
+        alt=""
+        width={400}
+        height={400}
+        aria-hidden
+        className="
+          pointer-events-none select-none absolute z-0
+          bottom-[-60px] right-[-40px]
+          sm:bottom-[-80px] sm:right-[-35px]
+        "
+        style={{
+          width: "calc(0.85 * var(--corner))",
+          height: "auto",
+        }}
+        priority={false}
+      />
+
+      {/* Inferior izquierda (ramita pequeña) */}
+      <Image
+        src="/timelineflower2.png"
+        alt=""
+        width={400}
+        height={400}
+        aria-hidden
+        className="
+          pointer-events-none select-none absolute z-0
+          bottom-[-40px] left-[-35px]
+          sm:bottom-[-60px] sm:left-[-30px]
+        "
+        style={{
+          width: "calc(0.6 * var(--corner))",
+          height: "auto",
+        }}
+        priority={false}
+      />
 
       <div className="relative mx-auto w-full max-w-[980px] px-2 sm:px-3 overflow-hidden">
         {/* línea central */}
@@ -157,7 +196,7 @@ function TimelineRow({
             ${itemClassName ?? ""}
           `}
           style={{
-            width: "min(160px, 40vw)", // ancho fijo → todos los SVG+labels quedan alineados
+            width: "min(160px, 40vw)", // todos los SVG+labels alineados
           }}
         >
           {icon && (

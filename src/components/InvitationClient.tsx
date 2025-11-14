@@ -376,7 +376,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               { color: "#CAE7FA" },
               { color: "#D6EFFC" }
             ]}
-            menColors={[{ color: "#191919" }, { color: "#393939" }, { color: "#4B4B4B" }, { color: "#535353" }]}
+            
           />
         </RevealSection>
 
