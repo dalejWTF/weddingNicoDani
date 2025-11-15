@@ -376,7 +376,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 title="Recepción"
                 name={RECEPTION_NAME}
                 address="Vía a Cuenca, barrio Carigán, Loja"
-                time="07:00 PM"
+                time="06:30 PM"
                 mapUrl={RECEPTION_MAPS_URL}
               />
             </div>
@@ -390,7 +390,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               style={{ backgroundColor: SOFT_BG_CARD, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
             >
               <Image
-                src="/assets/11.jpg"
+                src="/assets/10.jpg"
                 alt="Momentos"
                 fill sizes="100vw"
                 className="object-cover"
@@ -501,7 +501,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
         {/* 12 — Cierre */}
         <RevealSection>
-          <HeroCover src="/assets/12.jpg" alt="Nos vemos pronto" objectPosition="60% 20%">
+          <HeroCover src="/assets/11.jpg" alt="Nos vemos pronto" objectPosition="60% 20%">
             <h1 className={`text-center text-5xl sm:text-8xl ${greatVibes.className} text-white drop-shadow`}>
               ¡Nos vemos en la boda!
             </h1>
