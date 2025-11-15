@@ -188,10 +188,10 @@ export default function BackgroundAudio({
           onClick={toggle}
           className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-semibold"
           aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
-          title={isPlaying ? "Pausar" : "Reproducir"}
+          title={isPlaying ? " Pausar" : " Reproducir"}
         >
           {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
-          <span>{isPlaying ? "Pausar" : blocked ? "Reproducir" : "Reproducir"}</span>
+          <span>{isPlaying ? " Pausar" : blocked ? " Reproducir" : " Reproducir"}</span>
         </button>
 
         <button

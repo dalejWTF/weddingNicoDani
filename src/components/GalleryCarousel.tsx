@@ -7,7 +7,7 @@ import Image, { StaticImageData } from "next/image";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger, DialogClose, DialogTitle } from "@/components/ui/dialog";
 
-type Img = { src: StaticImageData | string; alt?: string };
+type Img = { src: StaticImageData | string; alt?: string;  objectPosition?: string; };
 
 const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
@@ -46,7 +46,7 @@ export default function GalleryCarousel({
   return (
     <div
       className={`relative w-full max-w-full overflow-hidden bg-white ${className ?? ""}`}
-      style={{ border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
+      style={{ boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
     >
       <div
         className="relative w-full overflow-hidden"
@@ -70,6 +70,9 @@ export default function GalleryCarousel({
               sizes="100dvw"
               priority={index === 0}
               className="object-cover select-none"
+              style={{
+                objectPosition: current.objectPosition ?? "center", // 👈 se respeta por imagen
+              }}
               draggable={false}
             />
           </motion.div>

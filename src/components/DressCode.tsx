@@ -2,21 +2,13 @@
 "use client";
 
 import Image from "next/image";
-import { Mars, Venus } from "lucide-react";
+import { Venus } from "lucide-react";
 import { Great_Vibes } from "next/font/google";
 
 type Swatch = { color: string; name?: string };
 
-const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
-const COUPLE = "/couple2.png";
-
-// igual que tu ejemplo de “El gran día”
-const PANEL_STYLE: React.CSSProperties = {
-  background: "linear-gradient(0deg, #F7FBFE 0%, #EFF7FD 100%)",
-  border: "1px solid #DBEAF5",
-  boxShadow: "0 4px 14px rgba(0,0,0,0.04)",
-};
+const DRESS_IMAGE = "/couple3.png"; // cámbiala si quieres otra ilustración
 
 const greatVibes = Great_Vibes({
   subsets: ["latin"],
@@ -27,124 +19,146 @@ const greatVibes = Great_Vibes({
 
 export default function DressCode({
   title = "Código de Vestimenta",
-  message1 = "Se recomienda no usar blanco ni tonalidades similares ya que es el color de la novia.",
-  message2 = "Invitados en general pueden usar tonos pasteles, colores claros o vibrantes.",
+  brideMessage = "Con cariño, les pedimos evitar vestir en blanco y en baby blue o tonos afines a los mismos, ya que serán exclusivos de la novia y de nuestras damas de honor.",
+  generalMessage = "El resto de colores queda libre para que cada invitado brille a su manera.",
   colors = DEFAULT_COLORS,
   womenColors,
-  menColors,
   className,
   titleClassName,
   captionClassName,
 }: {
   title?: string;
-  message1?: string;
-  message2?: string;
+  brideMessage?: string;
+  generalMessage?: string;
   colors?: Swatch[];
   womenColors?: Swatch[];
-  menColors?: Swatch[];
   className?: string;
   titleClassName?: string;
   captionClassName?: string;
 }) {
+  // solo usamos colores de damas (primeros 4 por defecto)
   const w = womenColors && womenColors.length ? womenColors.slice(0, 4) : colors.slice(0, 4);
-  const m = menColors && menColors.length ? menColors.slice(0, 4) : colors.slice(4, 8);
 
   return (
     <section
       className={[
-        "relative w-full px-4 sm:px-6 py-6 sm:py-8",
+        "relative w-full",
         className ?? "",
       ].join(" ")}
-      style={PANEL_STYLE}
     >
-      <div className="mx-auto w-full max-w-[560px] text-center">
-        <h3
-          className={`text-[34px] sm:text-[40px] font-medium text-slate-800 ${titleClassName ?? ""}`}
-        >
-          {title}
-        </h3>
+      {/* TARJETA BLANCA */}
+      <div
+        className="
+          mx-auto w-full max-w-[640px]
+          bg-white
+          shadow-[0_4px_14px_rgba(0,0,0,0.04)]
+          px-4 sm:px-6 py-5 sm:py-6
+        "
+      >
+        <div className="text-center">
+          {/* título */}
+          <h3
+            className={`font-medium text-slate-500 ${
+              titleClassName ?? ""
+            }`}
+          >
+            {title}
+          </h3>
 
-        <Image
-          src={COUPLE}
-          alt=""
-          width={120}
-          height={120}
-          className="pointer-events-none mx-auto mt-4"
-          style={{ height: "auto" }}
-          priority={false}
-        />
+          {/* línea "Formal" debajo del título */}
+          <p className={`mt-1 text-[25px] sm:text-[29px] text-slate-500 ${
+              titleClassName ?? ""}`}>
+            Formal
+          </p>
 
-        <p className={`mt-3 text-sm text-slate-600 ${captionClassName ?? ""}`}>
-          {message1}
-        </p>
-
-        <div className="mt-6 grid gap-6">
-          <PaletteGroup
-            label="Damas"
-            icon={<Venus className="size-4" style={{ color: SOFT_ACCENT }} />}
-            colors={w}
+          {/* imagen de referencia */}
+          <Image
+            src={DRESS_IMAGE}
+            alt="Código de vestimenta"
+            width={110}
+            height={110}
+            className="pointer-events-none mx-auto mt-3"
+            style={{ height: "auto" }}
+            priority={false}
           />
-          <PaletteGroup
-            label="Caballeros"
-            icon={<Mars className="size-4" style={{ color: SOFT_ACCENT }} />}
-            colors={m}
-          />
+
+          {/* texto: blanco reservado para la novia */}
+          <div className="mt-3 flex flex-col items-center gap-1.5">
+            <p
+            className={`mt-3 text-xs sm:text-sm text-slate-600 leading-snug ${
+              captionClassName ?? ""
+            }`}
+          >
+            {brideMessage}
+          </p>
+
+            <PaletteInline label="Damas" colors={w} />
+          </div>
+
+          {/* texto general opcional */}
+          {generalMessage && (
+            <p
+              className={`mt-4 text-xs sm:text-sm text-slate-600 leading-snug ${
+                captionClassName ?? ""
+              }`}
+            >
+              {generalMessage}
+            </p>
+          )}
         </div>
-
-        <p className={`mt-6 text-sm text-slate-600 ${captionClassName ?? ""}`}>
-          {message2}
-        </p>
       </div>
     </section>
   );
 }
 
-function PaletteGroup({
+function PaletteInline({
   label,
-  icon,
   colors,
 }: {
   label: string;
-  icon?: React.ReactNode;
   colors: Swatch[];
 }) {
   return (
-    <div className="mx-auto w-full max-w-[520px]">
+    <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+      {/* label + icono */}
       <div
-        className={`mb-2 flex items-center justify-center gap-2 text-[24px] sm:text-[30px] font-semibold tracking-wider text-slate-500 ${greatVibes.className}`}
+        className={`
+          inline-flex items-center gap-1.5
+          text-[18px] sm:text-[20px] font-semibold tracking-wider text-slate-500
+          ${greatVibes.className}
+        `}
       >
-        {icon}
+        <Venus className="size-3.5" style={{ color: SOFT_ACCENT }} />
         <span>{label}</span>
       </div>
 
-      <div className="grid grid-cols-4 gap-3 sm:gap-4">
+      {/* swatches en la misma línea, más pequeños */}
+      <div className="inline-flex items-center gap-1.5 sm:gap-2">
         {colors.slice(0, 4).map((s, i) => (
-          <div key={i} className="flex flex-col items-center">
-            <span
-              className="size-12 sm:size-14 rounded-full ring-1 shadow-inner"
-              style={{
-                backgroundColor: s.color,
-                boxShadow: "inset 0 1px 2px rgba(0,0,0,0.06)",
-                borderColor: SOFT_BORDER,
-              }}
-              aria-label={s.name ?? s.color}
-              title={s.name ?? s.color}
-            />
-            {s.name && <span className="mt-1 text-[10px] text-slate-500">{s.name}</span>}
-          </div>
+          <span
+            key={i}
+            className="h-7 w-7 sm:h-8 sm:w-8 rounded-full ring-1 shadow-inner"
+            style={{
+              backgroundColor: s.color,
+              boxShadow: "inset 0 1px 2px rgba(0,0,0,0.06)",
+            }}
+            aria-label={s.name ?? s.color}
+            title={s.name ?? s.color}
+          />
         ))}
       </div>
     </div>
   );
 }
 
+// paleta por defecto
 const DEFAULT_COLORS: Swatch[] = [
   // Mujeres
   { color: "#77C3EC" },
   { color: "#89CFF0" },
   { color: "#9DD9F3" },
   { color: "#B8E2F2" },
-  // Hombres
+  // Hombres (no usados aquí)
   { color: "#9C867C" },
   { color: "#C9B2A6" },
   { color: "#EBD8CD" },

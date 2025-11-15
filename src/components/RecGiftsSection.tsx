@@ -16,8 +16,8 @@ const SOFT_TEXT = "#0F172A";
 type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
 export default function RecGiftsSection({
-  recommendations = "Llega con anticipación, sigue las indicaciones del personal y considera llevar un abrigo ligero (locación al aire libre).",
-  gifts = "Tu presencia es lo más valioso; si deseas obsequiarnos algo, agradecemos el detalle en sobre o transferencia.",
+  recommendations = "Llega con anticipación y sigue las indicaciones del personal del lugar para asegurar una experiencia agradable para todos.",
+  gifts = "Tu presencia es lo más valioso para nosotros. Si deseas hacernos un regalo, hemos preparado algunas opciones para facilitarte el proceso.",
   registryLabel,
   registryUrl,
   accounts = [],
@@ -61,7 +61,7 @@ export default function RecGiftsSection({
       <div className="relative z-10 mx-auto grid max-w-[880px] gap-6">
         <InfoCard
           title={<span className={titleClassName}>{`Recomendaciones`}</span>}
-          icon={<Sparkles className="size-6" style={{ color: "#8FBFD9" }} />}
+          icon={<Sparkles className="size-6" style={{ color: "#3579AD" }} />}
         >
           <p className={itemClassName}>{recommendations}</p>
         </InfoCard>
@@ -81,7 +81,7 @@ export default function RecGiftsSection({
 
         <InfoCard
           title={<span className={titleClassName}>{`Regalos`}</span>}
-          icon={<Gift className="size-6" style={{ color: "#8FBFD9" }} />}
+          icon={<Gift className="size-6" style={{ color: "#3579AD" }} />}
         >
           <p className={itemClassName}>{gifts}</p>
 
