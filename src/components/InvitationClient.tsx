@@ -376,7 +376,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
                 title="Recepción"
                 name={RECEPTION_NAME}
                 address="Vía a Cuenca, barrio Carigán, Loja"
-                time="07:00 PM"
+                time="06:30 PM"
                 mapUrl={RECEPTION_MAPS_URL}
               />
             </div>
