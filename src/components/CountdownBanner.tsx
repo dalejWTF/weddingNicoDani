@@ -42,8 +42,8 @@ export default function CountdownBanner({ date, className }: { date: Date; class
       {vs.map((u, i) => (
         <React.Fragment key={u.label}>
           <div className="text-center min-w-16">
-          <div className="text-4xl sm:text-5xl leading-none text-slate-800">{u.value}</div>
-            <div className={`mt-1 text-[20px] tracking-[0.08em] text-slate-500 ${greatVibes.className}`}>{u.label}</div>
+          <div className="text-4xl sm:text-5xl leading-none text-blue-950/90">{u.value}</div>
+            <div className={`mt-1 text-[20px] tracking-[0.08em] text-blue-950/90 ${greatVibes.className}`}>{u.label}</div>
           </div>
           {i < vs.length - 1 && <span className="pb-10 text-2xl text-slate-400/60">:</span>}
         </React.Fragment>

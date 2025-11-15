@@ -25,7 +25,7 @@ export default function TextBlock({
           {title}
         </h2>
       )}
-      <div className="space-y-2 text-sm text-slate-700 text-[22px] sm:text-[26px]">
+      <div className="space-y-2 text-sm text-slate-700 text-[25px] sm:text-[29px]">
         {paragraphs.map((p, i) => (
           <p key={i} className={paragraphClassName}>{p}</p>
         ))}

@@ -16,7 +16,7 @@ export default function QuoteBlock({
 }) {
   return (
     <figure
-      className={`rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.03)] ${className ?? ""
+      className={`${className ?? ""
         }`}
     >
       <blockquote

@@ -36,7 +36,6 @@ type Family = { id: string; nombreFamilia: string; nroPersonas: number };
 type CSSVarProps<T extends string> = React.CSSProperties & Record<T, string>;
 
 const SOFT_BG_CARD = "#FFFFFF";
-const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 
 const greatVibes = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "--font-greatvibes", display: "swap" });
@@ -141,26 +140,82 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
       <div className="mx-auto max-w-[640px]">
         {/* 1 — Hero */}
         <HeroCover src="/assets/1.jpg" alt="Daniel y Nicole">
-          <h1 className={`text-center text-[64px] sm:text-[100px] ${mr_de_haviland.className} text-white drop-shadow`}>
-            Daniel & Nicole
-          </h1>
-          <p className={`mt-2 text-center text-white/90 text-[44px] sm:text-[50px] ${mr_de_haviland.className}`}>¡Nuestra Boda!</p>
-        </HeroCover>
+          <div className="no-auto-resize">
+            <h1 className={`text-center text-[64px] sm:text-[100px] ${mr_de_haviland.className} text-white drop-shadow`}>
+              Daniel & Nicole
+            </h1>
+            <p className={`mt-2 text-center text-white/90 text-[44px] sm:text-[50px] ${mr_de_haviland.className}`}>¡Nuestra Boda!</p>
+          </div>
 
+        </HeroCover>
+        {/* 10 — Cita (hoja blanca) */}
+        <RevealSection>
+          <section className="relative ">
+            <div
+              className="mx-auto  max-w-[880px] overflow-hidden p-6 sm:p-8 shadow-[0_4px_14px_rgba(0,0,0,0.04)]"
+              style={{
+                ...garlandVar,
+                background: "#FFFFFF",
+              }}
+            >
+              <Image
+                src="/blue_horizontal.png"
+                alt=""
+                aria-hidden
+                width={320}
+                height={120}
+                className="pointer-events-none select-none absolute z-0"
+                style={{
+                  top: "10%",
+                  left: "50%",
+                  transform: "translate(-50%, -30%)",
+                  width: "var(--garland)",
+                  height: "auto",
+                  opacity: 0.95,
+                }}
+                priority={false}
+              />
+              <Image
+                src="/blue_horizontal.png"
+                alt=""
+                aria-hidden
+                width={320}
+                height={120}
+                className="pointer-events-none select-none absolute z-0"
+                style={{
+                  bottom: "5%",
+                  left: "50%",
+                  transform: "translate(-50%, 30%)",
+                  width: "var(--garland)",
+                  height: "auto",
+                  opacity: 0.95,
+                }}
+                priority={false}
+              />
+              <div className="relative z-10 py-6 text-center ">
+                <QuoteBlock
+                  classNameAuthor={`${cormorant.className} text-[15px] sm:text-[20px] py-3`}
+                  classNameQuote={`${rougeScript.className} text-[25px] sm:text-[29px] pt-3`}
+                  quote="El amor es paciente, es bondadoso. El amor no es envidioso, jactancioso ni orgulloso. No se comporta con rudeza, no es egoista, no se enoja fácilmente, no guarda rencor."
+                  author="1 Corintios 13:4-5"
+                />
+              </div>
+            </div>
+          </section>
+        </RevealSection>
         {/* 2 — Texto + BigDate + Countdown + CalendarMonth (panel baby blue) */}
         <RevealSection>
           <section
             className="relative px-4 sm:px-6 py-6 sm:py-8"
             style={{
               background: "linear-gradient(0deg, #F7FBFE 0%, #EFF7FD 100%)",
-              border: "1px solid #DBEAF5",
               boxShadow: "0 4px 14px rgba(0,0,0,0.04)",
             }}
           >
             <div className="mx-auto w-full max-w-[560px] text-center">
               <TextBlock
                 className={`bg-transparent shadow-none p-0`}
-                paragraphClassName={`text-slate-700 text-center ${tangerine.className}`}
+                paragraphClassName={`text-slate-700 text-center leading-[1.2] ${rougeScript.className}`}
                 paragraphs={[
                   "Dios nos ha concedido el privilegio de conocernos y amarnos con su bendición y la de nuestros padres.",
                   "Queremos unir nuestras vidas para siempre y celebrarlo contigo.",
@@ -248,7 +303,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               <InfoCard
                 title={<span className="pt-6">Padrinos de Arras</span>}
                 titleClassName={`${mea_culpa.className} text-[34px] sm:text-[40px]`}
-                icon={<Coins className="size-6" style={{ color: "#8FBFD9" }} />}
+                icon={<Coins className="size-6" style={{ color: "#3579AD" }} />}
               >
                 <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>
                   Manuel Villamagua & Elizabeth Torres
@@ -258,7 +313,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               <InfoCard
                 title={<span className="pt-6">Padrinos de Lazo</span>}
                 titleClassName={`${mea_culpa.className} text-[34px] sm:text-[40px]`}
-                icon={<Infinity className="size-6" style={{ color: "#8FBFD9" }} />}
+                icon={<Infinity className="size-6" style={{ color: "#3579AD" }} />}
               >
                 <p className={`${tangerine.className} text-[26px] sm:text-[30px]`}>
                   Carlos Ulloa & Eliza Márquez
@@ -267,18 +322,27 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             </div>
           </section>
         </RevealSection>
-
+        {/* 6 — Imagen */}
+        <RevealSection>
+          <section className="grid gap-4">
+            <div
+              className="relative mt-0 w-full aspect-[16/10] overflow-hidden"
+              style={{ backgroundColor: SOFT_BG_CARD, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
+            >
+              <Image src="/assets/3.jpg" alt="Momentos" fill sizes="100vw" className="object-cover" loading="lazy" />
+            </div>
+          </section>
+        </RevealSection>
         {/* 4 — Venue */}
         <RevealSection>
           <section
             className={[
               "[--corner:clamp(112px,38vw,260px)]",
               "sm:[--corner:clamp(52px,16vw,210px)]",
-              "relative rounded-2xl w-full px-4 sm:px-6",
+              "relative w-full px-4 sm:px-6",
               "pt-0 pb-0 sm:pt-0 sm:pb-0",
               "mb-0",
               "shadow-[0_4px_14px_rgba(0,0,0,0.04)]",
-              "border border-[#DBEAF5]",
             ].join(" ")}
           >
             <div className="z-10 pb-9 py-9">
@@ -318,6 +382,23 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
             </div>
           </section>
         </RevealSection>
+        {/* 6 — Imagen */}
+        <RevealSection>
+          <section className="grid gap-4">
+            <div
+              className="relative mt-0 w-full aspect-[16/10] overflow-hidden"
+              style={{ backgroundColor: SOFT_BG_CARD, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
+            >
+              <Image
+                src="/assets/11.jpg"
+                alt="Momentos"
+                fill sizes="100vw"
+                className="object-cover"
+                loading="lazy"
+              />
+            </div>
+          </section>
+        </RevealSection>
 
         {/* 5 — Timeline */}
         <RevealSection>
@@ -328,19 +409,18 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
               "relative w-full",
               "px-4 sm:px-6 py-6 sm:py-8",        // padding más limpio
               "mt-0 mb-0",
-              "overflow-x-hidden sm:overflow-visible",
+              "overflow-x-hidden overflow-hidden",
             ].join(" ")}
             style={{
               background: "linear-gradient(0deg, #F7FBFE 0%, #EFF7FD 100%)",
-              border: "1px solid #DBEAF5",
               boxShadow: "0 4px 14px rgba(0,0,0,0.04)",
             }}
           >
             <Timeline
               items={[
                 { time: "5:00 PM", label: "Ceremonia", icon: "/assets/TimelineSVG/church.svg" },
-                { time: "6:00 PM", label: "Fotos", icon: "/assets/TimelineSVG/photos.svg" },
-                { time: "7:00 PM", label: "Recepción", icon: "/assets/TimelineSVG/lunch.svg" },
+                { time: "6:30 PM", label: "Recepción", icon: "/assets/TimelineSVG/lunch.svg" },
+                { time: "7:00 PM", label: "Fotos", icon: "/assets/TimelineSVG/photos.svg" },
                 { time: "9:00 PM", label: "Brindis & cena", icon: "/assets/TimelineSVG/lunch.svg" },
                 { time: "10:00 PM", label: "Baile", icon: "/assets/TimelineSVG/disco.svg" },
               ]}
@@ -352,119 +432,49 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           </section>
         </RevealSection>
 
-        {/* 6 — Imagen */}
-        <RevealSection>
-          <section className="grid gap-4">
-            <div
-              className="relative mt-0 w-full aspect-[16/10] overflow-hidden"
-              style={{ backgroundColor: SOFT_BG_CARD, border: `1px solid ${SOFT_BORDER}`, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}
-            >
-              <Image src="/assets/3.jpg" alt="Momentos" fill sizes="100vw" className="object-cover" loading="lazy" />
-            </div>
-          </section>
-        </RevealSection>
-
         {/* 7 — DressCode */}
         <RevealSection>
           <DressCode
-            className="pt-6"
-            titleClassName={`${mea_culpa.className} text-3xl`}
+            titleClassName={`${mea_culpa.className} text-4xl`}
             captionClassName={`${rougeScript.className} text-[25px] sm:text-[29px]`}
             womenColors={[
+              { color: "#1F4E7A" },
               { color: "#A9D6F5" },
               { color: "#BDE1F8" },
               { color: "#CAE7FA" },
-              { color: "#D6EFFC" }
             ]}
-            
+
           />
         </RevealSection>
-
+        {/* 9 — Carrusel */}
+        <RevealSection>
+          <section className="grid gap-3 [--garland:clamp(110px,26vw,200px)]">
+            <GalleryCarousel
+              aspect={4 / 3}
+              images={[
+                { src: "/assets/4.jpg", alt: "Foto 4" },
+                { src: "/assets/5.jpg", alt: "Foto 5" },
+                { src: "/assets/6.jpg", alt: "Foto 6" },
+                { src: "/assets/7.jpg", alt: "Foto 7", objectPosition: "50% 30%" },
+                { src: "/assets/9.jpg", alt: "Foto 9" },
+                { src: "/assets/8.jpg", alt: "Foto 8", objectPosition: "50% 60%" },
+              ]}
+              className={`${cormorant.className} text-3xl`}
+            />
+          </section>
+        </RevealSection>
         {/* 8 — Recomendaciones + Regalos */}
         <RevealSection>
           <RecGiftsSection
             className="pt-6"
-            titleClassName={`${mea_culpa.className} text-5xl`}
-            itemClassName={`${rougeScript.className} text-[29px] sm:text-[35px]`}
+            titleClassName={`${mea_culpa.className} text-4xl`}
+            itemClassName={`${rougeScript.className} text-[26px] sm:text-[33px]`}
             accounts={[
               { bank: "Cooperativa Coopmego", holder: "Daniel Ulloa", account: "401010838242", dni: "1105002867" },
               { bank: "Banco de Loja", holder: "Daniel Ulloa", account: "2903926236", dni: "1105002867" },
               { bank: "Banco Pichincha", holder: "Daniel Ulloa", account: "2206132871", dni: "1105002867" },
             ]}
           />
-        </RevealSection>
-
-        {/* 9 — Carrusel */}
-        <RevealSection>
-          <section className="grid gap-3 pt-6 [--garland:clamp(110px,26vw,200px)]">
-            <GalleryCarousel
-              aspect={4 / 3}
-              images={[
-                { src: "/assets/4.jpg", alt: "Foto 1" },
-                { src: "/assets/5.jpg", alt: "Foto 2" },
-                { src: "/assets/6.jpg", alt: "Foto 3" },
-              ]}
-              className={`${cormorant.className} text-3xl`}
-            />
-          </section>
-        </RevealSection>
-
-        {/* 10 — Cita (hoja blanca) */}
-        <RevealSection>
-          <section className="relative">
-            <div
-              className="relative mx-auto max-w-[880px] overflow-hidden p-6 sm:p-8 shadow-[0_4px_14px_rgba(0,0,0,0.04)]"
-              style={{
-                ...garlandVar,
-                background: "#FFFFFF",
-                border: `1px solid ${SOFT_BORDER}`,
-                borderRadius: 28,
-              }}
-            >
-              <Image
-                src="/blue_horizontal.png"
-                alt=""
-                aria-hidden
-                width={320}
-                height={120}
-                className="pointer-events-none select-none absolute z-0"
-                style={{
-                  top: "10%",
-                  left: "50%",
-                  transform: "translate(-50%, -30%)",
-                  width: "var(--garland)",
-                  height: "auto",
-                  opacity: 0.95,
-                }}
-                priority={false}
-              />
-              <Image
-                src="/blue_horizontal.png"
-                alt=""
-                aria-hidden
-                width={320}
-                height={120}
-                className="pointer-events-none select-none absolute z-0"
-                style={{
-                  bottom: "5%",
-                  left: "50%",
-                  transform: "translate(-50%, 30%)",
-                  width: "var(--garland)",
-                  height: "auto",
-                  opacity: 0.95,
-                }}
-                priority={false}
-              />
-              <div className="relative z-10 py-6 text-center bg-white shadow-[0_4px_14px_rgba(0,0,0,0.04)]">
-                <QuoteBlock
-                  classNameAuthor={`${cormorant.className} text-[14px] sm:text-[20px] py-3`}
-                  classNameQuote={`${rougeScript.className} text-[29px] sm:text-[35px] pt-3`}
-                  quote="El amor es paciente, es bondadoso. El amor no es envidioso, jactancioso ni orgulloso. No se comporta en rudeza, no es egoista, no se enoja fácilmente, no guarda rencor."
-                  author="1 Corintios 13:4-5"
-                />
-              </div>
-            </div>
-          </section>
         </RevealSection>
 
         {/* 11 — Confirmación — SOLO si hay id */}
@@ -491,7 +501,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
 
         {/* 12 — Cierre */}
         <RevealSection>
-          <HeroCover src="/assets/2.jpg" alt="Nos vemos pronto">
+          <HeroCover src="/assets/12.jpg" alt="Nos vemos pronto" objectPosition="60% 20%">
             <h1 className={`text-center text-5xl sm:text-8xl ${greatVibes.className} text-white drop-shadow`}>
               ¡Nos vemos en la boda!
             </h1>

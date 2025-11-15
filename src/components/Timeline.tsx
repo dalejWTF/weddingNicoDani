@@ -41,9 +41,8 @@ export default function Timeline({
       {title && (
         <div className="mb-3 text-center relative z-10">
           <div
-            className={`mb-1 tracking-wide mt-3 ${titleClassName ?? ""}`}
+            className={`mb-1 tracking-wide mt-3 text-slate-500 ${titleClassName ?? ""}`}
             style={{
-              color: TEXTTIMELINE,
               fontSize: "clamp(28px, 6vw, 54px)",
               lineHeight: 1.06,
             }}
@@ -63,11 +62,11 @@ export default function Timeline({
         aria-hidden
         className="
           pointer-events-none select-none absolute z-0
-          top-[-40px] left-[-40px]
+          top-[-32px] left-[-20px]
           sm:top-[-50px] sm:left-[-37px]
         "
         style={{
-          width: "calc(0.85 * var(--corner))",
+          width: "calc(0.80 * var(--corner))",
           height: "auto",
           rotate: "180deg",
         }}
@@ -83,30 +82,11 @@ export default function Timeline({
         aria-hidden
         className="
           pointer-events-none select-none absolute z-0
-          bottom-[-60px] right-[-40px]
+          bottom-[-22px] right-[-20px]
           sm:bottom-[-80px] sm:right-[-35px]
         "
         style={{
-          width: "calc(0.85 * var(--corner))",
-          height: "auto",
-        }}
-        priority={false}
-      />
-
-      {/* Inferior izquierda (ramita pequeña) */}
-      <Image
-        src="/timelineflower2.png"
-        alt=""
-        width={400}
-        height={400}
-        aria-hidden
-        className="
-          pointer-events-none select-none absolute z-0
-          bottom-[-40px] left-[-35px]
-          sm:bottom-[-60px] sm:left-[-30px]
-        "
-        style={{
-          width: "calc(0.6 * var(--corner))",
+          width: "calc(0.80 * var(--corner))",
           height: "auto",
         }}
         priority={false}
@@ -153,7 +133,7 @@ function TimelineRow({
 }) {
   const iconSize = "clamp(40px, 11vw, 72px)";
   const timeSize = "clamp(14px, 3.4vw, 18px)";
-  const labelSize = "clamp(12px, 3vw, 16px)";
+  const labelSize = "clamp(10px, 2vw, 10px)";
 
   return (
     <li
@@ -178,7 +158,7 @@ function TimelineRow({
       />
 
       {/* izquierda: hora */}
-      <div className="flex items-center justify-end pr-3 sm:pr-6">
+      <div className="flex items-center justify-end pr-10 sm:pr-10">
         <span
           className={`font-semibold tracking-wide ${itemClassName ?? ""}`}
           style={{ color: TEXTTIMELINE, fontSize: timeSize }}
@@ -188,11 +168,11 @@ function TimelineRow({
       </div>
 
       {/* derecha: SVG arriba y label debajo, ambos CENTRADOS y con ancho fijo */}
-      <div className="flex items-center justify-start pl-4 sm:pl-6">
+      <div className="flex items-center justify-start sm:pl-6">
         <div
           className={`
             flex flex-col items-center text-center
-            gap-1 sm:gap-2
+            
             ${itemClassName ?? ""}
           `}
           style={{
@@ -218,7 +198,7 @@ function TimelineRow({
           )}
 
           <span
-            className="uppercase"
+            className="uppercase font-semibold "
             style={{
               fontSize: labelSize,
               color: TEXTTIMELINE,

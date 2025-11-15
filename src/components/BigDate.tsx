@@ -30,12 +30,11 @@ export default function BigDate({
   const month = MONTHS[d.getMonth()];
   const dow = WEEKDAYS[d.getDay()];
 
-  const textColor   = tone === "light" ? "rgba(255,255,255,0.92)" : "#0F172A";
   const mutedColor  = tone === "light" ? "rgba(255,255,255,0.70)" : "rgba(15,23,42,0.70)";
   const hairlineCol = tone === "light" ? "rgba(255,255,255,0.45)" : "rgba(15,23,42,0.18)";
 
   return (
-    <section className={`w-full text-center ${className ?? ""}`} style={{ color: textColor }}>
+    <section className={`w-full text-center ${className ?? ""}`} >
       {/* Mes */}
       <div
         className={`uppercase tracking-[0.35em] text-[11px] sm:text-xs ${labelsClassName ?? ""}`}
@@ -63,7 +62,7 @@ export default function BigDate({
 
         {/* Día grande — SIEMPRE centrado */}
         <span
-          className={`leading-none font-light ${dayClassName ?? ""}`}
+          className={`leading-none font-light text-blue-950/90 ${dayClassName ?? ""}`}
           style={{ fontSize: "clamp(64px, 16vw, 120px)", lineHeight: 0.9 }}
           aria-label={`Día ${day}`}
         >

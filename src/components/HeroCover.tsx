@@ -7,11 +7,13 @@ export default function HeroCover({
   alt = "",
   children,
   className = "",
+  objectPosition="",
 }: {
   src: string;
   alt?: string;
   children?: React.ReactNode;
   className?: string;
+  objectPosition?: string;
 }) {
   return (
     <div className={`relative w-full min-h-dvh overflow-hidden ${className}`}>
@@ -23,6 +25,9 @@ export default function HeroCover({
         priority
         sizes="100vw"
         className="object-cover"
+        style={{
+          objectPosition: objectPosition ?? "center", // 👈 se respeta por imagen
+        }}
       />
 
       {/* degradado oscuro desde abajo */}

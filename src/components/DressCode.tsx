@@ -7,7 +7,6 @@ import { Great_Vibes } from "next/font/google";
 
 type Swatch = { color: string; name?: string };
 
-const SOFT_BORDER = "#DBEAF5";
 const SOFT_ACCENT = "#8FBFD9";
 const DRESS_IMAGE = "/couple3.png"; // cámbiala si quieres otra ilustración
 
@@ -43,7 +42,7 @@ export default function DressCode({
   return (
     <section
       className={[
-        "relative w-full px-4 sm:px-6 py-5 sm:py-6",
+        "relative w-full",
         className ?? "",
       ].join(" ")}
     >
@@ -51,8 +50,7 @@ export default function DressCode({
       <div
         className="
           mx-auto w-full max-w-[640px]
-          rounded-2xl bg-white
-          border border-[rgba(219,234,245,0.95)]
+          bg-white
           shadow-[0_4px_14px_rgba(0,0,0,0.04)]
           px-4 sm:px-6 py-5 sm:py-6
         "
@@ -60,7 +58,7 @@ export default function DressCode({
         <div className="text-center">
           {/* título */}
           <h3
-            className={`text-[30px] sm:text-[34px] font-medium text-slate-800 ${
+            className={`font-medium text-slate-500 ${
               titleClassName ?? ""
             }`}
           >
@@ -143,7 +141,6 @@ function PaletteInline({
             style={{
               backgroundColor: s.color,
               boxShadow: "inset 0 1px 2px rgba(0,0,0,0.06)",
-              borderColor: SOFT_BORDER,
             }}
             aria-label={s.name ?? s.color}
             title={s.name ?? s.color}

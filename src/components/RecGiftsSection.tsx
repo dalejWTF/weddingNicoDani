@@ -61,7 +61,7 @@ export default function RecGiftsSection({
       <div className="relative z-10 mx-auto grid max-w-[880px] gap-6">
         <InfoCard
           title={<span className={titleClassName}>{`Recomendaciones`}</span>}
-          icon={<Sparkles className="size-6" style={{ color: "#8FBFD9" }} />}
+          icon={<Sparkles className="size-6" style={{ color: "#3579AD" }} />}
         >
           <p className={itemClassName}>{recommendations}</p>
         </InfoCard>
@@ -81,7 +81,7 @@ export default function RecGiftsSection({
 
         <InfoCard
           title={<span className={titleClassName}>{`Regalos`}</span>}
-          icon={<Gift className="size-6" style={{ color: "#8FBFD9" }} />}
+          icon={<Gift className="size-6" style={{ color: "#3579AD" }} />}
         >
           <p className={itemClassName}>{gifts}</p>
 
