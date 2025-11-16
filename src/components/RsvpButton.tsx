@@ -41,6 +41,11 @@ function personasLabel(n?: number) {
   return n === 1 ? "1 persona" : `${n} personas`;
 }
 
+function asistiranLabel(n?: number) {
+  if (typeof n !== "number") return "";
+  return n === 1 ? "¿Asistirás?" : `¿Asistirán?`;
+}
+
 export default function RsvpButton({
   triggerClassName = "",
   triggerLabel = "Confirmar",
@@ -84,7 +89,7 @@ export default function RsvpButton({
   const [successData, setSuccessData] = React.useState<
     null | { nombreFamilia: string; nroPersonas: number; asistencia: boolean }
   >(null);
-
+  const SOFT_BTN_BG = "#EAF3FB";
   const [alreadyResponded, setAlreadyResponded] = React.useState(false);
   const [checkingStatus, setCheckingStatus] = React.useState(false);
 
@@ -208,10 +213,15 @@ export default function RsvpButton({
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className={`rounded-2xl px-10 ${triggerClassName}`}
+            className="rounded-xl px-5 py-2 w-auto text-[15px] sm:text-[15px]"
+                style={{
+                  backgroundColor: SOFT_BTN_BG,
+                  color: SOFT_TEXT,
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                  borderColor: SOFT_BORDER
+                }}
             disabled={noneLeft}
             title={noneLeft ? "Ya no hay familias pendientes" : ""}
-            style={{ borderColor: SOFT_BORDER, backgroundColor: "#f7f7f7ff" }}
           >
             {noneLeft ? "Sin pendientes" : triggerLabel}
           </Button>
@@ -306,7 +316,8 @@ export default function RsvpButton({
                 )}
 
                 <div className="grid gap-2">
-                  <Label className={`text-slate-700 text-2xl ${titleClassName ?? ""}`}>¿Asistirán?</Label>
+                  <Label className={`text-slate-700 text-2xl ${titleClassName ?? ""}`}>
+                  {asistiranLabel(selected?.invitados?.total)}</Label>
 
                   <RadioGroup
                     value={attendance}
