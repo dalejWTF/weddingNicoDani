@@ -480,7 +480,7 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
         {/* 11 — Confirmación — SOLO si hay id */}
         {familyIdFromUrl && (
           <RevealSection>
-            <section className="pb-9 pt-6">
+            <section>
               <ConfirmCard
                 confirmed={confirmed}
                 declined={declined}
