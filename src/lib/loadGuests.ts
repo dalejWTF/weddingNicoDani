@@ -1,16 +1,14 @@
-// lib/loadGuests.ts
 import { getGhFile, decodeBase64ToUtf8 } from "./githubFiles";
+import { FAMILIAS as LOCAL_FAMILIAS } from "@/data/familias";
 
-// ⬇️ OPCIONAL: expone invitados en el tipo (no rompe nada si no lo usas en el front)
+// ⬇️ Invitados tipados
 export type Family = {
   id: string;
   nombreFamilia: string;
   nroPersonas: number;
-  telefono?: string; // 👈 NUEVO
+  telefono?: string;
   invitados?: { adult?: number; kids?: number; total?: number };
 };
-
-import { FAMILIAS as LOCAL_FAMILIAS } from "@/data/familias";
 
 const GUESTS_PATH = process.env.GITHUB_GUESTS_PATH || "data/guests.json";
 
@@ -52,15 +50,15 @@ export async function loadGuests(): Promise<Family[]> {
       if (Array.isArray(json)) {
         arrCandidate = json;
       } else if (isRecord(json)) {
-        const pick =
-          (json as Record<string, unknown>).families ??
-          (json as Record<string, unknown>).FAMILIAS ??
-          (json as Record<string, unknown>).familias;
+        const rec = json as Record<string, unknown>;
+        const pick = rec.families ?? rec.FAMILIAS ?? rec.familias;
         if (Array.isArray(pick)) {
           arrCandidate = pick;
         } else {
-          const firstArray = Object.values(json).find(Array.isArray);
-          arrCandidate = Array.isArray(firstArray) ? firstArray : [];
+          const firstArray = Object.values(rec).find(
+            (v): v is unknown[] => Array.isArray(v)
+          );
+          arrCandidate = firstArray ?? [];
         }
       }
 
@@ -69,7 +67,9 @@ export async function loadGuests(): Promise<Family[]> {
     }
 
     if (GUESTS_PATH.endsWith(".ts")) {
-      const match = raw.match(/export\s+const\s+FAMILIAS[\s\S]*?=\s*(\[[\s\S]*?\]);?/);
+      const match = raw.match(
+        /export\s+const\s+FAMILIAS[\s\S]*?=\s*(\[[\s\S]*?\]);?/
+      );
       if (!match) throw new Error("No se pudo localizar el array FAMILIAS en el .ts");
       const arrayLiteral = match[1];
 
@@ -85,6 +85,7 @@ export async function loadGuests(): Promise<Family[]> {
 
     return LOCAL_FAMILIAS as unknown as Family[];
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error("[loadGuests] fallback a LOCAL_FAMILIAS:", e);
     return LOCAL_FAMILIAS as unknown as Family[];
   }
@@ -95,14 +96,20 @@ function normalizeFamilies(arr: unknown[]): Family[] {
     .map((x): Family | null => {
       if (!isRecord(x)) return null;
 
-      const id = toStringSafe(x.id).trim();
-      const nombreFamilia = (toStringSafe(x.nombreFamilia) || toStringSafe(x.nombre)).trim();
-      const telefono = toStringSafe((x as any).telefono).trim(); // 👈 NUEVO
+      const rec = x as Record<string, unknown>;
 
-      // ⬇️ NUEVO: soporta { invitados: { adult, kids, total } }
-      const rawInv = isRecord(x.invitados) ? (x.invitados as Record<string, unknown>) : undefined;
+      const id = toStringSafe(rec.id).trim();
+      const nombreFamilia = (
+        toStringSafe(rec.nombreFamilia) || toStringSafe(rec.nombre)
+      ).trim();
+      const telefono = toStringSafe(rec.telefono).trim();
+
+      // Invitados: { invitados: { adult, kids, total } }
+      const rawInv = isRecord(rec.invitados)
+        ? (rec.invitados as Record<string, unknown>)
+        : undefined;
       const invAdult = rawInv ? toNumberSafe(rawInv.adult) : NaN;
-      const invKids  = rawInv ? toNumberSafe(rawInv.kids)  : NaN;
+      const invKids = rawInv ? toNumberSafe(rawInv.kids) : NaN;
       const invTotal = rawInv ? toNumberSafe(rawInv.total) : NaN;
 
       let nroPersonas = NaN;
@@ -110,16 +117,14 @@ function normalizeFamilies(arr: unknown[]): Family[] {
         nroPersonas = invTotal;
       } else if (Number.isFinite(invAdult) || Number.isFinite(invKids)) {
         const a = Number.isFinite(invAdult) ? invAdult : 0;
-        const k = Number.isFinite(invKids)  ? invKids  : 0;
+        const k = Number.isFinite(invKids) ? invKids : 0;
         if (a + k > 0) nroPersonas = a + k;
       }
 
       // Fallback a esquema antiguo (nroPersonas | personas | nro)
       if (!Number.isFinite(nroPersonas)) {
         const legacy =
-          (x as Record<string, unknown>).nroPersonas ??
-          (x as Record<string, unknown>).personas ??
-          (x as Record<string, unknown>).nro;
+          rec.nroPersonas ?? rec.personas ?? rec.nro;
         nroPersonas = toNumberSafe(legacy);
       }
 
@@ -127,19 +132,21 @@ function normalizeFamilies(arr: unknown[]): Family[] {
         id,
         nombreFamilia,
         nroPersonas,
-        ...(telefono ? { telefono } : {}), // 👈 NUEVO
+        ...(telefono ? { telefono } : {}),
         ...(rawInv
           ? {
               invitados: {
                 adult: Number.isFinite(invAdult) ? invAdult : undefined,
-                kids:  Number.isFinite(invKids)  ? invKids  : undefined,
+                kids: Number.isFinite(invKids) ? invKids : undefined,
                 total: Number.isFinite(invTotal) ? invTotal : undefined,
               },
             }
           : {}),
       };
 
-      if (!fam.id || !fam.nombreFamilia || !Number.isFinite(fam.nroPersonas)) return null;
+      if (!fam.id || !fam.nombreFamilia || !Number.isFinite(fam.nroPersonas)) {
+        return null;
+      }
       return fam;
     })
     .filter((f): f is Family => f !== null);
