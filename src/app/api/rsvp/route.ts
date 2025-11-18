@@ -1,6 +1,7 @@
 // api/rsvp/route.ts
 
 import { NextResponse } from "next/server";
+import { loadGuests } from "@/lib/loadGuests"; // 👈 NUEVO
 
 export const runtime = "nodejs";
 
@@ -11,6 +12,7 @@ type Body = {
   asistencia: boolean;
   adultos?: number; 
   ninos?: number;
+  telefono?: string;
 };
 
 const OWNER = process.env.GITHUB_OWNER!;
@@ -19,8 +21,10 @@ const BRANCH = process.env.GITHUB_BRANCH || "main";
 const PATH = process.env.GITHUB_DATA_PATH || "data/rsvps.md";
 const TOKEN = process.env.GITHUB_TOKEN!;
 const GH = "https://api.github.com";
+const GUESTS_PATH = process.env.GITHUB_GUESTS_PATH || "data/guests.json"; // 👈 NUEVO
 
 type GhFile = { content: string; sha: string };
+type GhJsonFile = { content: string; sha: string }; // 👈 NUEVO
 
 // === Zona horaria local para timestamps y mensajes ===
 const TZ = "America/Guayaquil";
@@ -107,6 +111,7 @@ export async function POST(req: Request) {
       asistencia,
       adultos,
       ninos,
+      telefono: telefonoFromBody, // 👈 por si viene desde el front
     } = (await req.json()) as Body;
 
     if (
@@ -118,12 +123,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
     }
 
+    // 👇 Buscar teléfono de la familia (prioriza lo que venga en el body, luego JSON)
+    let telefono = "";
+    try {
+      const families = await loadGuests();
+      const fam = families.find((f) => f.id === familyId);
+      const telefonoFromGuests = fam?.telefono ?? "";
+      telefono =
+        (typeof telefonoFromBody === "string" && telefonoFromBody.trim()) ||
+        telefonoFromGuests;
+    } catch (e) {
+      console.error("[rsvp] no se pudo leer telefono desde guests:", e);
+    }
+
     const existing = await getFile();
 
-    // Header con columnas adultos y niños
+    // 👇 Header con columna "telefono" AL FINAL
     const header =
-      `| family_id | creation_date | nombre_familia | adultos | niños | total | asistencia |\n` +
-      `|---|---|---|---|---|---|---|\n`;
+      `| family_id | creation_date | nombre_familia | adultos | niños | total | asistencia | telefono |\n` +
+      `|---|---|---|---|---|---|---|---|\n`;
 
     // Timestamp en hora local (no uses toISOString, que es UTC)
     const ts = nowString();
@@ -131,9 +149,12 @@ export async function POST(req: Request) {
     // Normaliza a string (evita "undefined")
     const adultosCell = Number.isFinite(adultos as number) ? String(adultos) : "";
     const ninosCell = Number.isFinite(ninos as number) ? String(ninos) : "";
+    const telefonoCell =
+      typeof telefono === "string" ? telefono.trim() : "";
 
+    // 👇 Nueva fila con teléfono al FINAL
     const newRow =
-      `| ${familyId} | ${ts} | ${nombreFamilia} | ${adultosCell} | ${ninosCell} | ${nroPersonas} | ${asistencia ? "Sí" : "No"} |\n`;
+      `| ${familyId} | ${ts} | ${nombreFamilia} | ${adultosCell} | ${ninosCell} | ${nroPersonas} | ${asistencia ? "Sí" : "No"} | ${telefonoCell} |\n`;
 
     // Mensaje de commit solicitado
     const commitMessage = `Invitado ${nombreFamilia} - Respuesta enviada: ${nowString()}`;
@@ -164,3 +185,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

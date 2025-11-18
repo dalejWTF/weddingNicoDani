@@ -6,6 +6,7 @@ export type Family = {
   id: string;
   nombreFamilia: string;
   nroPersonas: number;
+  telefono?: string; // 👈 NUEVO
   invitados?: { adult?: number; kids?: number; total?: number };
 };
 
@@ -96,6 +97,7 @@ function normalizeFamilies(arr: unknown[]): Family[] {
 
       const id = toStringSafe(x.id).trim();
       const nombreFamilia = (toStringSafe(x.nombreFamilia) || toStringSafe(x.nombre)).trim();
+      const telefono = toStringSafe((x as any).telefono).trim(); // 👈 NUEVO
 
       // ⬇️ NUEVO: soporta { invitados: { adult, kids, total } }
       const rawInv = isRecord(x.invitados) ? (x.invitados as Record<string, unknown>) : undefined;
@@ -125,6 +127,7 @@ function normalizeFamilies(arr: unknown[]): Family[] {
         id,
         nombreFamilia,
         nroPersonas,
+        ...(telefono ? { telefono } : {}), // 👈 NUEVO
         ...(rawInv
           ? {
               invitados: {
