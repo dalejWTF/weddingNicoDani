@@ -1,6 +1,5 @@
-// api/rsvp/route.ts
-
 import { NextResponse } from "next/server";
+import { loadGuests } from "@/lib/loadGuests";
 
 export const runtime = "nodejs";
 
@@ -9,8 +8,9 @@ type Body = {
   nombreFamilia: string;
   nroPersonas: number;
   asistencia: boolean;
-  adultos?: number; 
+  adultos?: number;
   ninos?: number;
+  telefono?: string;
 };
 
 const OWNER = process.env.GITHUB_OWNER!;
@@ -20,10 +20,10 @@ const PATH = process.env.GITHUB_DATA_PATH || "data/rsvps.md";
 const TOKEN = process.env.GITHUB_TOKEN!;
 const GH = "https://api.github.com";
 
-type GhFile = { content: string; sha: string };
-
 // === Zona horaria local para timestamps y mensajes ===
 const TZ = "America/Guayaquil";
+
+type GhFile = { content: string; sha: string };
 
 /**
  * Devuelve la fecha/hora actual como "YYYY-MM-DD HH:mm:ss" en la zona horaria indicada.
@@ -62,7 +62,7 @@ async function getFile(): Promise<GhFile | null> {
  */
 async function putFile(content: string, sha?: string, message?: string) {
   const body = {
-    message: message ?? `RSVP ${nowString()}`, // por defecto hora local
+    message: message ?? `RSVP ${nowString()}`,
     content: Buffer.from(content, "utf8").toString("base64"),
     branch: BRANCH,
     ...(sha ? { sha } : {}),
@@ -84,7 +84,7 @@ async function putFile(content: string, sha?: string, message?: string) {
 }
 
 // Parser para detectar qué familias ya respondieron, con el NUEVO orden:
-// | family_id | creation_date | nombre_familia | adultos | niños | total | asistencia |
+// | family_id | creation_date | nombre_familia | adultos | niños | total | asistencia | telefono |
 function parseRespondedSet(md: string) {
   const set = new Set<string>();
   for (const line of md.split("\n")) {
@@ -107,6 +107,7 @@ export async function POST(req: Request) {
       asistencia,
       adultos,
       ninos,
+      telefono: telefonoFromBody,
     } = (await req.json()) as Body;
 
     if (
@@ -118,24 +119,38 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
     }
 
+    // Buscar teléfono de la familia (prioriza body, luego guests.json/ts)
+    let telefono = "";
+    try {
+      const families = await loadGuests();
+      const fam = families.find((f) => f.id === familyId);
+      const telefonoFromGuests = fam?.telefono ?? "";
+      telefono =
+        (typeof telefonoFromBody === "string" && telefonoFromBody.trim()) ||
+        telefonoFromGuests;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("[rsvp] no se pudo leer telefono desde guests:", err);
+    }
+
     const existing = await getFile();
 
-    // Header con columnas adultos y niños
+    // Header con columna "telefono" AL FINAL
     const header =
-      `| family_id | creation_date | nombre_familia | adultos | niños | total | asistencia |\n` +
-      `|---|---|---|---|---|---|---|\n`;
+      `| family_id | creation_date | nombre_familia | adultos | niños | total | asistencia | telefono |\n` +
+      `|---|---|---|---|---|---|---|---|\n`;
 
-    // Timestamp en hora local (no uses toISOString, que es UTC)
+    // Timestamp en hora local
     const ts = nowString();
 
     // Normaliza a string (evita "undefined")
     const adultosCell = Number.isFinite(adultos as number) ? String(adultos) : "";
     const ninosCell = Number.isFinite(ninos as number) ? String(ninos) : "";
+    const telefonoCell = typeof telefono === "string" ? telefono.trim() : "";
 
     const newRow =
-      `| ${familyId} | ${ts} | ${nombreFamilia} | ${adultosCell} | ${ninosCell} | ${nroPersonas} | ${asistencia ? "Sí" : "No"} |\n`;
+      `| ${familyId} | ${ts} | ${nombreFamilia} | ${adultosCell} | ${ninosCell} | ${nroPersonas} | ${asistencia ? "Sí" : "No"} | ${telefonoCell} |\n`;
 
-    // Mensaje de commit solicitado
     const commitMessage = `Invitado ${nombreFamilia} - Respuesta enviada: ${nowString()}`;
 
     if (!existing) {
@@ -156,8 +171,9 @@ export async function POST(req: Request) {
     const next = decoded.endsWith("\n") ? decoded + newRow : decoded + "\n" + newRow;
     await putFile(next, existing.sha, commitMessage);
     return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(err);
     return NextResponse.json(
       { error: "No se pudo guardar en GitHub" },
       { status: 500 }
