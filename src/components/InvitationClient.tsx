@@ -418,8 +418,8 @@ export default function InvitationClient({ familyIdFromUrl }: { familyIdFromUrl?
           >
             <Timeline
               items={[
-                { time: "5:00 PM", label: "Ceremonia", icon: "/assets/TimelineSVG/church.svg" },
-                { time: "6:30 PM", label: "Recepción", icon: "/assets/TimelineSVG/lunch.svg" },
+                { time: "4:00 PM", label: "Ceremonia", icon: "/assets/TimelineSVG/church.svg" },
+                { time: "6:00 PM", label: "Recepción", icon: "/assets/TimelineSVG/lunch.svg" },
                 { time: "7:00 PM", label: "Fotos", icon: "/assets/TimelineSVG/photos.svg" },
                 { time: "9:00 PM", label: "Brindis & cena", icon: "/assets/TimelineSVG/lunch.svg" },
                 { time: "10:00 PM", label: "Baile", icon: "/assets/TimelineSVG/disco.svg" },
